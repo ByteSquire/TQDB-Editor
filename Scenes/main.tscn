@@ -1,0 +1,266 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2vk1113jlm6i"]
+
+[ext_resource type="Script" path="res://Scripts/SourcesTree.gd" id="1_m65gi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
+bg_color = Color(0, 0.686275, 0, 1)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = -1.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+metadata/_edit_use_anchors_ = true
+
+[node name="Control" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 2
+offset_right = 481.0
+offset_bottom = 31.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="MenuButton" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_right = 35.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "File"
+switch_on_hover = true
+
+[node name="MenuButton2" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 39.0
+offset_right = 77.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Edit"
+switch_on_hover = true
+
+[node name="MenuButton3" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 81.0
+offset_right = 124.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Mod"
+switch_on_hover = true
+
+[node name="MenuButton4" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 128.0
+offset_right = 176.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Build"
+switch_on_hover = true
+
+[node name="MenuButton5" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 180.0
+offset_right = 261.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Database"
+switch_on_hover = true
+
+[node name="MenuButton6" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 265.0
+offset_right = 331.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Archive"
+switch_on_hover = true
+
+[node name="MenuButton9" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 335.0
+offset_right = 384.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Tools"
+switch_on_hover = true
+
+[node name="MenuButton7" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 388.0
+offset_right = 433.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "View"
+switch_on_hover = true
+
+[node name="MenuButton8" type="MenuButton" parent="Control/HBoxContainer"]
+layout_mode = 2
+offset_left = 437.0
+offset_right = 481.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+text = "Help"
+switch_on_hover = true
+
+[node name="HSplitContainer" type="VSplitContainer" parent="Control"]
+layout_mode = 2
+offset_top = 35.0
+offset_right = 1150.0
+offset_bottom = 615.0
+size_flags_vertical = 3
+
+[node name="HBoxContainer2" type="HSplitContainer" parent="Control/HSplitContainer"]
+layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 284.0
+size_flags_vertical = 3
+
+[node name="TabContainer" type="TabContainer" parent="Control/HSplitContainer/HBoxContainer2"]
+layout_mode = 2
+offset_right = 569.0
+offset_bottom = 284.0
+size_flags_horizontal = 3
+drag_to_rearrange_enabled = true
+use_hidden_tabs_for_min_size = true
+
+[node name="Sources" type="Tree" parent="Control/HSplitContainer/HBoxContainer2/TabContainer"]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m65gi")
+
+[node name="Assets" type="Tree" parent="Control/HSplitContainer/HBoxContainer2/TabContainer"]
+visible = false
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m65gi")
+
+[node name="Database" type="Tree" parent="Control/HSplitContainer/HBoxContainer2/TabContainer"]
+visible = false
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_m65gi")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/HSplitContainer/HBoxContainer2"]
+layout_mode = 2
+offset_left = 581.0
+offset_right = 1150.0
+offset_bottom = 284.0
+size_flags_horizontal = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/HSplitContainer/HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+offset_right = 187.0
+offset_bottom = 284.0
+size_flags_horizontal = 3
+text = "Test"
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="Control/HSplitContainer/HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+offset_left = 191.0
+offset_right = 378.0
+offset_bottom = 284.0
+size_flags_horizontal = 3
+text = "Test"
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="Control/HSplitContainer/HBoxContainer2/HBoxContainer"]
+layout_mode = 2
+offset_left = 382.0
+offset_right = 569.0
+offset_bottom = 284.0
+size_flags_horizontal = 3
+text = "Test"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/HSplitContainer"]
+layout_mode = 2
+offset_top = 296.0
+offset_right = 1150.0
+offset_bottom = 580.0
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/HSplitContainer/ScrollContainer"]
+layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 284.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "Information
+[color=yellow]Warning[/color]
+[color=red]Error[/color]"
+
+[node name="HSplitContainer3" type="HSplitContainer" parent="Control"]
+layout_mode = 2
+offset_top = 619.0
+offset_right = 1150.0
+offset_bottom = 646.0
+split_offset = 300
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/HSplitContainer3"]
+layout_mode = 2
+offset_right = 869.0
+offset_bottom = 27.0
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[color=green]Ready[/color]"
+
+[node name="HSplitContainer2" type="HSplitContainer" parent="Control/HSplitContainer3"]
+layout_mode = 2
+offset_left = 881.0
+offset_right = 1150.0
+offset_bottom = 27.0
+size_flags_horizontal = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="Control/HSplitContainer3/HSplitContainer2"]
+custom_minimum_size = Vector2i(50, 0)
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 27.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_styles/fill = SubResource("StyleBoxFlat_wpugc")
+step = 1.0
+rounded = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/HSplitContainer3/HSplitContainer2"]
+layout_mode = 2
+offset_left = 140.0
+offset_right = 269.0
+offset_bottom = 27.0
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="Control/HSplitContainer3/HSplitContainer2/ScrollContainer"]
+layout_mode = 2
+offset_right = 634.0
+offset_bottom = 26.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handles/that"
