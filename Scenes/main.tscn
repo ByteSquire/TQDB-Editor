@@ -1,11 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://b2vk1113jlm6i"]
+[gd_scene load_steps=7 format=3 uid="uid://b2vk1113jlm6i"]
 
+[ext_resource type="Script" path="res://Scripts/MainScene/Init.gd" id="1_4u0es"]
+[ext_resource type="Script" path="res://Scripts/MainScene/ModMenu.gd" id="1_35yvy"]
 [ext_resource type="Script" path="res://Scripts/SourcesTree.gd" id="1_m65gi"]
+[ext_resource type="PackedScene" uid="uid://7nwrjcsi5j6" path="res://Scenes/dbr_file_row.tscn" id="2_7nqb2"]
+[ext_resource type="Script" path="res://Scripts/MainScene/BuildMenu.gd" id="2_bwdgy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
 bg_color = Color(0, 0.686275, 0, 1)
 
-[node name="Control" type="Control"]
+[node name="MainWindow" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +24,10 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 metadata/_edit_use_anchors_ = true
 
-[node name="Control" type="VBoxContainer" parent="."]
+[node name="Init" type="Node" parent="."]
+script = ExtResource("1_4u0es")
+
+[node name="MainView" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,107 +36,159 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control"]
+[node name="MenuBar2" type="MenuBar" parent="MainView"]
 layout_mode = 2
-offset_right = 481.0
+offset_right = 1150.0
 offset_bottom = 31.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
 
-[node name="MenuButton" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_right = 35.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "File"
-switch_on_hover = true
+[node name="File" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 4
+item_0/text = "Set Working Folder..."
+item_0/id = 0
+item_1/text = "Rename"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "Exit"
+item_3/id = 3
 
-[node name="MenuButton2" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 39.0
-offset_right = 77.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Edit"
-switch_on_hover = true
+[node name="Edit" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 6
+item_0/text = "Undo"
+item_0/id = 0
+item_1/text = "Select All"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "Copy"
+item_3/id = 3
+item_4/text = "Paste"
+item_4/id = 4
+item_5/text = "Delete"
+item_5/id = 5
 
-[node name="MenuButton3" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 81.0
-offset_right = 124.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Mod"
-switch_on_hover = true
+[node name="Mod" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 3
+item_0/text = "New"
+item_0/id = 0
+item_1/text = "Delete"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+script = ExtResource("1_35yvy")
 
-[node name="MenuButton4" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 128.0
-offset_right = 176.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Build"
-switch_on_hover = true
+[node name="Select" type="PopupMenu" parent="MainView/MenuBar2/Mod"]
+item_count = 1
+item_0/text = "test1"
+item_0/id = 0
 
-[node name="MenuButton5" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 180.0
-offset_right = 261.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Database"
-switch_on_hover = true
+[node name="Build" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 4
+item_0/text = "Build"
+item_0/id = 0
+item_1/text = "Stop"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "Verify Build"
+item_3/id = 3
+script = ExtResource("2_bwdgy")
 
-[node name="MenuButton6" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 265.0
-offset_right = 331.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Archive"
-switch_on_hover = true
+[node name="Verify Options" type="PopupMenu" parent="MainView/MenuBar2/Build"]
+item_count = 3
+item_0/text = "Normal"
+item_0/checkable = 2
+item_0/checked = true
+item_0/id = 0
+item_1/text = "Detailed"
+item_1/checkable = 2
+item_1/id = 1
+item_2/text = "Excessive"
+item_2/checkable = 2
+item_2/id = 2
 
-[node name="MenuButton9" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 335.0
-offset_right = 384.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Tools"
-switch_on_hover = true
+[node name="Database" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 7
+item_0/text = "Import Record..."
+item_0/id = 0
+item_1/text = ""
+item_1/id = 1
+item_1/separator = true
+item_2/text = "Check Records"
+item_2/id = 2
+item_3/text = "Move Records"
+item_3/id = 3
+item_4/text = "Db Archive Stats"
+item_4/id = 4
+item_5/text = ""
+item_5/id = 5
+item_5/separator = true
+item_6/text = "Stop"
+item_6/id = 6
 
-[node name="MenuButton7" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 388.0
-offset_right = 433.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "View"
-switch_on_hover = true
+[node name="Archive" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 4
+item_0/text = "Build..."
+item_0/id = 0
+item_1/text = "Compact..."
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "Statistics..."
+item_3/id = 3
 
-[node name="MenuButton8" type="MenuButton" parent="Control/HBoxContainer"]
-layout_mode = 2
-offset_left = 437.0
-offset_right = 481.0
-offset_bottom = 31.0
-size_flags_horizontal = 3
-text = "Help"
-switch_on_hover = true
+[node name="Tools" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 3
+item_0/text = "Extract game files..."
+item_0/id = 0
+item_1/text = ""
+item_1/id = 1
+item_1/separator = true
+item_2/text = "Options..."
+item_2/id = 2
 
-[node name="HSplitContainer" type="VSplitContainer" parent="Control"]
+[node name="View" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 2
+item_0/text = "Status bar"
+item_0/checkable = 1
+item_0/checked = true
+item_0/id = 0
+item_1/text = "Refresh"
+item_1/id = 1
+
+[node name="Help" type="PopupMenu" parent="MainView/MenuBar2"]
+item_count = 5
+item_0/text = "Help..."
+item_0/id = 0
+item_1/text = "About TQDB-Editor..."
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "Install Templates..."
+item_3/id = 3
+item_4/text = "Install Tutorials..."
+item_4/id = 4
+
+[node name="FilesConsole" type="VSplitContainer" parent="MainView"]
 layout_mode = 2
 offset_top = 35.0
 offset_right = 1150.0
 offset_bottom = 615.0
 size_flags_vertical = 3
 
-[node name="HBoxContainer2" type="HSplitContainer" parent="Control/HSplitContainer"]
+[node name="DirectoriesFiles" type="HSplitContainer" parent="MainView/FilesConsole"]
 layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 284.0
 size_flags_vertical = 3
 
-[node name="TabContainer" type="TabContainer" parent="Control/HSplitContainer/HBoxContainer2"]
+[node name="Directories" type="TabContainer" parent="MainView/FilesConsole/DirectoriesFiles"]
 layout_mode = 2
 offset_right = 569.0
 offset_bottom = 284.0
@@ -137,7 +196,7 @@ size_flags_horizontal = 3
 drag_to_rearrange_enabled = true
 use_hidden_tabs_for_min_size = true
 
-[node name="Sources" type="Tree" parent="Control/HSplitContainer/HBoxContainer2/TabContainer"]
+[node name="Sources" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
 layout_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
@@ -147,7 +206,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m65gi")
 
-[node name="Assets" type="Tree" parent="Control/HSplitContainer/HBoxContainer2/TabContainer"]
+[node name="Assets" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
 visible = false
 layout_mode = 2
 anchors_preset = 15
@@ -158,7 +217,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m65gi")
 
-[node name="Database" type="Tree" parent="Control/HSplitContainer/HBoxContainer2/TabContainer"]
+[node name="Database" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
 visible = false
 layout_mode = 2
 anchors_preset = 15
@@ -169,44 +228,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_m65gi")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Control/HSplitContainer/HBoxContainer2"]
+[node name="DBRFile" parent="MainView/FilesConsole/DirectoriesFiles" instance=ExtResource("2_7nqb2")]
 layout_mode = 2
-offset_left = 581.0
-offset_right = 1150.0
-offset_bottom = 284.0
-size_flags_horizontal = 3
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/HSplitContainer/HBoxContainer2/HBoxContainer"]
-layout_mode = 2
-offset_right = 187.0
-offset_bottom = 284.0
-size_flags_horizontal = 3
-text = "Test"
-
-[node name="RichTextLabel2" type="RichTextLabel" parent="Control/HSplitContainer/HBoxContainer2/HBoxContainer"]
-layout_mode = 2
-offset_left = 191.0
-offset_right = 378.0
-offset_bottom = 284.0
-size_flags_horizontal = 3
-text = "Test"
-
-[node name="RichTextLabel3" type="RichTextLabel" parent="Control/HSplitContainer/HBoxContainer2/HBoxContainer"]
-layout_mode = 2
-offset_left = 382.0
-offset_right = 569.0
-offset_bottom = 284.0
-size_flags_horizontal = 3
-text = "Test"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/HSplitContainer"]
+[node name="ConsoleContainer" type="ScrollContainer" parent="MainView/FilesConsole"]
 layout_mode = 2
 offset_top = 296.0
 offset_right = 1150.0
 offset_bottom = 580.0
 size_flags_vertical = 3
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/HSplitContainer/ScrollContainer"]
+[node name="Console" type="RichTextLabel" parent="MainView/FilesConsole/ConsoleContainer"]
 layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 284.0
@@ -217,14 +249,14 @@ text = "Information
 [color=yellow]Warning[/color]
 [color=red]Error[/color]"
 
-[node name="HSplitContainer3" type="HSplitContainer" parent="Control"]
+[node name="FootBar" type="HSplitContainer" parent="MainView"]
 layout_mode = 2
 offset_top = 619.0
 offset_right = 1150.0
 offset_bottom = 646.0
 split_offset = 300
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/HSplitContainer3"]
+[node name="StatusLabel" type="RichTextLabel" parent="MainView/FootBar"]
 layout_mode = 2
 offset_right = 869.0
 offset_bottom = 27.0
@@ -232,14 +264,14 @@ size_flags_horizontal = 3
 bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
-[node name="HSplitContainer2" type="HSplitContainer" parent="Control/HSplitContainer3"]
+[node name="ProgressPath" type="HSplitContainer" parent="MainView/FootBar"]
 layout_mode = 2
 offset_left = 881.0
 offset_right = 1150.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
-[node name="ProgressBar" type="ProgressBar" parent="Control/HSplitContainer3/HSplitContainer2"]
+[node name="Progress" type="ProgressBar" parent="MainView/FootBar/ProgressPath"]
 custom_minimum_size = Vector2i(50, 0)
 layout_mode = 2
 offset_right = 128.0
@@ -250,14 +282,14 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_wpugc")
 step = 1.0
 rounded = true
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control/HSplitContainer3/HSplitContainer2"]
+[node name="PathContainer" type="ScrollContainer" parent="MainView/FootBar/ProgressPath"]
 layout_mode = 2
 offset_left = 140.0
 offset_right = 269.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
-[node name="Label2" type="Label" parent="Control/HSplitContainer3/HSplitContainer2/ScrollContainer"]
+[node name="Path" type="Label" parent="MainView/FootBar/ProgressPath/PathContainer"]
 layout_mode = 2
 offset_right = 634.0
 offset_bottom = 26.0
