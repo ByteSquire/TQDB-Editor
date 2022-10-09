@@ -7,7 +7,7 @@ using System.Linq;
 public partial class FilesViewAssets : FilesViewBase
 {
     [Export]
-    private VBoxContainer column2;
+    private VBoxContainer column2; // status
 
     protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
@@ -16,8 +16,9 @@ public partial class FilesViewAssets : FilesViewBase
         return new VBoxContainer[] { column2 };
     }
 
-    protected override void InitFile(string path)
+    protected override bool InitFile(string path)
     {
 
+        return true;
     }
 }

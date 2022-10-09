@@ -66,7 +66,7 @@ public abstract partial class FilesViewBase : ScrollContainer
         }
     }
 
-    protected abstract void InitFile(string path);
+    protected abstract bool InitFile(string path);
 
     protected void InitDir(string path)
     {
@@ -87,13 +87,14 @@ public abstract partial class FilesViewBase : ScrollContainer
         {
             if (IsSupportedFile(filePath))
             {
+                if (!InitFile(filePath))
+                    continue;
                 var fileName = Path.GetFileName(filePath);
                 column1.AddChild(new Label
                 {
                     Text = fileName,
                     TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis
                 });
-                InitFile(filePath);
             }
         }
     }

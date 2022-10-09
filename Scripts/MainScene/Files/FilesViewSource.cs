@@ -15,9 +15,9 @@ public partial class FilesViewSource : FilesViewBase
         return System.Array.Empty<VBoxContainer>();
     }
 
-    protected override void InitFile(string path)
+    protected override bool InitFile(string path)
     {
         // nothing additional to do
-        return;
+        return true;
     }
 }
