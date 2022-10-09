@@ -1,0 +1,34 @@
+[gd_scene load_steps=3 format=3 uid="uid://csqo7qxycdea8"]
+
+[ext_resource type="PackedScene" uid="uid://3dcvr6vwmxed" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewAssets.cs" id="2_jwlqo"]
+
+[node name="Container" node_paths=PackedStringArray("column2") instance=ExtResource("1_88eub")]
+script = ExtResource("2_jwlqo")
+column2 = NodePath("Column1/Column2")
+
+[node name="Column1" parent="Column1" index="0"]
+offset_right = 47.0
+
+[node name="Filename" parent="Column1/Column1" index="0"]
+offset_right = 47.0
+
+[node name="HSeparator" parent="Column1/Column1" index="1"]
+offset_right = 47.0
+
+[node name="Column2" type="VBoxContainer" parent="Column1" index="1"]
+offset_left = 59.0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="Filestatus" type="Label" parent="Column1/Column2" index="0"]
+offset_right = 1093.0
+offset_bottom = 26.0
+size_flags_vertical = 1
+text = "Status
+"
+
+[node name="HSeparator" type="HSeparator" parent="Column1/Column2" index="1"]
+offset_top = 30.0
+offset_right = 1093.0
+offset_bottom = 34.0

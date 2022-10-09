@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://3dcvr6vwmxed"]
+
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewSource.cs" id="1_rwkoj"]
+
+[node name="Container" type="ScrollContainer" node_paths=PackedStringArray("column1")]
+custom_minimum_size = Vector2i(100, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_rwkoj")
+column1 = NodePath("Column1/Column1")
+
+[node name="Column1" type="HSplitContainer" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Column1" type="VBoxContainer" parent="Column1"]
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="Filename" type="Label" parent="Column1/Column1"]
+offset_right = 1152.0
+offset_bottom = 26.0
+size_flags_vertical = 1
+text = "Name"
+
+[node name="HSeparator" type="HSeparator" parent="Column1/Column1"]
+offset_top = 30.0
+offset_right = 1152.0
+offset_bottom = 34.0

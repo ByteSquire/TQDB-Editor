@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://5vfh6iyyt47w"]
+
+[ext_resource type="PackedScene" uid="uid://3dcvr6vwmxed" path="res://Scenes/Files/FilesViewBase.tscn" id="1_tq10n"]
+
+[node name="Container" instance=ExtResource("1_tq10n")]
