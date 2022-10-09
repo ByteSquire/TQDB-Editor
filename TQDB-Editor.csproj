@@ -11,6 +11,6 @@
 	</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="TQArchive-Wrapper" Version="1.0.0" />
-    <PackageReference Include="TQDB-Parser" Version="1.0.0" />
+    <PackageReference Include="TQDB-Parser" Version="1.1.0" />
   </ItemGroup>
 </Project>
