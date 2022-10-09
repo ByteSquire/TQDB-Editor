@@ -80,19 +80,96 @@ public abstract partial class DirViewBase : Tree
         return newNode;
     }
 
+    private void AddDir(string dirPath)
+    {
+        (var closest, var remaining) = FindClosestNode(dirPath);
+        //GD.Print("closest " + closest.GetText(0));
+        //GD.Print("remaining:");
+        //GD.Print(remaining);
+        //GD.Print("");
+        foreach (var dir in remaining)
+        {
+            closest = AddChildItem(closest, dir);
+        }
+    }
+
+    protected (TreeItem, string[]) FindClosestNode(string dirPath)
+    {
+        var currDir = root.GetChild(0);
+        var dirs = dirPath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
+
+        int i = 0;
+        var lastDir = currDir;
+        for (; i < dirs.Length - 1; i++)
+        {
+            while (currDir is not null && currDir.GetText(0) != dirs[i])
+            {
+                currDir = currDir.GetNext();
+            }
+            if (currDir is null)
+            {
+                currDir = lastDir;
+                break;
+            }
+            if (currDir.GetText(0) == dirs[i])
+            {
+                if (currDir.GetChildCount() == 0)
+                {
+                    i++;
+                    break;
+                }
+                if (i < dirs.Length - 2)
+                {
+                    lastDir = currDir;
+                    currDir = currDir.GetChild(0);
+                }
+            }
+        }
+        return (currDir, dirs[i..]);
+    }
+
+    private void RemoveDir(string dirPath)
+    {
+        (var closest, var remaining) = FindClosestNode(dirPath);
+        //GD.Print("closest " + closest.GetText(0));
+        //GD.Print("remaining:");
+        //GD.Print(remaining);
+        //GD.Print("");
+        if (remaining.Length > 1)
+        {
+            GD.PrintErr("Whoops, trying to delete a directory inside a subdirectory that wasn't picked up yet");
+            return;
+        }
+        var currDir = closest.GetChild(0);
+        while (currDir is not null && currDir.GetText(0) != remaining[0])
+        {
+            currDir = currDir.GetNext();
+        }
+        if (currDir is null)
+        {
+            GD.PrintErr("Whoops, trying to delete a directory that wasn't picked up yet");
+            return;
+        }
+        if (currDir.GetText(0) == remaining[0])
+        {
+            currDir.Free();
+        }
+    }
+
     private void DirectoryRenamed(object sender, RenamedEventArgs e)
     {
-        throw new NotImplementedException();
+        RemoveDir(Path.GetRelativePath(dirPath, e.OldFullPath));
+        AddDir(Path.GetRelativePath(dirPath, e.FullPath));
     }
 
     private void DirectoryDeleted(object sender, FileSystemEventArgs e)
     {
-        throw new NotImplementedException();
+        RemoveDir(Path.GetRelativePath(dirPath, e.FullPath));
     }
 
     private void DirectoryCreated(object sender, FileSystemEventArgs e)
     {
-        throw new NotImplementedException();
+        AddDir(Path.GetRelativePath(dirPath, e.FullPath));
     }
 
     public void OnDirSelected()
