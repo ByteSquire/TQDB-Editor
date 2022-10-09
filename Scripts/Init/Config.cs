@@ -16,6 +16,7 @@ public partial class Config : Node
     public string ToolsDir { get; set; }
     public Array<string> AdditionalDirs { get; set; }
     public string ModDir => Path.Combine(WorkingDir, "CustomMaps", modSubDir);
+    public string ModName => modSubDir;
     private string modSubDir;
 
 
@@ -46,6 +47,11 @@ public partial class Config : Node
         GD.Print(TypeColumnWidth);
         GD.Print(DefaultValueColumnWidth);
         GD.Print(DescriptionColumnWidth);
+    }
+
+    public string GetModPath()
+    {
+        return ModDir;
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
