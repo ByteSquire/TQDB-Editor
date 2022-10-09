@@ -3,34 +3,44 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Transactions;
 
-public partial class SourcesDir : Tree
+public abstract partial class DirViewBase : Tree
 {
     [Export(PropertyHint.NodeType, "Node")]
     private Config configNode;
 
-    private readonly FileSystemWatcher sourceWatcher;
+    private FileSystemWatcher sourceWatcher;
 
-    private string sourcesDirPath;
+    private string dirPath;
 
     private TreeItem root;
+
+    protected abstract string SubPath { get; }
+
+    [Signal]
+    public delegate void DirSelectedEventHandler(string path);
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        sourcesDirPath = Path.Combine(configNode.ModDir, "source");
+        if (configNode is null)
+            return;
+        dirPath = Path.Combine(configNode.ModDir, SubPath);
 
         root = CreateItem();
-        root.SetText(0, "source");
+        root.SetText(0, Path.Combine(configNode.ModName, SubPath));
 
-        if (!Directory.Exists(sourcesDirPath))
+        ItemSelected += OnDirSelected;
+
+        if (!Directory.Exists(dirPath))
         {
-            GD.PrintErr($"The source directory {sourcesDirPath} could not be found, creating...");
-            Directory.CreateDirectory(sourcesDirPath);
+            GD.PrintErr($"The source directory {dirPath} could not be found, creating...");
+            Directory.CreateDirectory(dirPath);
         }
 
-        var sourceWatcher = new FileSystemWatcher(sourcesDirPath)
+        sourceWatcher = new FileSystemWatcher(dirPath)
         {
             IncludeSubdirectories = true,
             EnableRaisingEvents = true,
@@ -45,7 +55,7 @@ public partial class SourcesDir : Tree
 
     private void AddDirectoriesToTree()
     {
-        AddDirectoryToTree(root, sourcesDirPath);
+        AddDirectoryToTree(root, dirPath);
     }
 
     private void AddDirectoryToTree(TreeItem parent, string dirPath)
@@ -85,10 +95,25 @@ public partial class SourcesDir : Tree
         throw new NotImplementedException();
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    //public override void _Process(double delta)
-    //{
-    //}
+    public void OnDirSelected()
+    {
+        var selected = GetSelected();
+        var paths = new List<string>();
+        var parent = selected.GetParent();
+
+        while (parent is not null)
+        {
+            paths.Add(parent.GetText(0));
+            parent = parent.GetParent();
+        }
+
+        paths.RemoveAt(paths.Count - 1);
+        paths.Reverse();
+        paths.Add(selected.GetText(0));
+
+        var relativePath = Path.Combine(paths.ToArray());
+        EmitSignal(nameof(DirSelected), Path.Combine(dirPath, relativePath));
+    }
 
     public override void _ExitTree()
     {
