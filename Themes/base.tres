@@ -1,3 +1,14 @@
-[gd_resource type="Theme" format=3 uid="uid://by3gpw466gxq"]
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://by3gpw466gxq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vfflo"]
+bg_color = Color(0.258824, 0.321569, 0.713726, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 
 [resource]
+RedTextLabel/base_type = &"Label"
+RedTextLabel/colors/font_color = Color(1, 0, 0, 1)
+SelectedLabel/base_type = &"Label"
+SelectedLabel/styles/normal = SubResource("StyleBoxFlat_vfflo")
