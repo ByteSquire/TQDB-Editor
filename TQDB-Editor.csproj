@@ -9,7 +9,12 @@
 		<StartProgram>C:\Program Files\Godot 4.0 mono\Godot_v4.0-beta2_mono_win64.exe</StartProgram>
 		<StartArguments>--path C:\Users\green\OneDrive\Documents\Own Games\TQDB-Editor\</StartArguments>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Compile Remove="script_templates\**" />
+	  <EmbeddedResource Remove="script_templates\**" />
+	</ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="TQArchive-Wrapper" Version="1.0.0" />
     <PackageReference Include="TQDB-Parser" Version="1.1.0" />
   </ItemGroup>
