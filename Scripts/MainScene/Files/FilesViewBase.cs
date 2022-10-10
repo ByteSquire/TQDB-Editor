@@ -10,17 +10,17 @@ using System.Runtime.CompilerServices;
 
 namespace TQDBEditor.Files
 {
-    public abstract partial class FilesViewBase : ScrollContainer
+    public abstract partial class FilesViewBase : VBoxContainer
     {
         [Export]
         protected DirViewBase dirView;
         [Export]
-        private VBoxContainer column1;
-        [Export]
-        protected PackedScene fileNameLabelTemplate;
+        private ItemList column1;
+        //[Export]
+        //protected PackedScene fileNameLabelTemplate;
 
-        [Signal]
-        public delegate void DeselectLabelEventHandler(Label other);
+        //[Signal]
+        //public delegate void DeselectLabelEventHandler(Label other);
 
         protected Config configNode;
 
@@ -54,26 +54,31 @@ namespace TQDBEditor.Files
             fileDirWatcher.Changed += FileChanged;
         }
 
-        protected abstract VBoxContainer[] GetAdditionalColumns();
+        protected abstract ItemList[] GetAdditionalColumns();
 
         private void ClearTable()
         {
-            var baseChildren = column1.GetChildren();
-            for (int i = 2; i < baseChildren.Count; i++)
-            {
-                var child = baseChildren[i];
-                child.QueueFree();
-            }
-
+            column1.Clear();
             foreach (var column in GetAdditionalColumns())
-            {
-                var children = column.GetChildren();
-                for (int i = 2; i < children.Count; i++)
-                {
-                    var child = children[i];
-                    child.QueueFree();
-                }
-            }
+                column.Clear();
+
+            // clears a vboxcontainer with heading and separator
+            //var baseChildren = column1.GetChildren();
+            //for (int i = 2; i < baseChildren.Count; i++)
+            //{
+            //    var child = baseChildren[i];
+            //    child.QueueFree();
+            //}
+
+            //foreach (var column in GetAdditionalColumns())
+            //{
+            //    var children = column.GetChildren();
+            //    for (int i = 2; i < children.Count; i++)
+            //    {
+            //        var child = children[i];
+            //        child.QueueFree();
+            //    }
+            //}
         }
 
         protected abstract bool InitFile(string path);
@@ -129,22 +134,32 @@ namespace TQDBEditor.Files
             if (IsSupportedFile(filePath))
             {
                 var fileName = Path.GetFileName(filePath);
-                var baseChildren = column1.GetChildren();
-                for (int i = 2; i < baseChildren.Count; i++)
+                for (int i = 0; i < column1.ItemCount; i++)
                 {
-                    var child = baseChildren[i] as Label;
-                    if (child.Text == fileName)
+                    if (column1.GetItemText(i) == fileName)
                     {
-                        child.QueueFree();
-
-                        foreach (var column in GetAdditionalColumns())
-                        {
-                            var additionalChild = column.GetChild(i);
-                            additionalChild.QueueFree();
-                        }
+                        column1.RemoveItem(i);
                         break;
                     }
                 }
+
+                // delete from vboxcontainer
+                //var baseChildren = column1.GetChildren();
+                //for (int i = 2; i < baseChildren.Count; i++)
+                //{
+                //    var child = baseChildren[i] as Label;
+                //    if (child.Text == fileName)
+                //    {
+                //        child.QueueFree();
+
+                //        foreach (var column in GetAdditionalColumns())
+                //        {
+                //            var additionalChild = column.GetChild(i);
+                //            additionalChild.QueueFree();
+                //        }
+                //        break;
+                //    }
+                //}
             }
         }
 
@@ -153,12 +168,17 @@ namespace TQDBEditor.Files
             if (IsSupportedFile(filePath))
             {
                 var fileName = Path.GetFileName(filePath);
-                var newLabel = fileNameLabelTemplate.Instantiate<Label>();
-                newLabel.Set("parentNode", this);
-                newLabel.Connect("label_selected", new Callable(OnLabelClicked));
-                newLabel.Text = fileName;
-                newLabel.ThemeTypeVariation = InitFile(filePath) ? "" : "RedTextLabel";
-                column1.AddChild(newLabel);
+                var index = column1.AddItem(fileName);
+                if (!InitFile(filePath))
+                    column1.SetItemCustomFgColor(index, Colors.Red);
+
+                // add to vboxcontainer
+                //var newLabel = fileNameLabelTemplate.Instantiate<Label>();
+                //newLabel.Set("parentNode", this);
+                //newLabel.Connect("label_selected", new Callable(OnLabelClicked));
+                //newLabel.Text = fileName;
+                //newLabel.ThemeTypeVariation = InitFile(filePath) ? "" : "RedTextLabel";
+                //column1.AddChild(newLabel);
                 //column1.AddChild(new Label
                 //{
                 //    Text = fileName,
@@ -170,22 +190,22 @@ namespace TQDBEditor.Files
             }
         }
 
-        protected Label lastSelected;
+        //protected Label lastSelected;
 
-        protected virtual void OnLabelClicked(Label sender)
-        {
-            if (lastSelected is not null)
-                EmitSignal(nameof(DeselectLabel), sender);
+        //protected virtual void OnLabelClicked(Label sender)
+        //{
+        //    if (lastSelected is not null)
+        //        EmitSignal(nameof(DeselectLabel), sender);
 
-            if (lastSelected != sender)
-            {
-                void handler() => lastSelected = null;
-                if (lastSelected is not null)
-                    lastSelected.TreeExited -= handler;
-                lastSelected = sender;
-                lastSelected.TreeExited += handler;
-            }
-        }
+        //    if (lastSelected != sender)
+        //    {
+        //        void handler() => lastSelected = null;
+        //        if (lastSelected is not null)
+        //            lastSelected.TreeExited -= handler;
+        //        lastSelected = sender;
+        //        lastSelected.TreeExited += handler;
+        //    }
+        //}
 
         public void OnSourceDirSelected(string path)
         {

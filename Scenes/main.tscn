@@ -241,19 +241,22 @@ offset_bottom = 284.0
 size_flags_horizontal = 3
 script = ExtResource("6_fcgqe")
 
-[node name="FileViewSource" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView") instance=ExtResource("6_y1vhp")]
+[node name="FilesViewSource" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("6_y1vhp")]
 layout_mode = 1
 dirView = NodePath("../../Directories/Sources")
+column1 = NodePath("Columns/Column1")
 
-[node name="FileViewAssets" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView") instance=ExtResource("7_njte4")]
+[node name="FilesViewAssets" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("7_njte4")]
 visible = false
 layout_mode = 1
 dirView = NodePath("../../Directories/Assets")
+column1 = NodePath("Columns/Column1")
 
-[node name="FileViewDatabase" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView") instance=ExtResource("8_jodwh")]
+[node name="FileViewDatabase" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("8_jodwh")]
 visible = false
 layout_mode = 1
 dirView = NodePath("../../Directories/Database")
+column1 = NodePath("Columns/Column1")
 
 [node name="ConsoleContainer" type="ScrollContainer" parent="MainView/FilesConsole"]
 custom_minimum_size = Vector2i(0, 40)

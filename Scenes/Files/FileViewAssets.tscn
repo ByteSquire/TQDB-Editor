@@ -1,34 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://csqo7qxycdea8"]
+[gd_scene load_steps=5 format=3 uid="uid://csqo7qxycdea8"]
 
-[ext_resource type="PackedScene" uid="uid://3dcvr6vwmxed" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
+[ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewAssets.cs" id="2_jwlqo"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="3_2qfng"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.gd" id="3_b8k0l"]
 
-[node name="Container" node_paths=PackedStringArray("column2") instance=ExtResource("1_88eub")]
+[node name="FilesViewAssets" node_paths=PackedStringArray("column2") instance=ExtResource("1_88eub")]
 script = ExtResource("2_jwlqo")
-column2 = NodePath("Column1/Column2")
+column2 = NodePath("Columns/Column2")
 
-[node name="Column1" parent="Column1" index="0"]
-offset_right = 47.0
+[node name="FileName" parent="Header" index="0"]
+offset_right = 100.0
 
-[node name="Filename" parent="Column1/Column1" index="0"]
-offset_right = 47.0
+[node name="FileStatus" parent="Header" index="1" instance=ExtResource("3_2qfng")]
+layout_mode = 2
+offset_left = 112.0
+text = "Status"
 
-[node name="HSeparator" parent="Column1/Column1" index="1"]
-offset_right = 47.0
+[node name="Column1" parent="Columns" index="0"]
+offset_right = 100.0
 
-[node name="Column2" type="VBoxContainer" parent="Column1" index="1"]
-offset_left = 59.0
+[node name="Column2" type="ItemList" parent="Columns" index="1" node_paths=PackedStringArray("sort_button")]
+custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
+offset_left = 112.0
 offset_right = 1152.0
-offset_bottom = 648.0
-
-[node name="Filestatus" type="Label" parent="Column1/Column2" index="0"]
-offset_right = 1093.0
-offset_bottom = 26.0
-size_flags_vertical = 1
-text = "Status
-"
-
-[node name="HSeparator" type="HSeparator" parent="Column1/Column2" index="1"]
-offset_top = 30.0
-offset_right = 1093.0
-offset_bottom = 34.0
+offset_bottom = 605.0
+script = ExtResource("3_b8k0l")
+sort_button = NodePath("../../Header/FileStatus")

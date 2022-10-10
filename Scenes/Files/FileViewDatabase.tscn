@@ -1,54 +1,62 @@
-[gd_scene load_steps=3 format=3 uid="uid://uou1pmtqo7rb"]
+[gd_scene load_steps=6 format=3 uid="uid://uou1pmtqo7rb"]
 
-[ext_resource type="PackedScene" uid="uid://3dcvr6vwmxed" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
+[ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewDatabase.cs" id="2_oktei"]
+[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="3_13c8a"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="4_0d73h"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.gd" id="4_xw5th"]
 
-[node name="Container" node_paths=PackedStringArray("column2", "column3") instance=ExtResource("1_6p5jd")]
+[node name="FileViewDatabase" node_paths=PackedStringArray("column2", "column3") instance=ExtResource("1_6p5jd")]
 script = ExtResource("2_oktei")
-column2 = NodePath("Column1/Column2-3/Column2")
-column3 = NodePath("Column1/Column2-3/Column3")
+column2 = NodePath("Columns/Columns23/Column2")
+column3 = NodePath("Columns/Columns23/Column3")
 
-[node name="Column1" parent="Column1" index="0"]
-offset_right = 47.0
+[node name="FileName" parent="Header" index="0"]
+offset_right = 100.0
 
-[node name="Filename" parent="Column1/Column1" index="0"]
-offset_right = 47.0
-
-[node name="HSeparator" parent="Column1/Column1" index="1"]
-offset_right = 47.0
-
-[node name="Column2-3" type="HSplitContainer" parent="Column1" index="1"]
-offset_left = 59.0
+[node name="Header2" type="HSplitContainer" parent="Header" index="1" node_paths=PackedStringArray("other")]
+layout_mode = 2
+offset_left = 112.0
 offset_right = 1152.0
-offset_bottom = 648.0
+offset_bottom = 31.0
+script = ExtResource("3_13c8a")
+other = NodePath("../../HSplitContainer/HSplitContainer")
 
-[node name="Column2" type="VBoxContainer" parent="Column1/Column2-3" index="0"]
-offset_right = 89.0
-offset_bottom = 648.0
-
-[node name="Description" type="Label" parent="Column1/Column2-3/Column2" index="0"]
-offset_right = 89.0
-offset_bottom = 26.0
-size_flags_vertical = 1
+[node name="FileDescription" parent="Header/Header2" index="0" instance=ExtResource("4_0d73h")]
+layout_mode = 2
+offset_right = 100.0
 text = "Description"
 
-[node name="HSeparator" type="HSeparator" parent="Column1/Column2-3/Column2" index="1"]
-offset_top = 30.0
-offset_right = 89.0
-offset_bottom = 34.0
-
-[node name="Column3" type="VBoxContainer" parent="Column1/Column2-3" index="1"]
-offset_left = 101.0
-offset_right = 1093.0
-offset_bottom = 648.0
-
-[node name="Template" type="Label" parent="Column1/Column2-3/Column3" index="0"]
-offset_right = 992.0
-offset_bottom = 26.0
-size_flags_vertical = 1
+[node name="FileTemplate" parent="Header/Header2" index="1" instance=ExtResource("4_0d73h")]
+layout_mode = 2
+offset_left = 112.0
+offset_right = 1040.0
 text = "Template"
 
-[node name="HSeparator" type="HSeparator" parent="Column1/Column2-3/Column3" index="1"]
-offset_top = 30.0
-offset_right = 992.0
-offset_bottom = 34.0
+[node name="Column1" parent="Columns" index="0"]
+offset_right = 100.0
+
+[node name="Columns23" type="HSplitContainer" parent="Columns" index="1" node_paths=PackedStringArray("other")]
+layout_mode = 2
+offset_left = 112.0
+offset_right = 1152.0
+offset_bottom = 605.0
+script = ExtResource("3_13c8a")
+other = NodePath("../../HSplitContainer2/HSplitContainer")
+
+[node name="Column2" type="ItemList" parent="Columns/Columns23" index="0" node_paths=PackedStringArray("sort_button")]
+custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
+offset_right = 100.0
+offset_bottom = 605.0
+script = ExtResource("4_xw5th")
+sort_button = NodePath("../../../Header/Header2/FileDescription")
+
+[node name="Column3" type="ItemList" parent="Columns/Columns23" index="1" node_paths=PackedStringArray("sort_button")]
+custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
+offset_left = 112.0
+offset_right = 1040.0
+offset_bottom = 605.0
+script = ExtResource("4_xw5th")
+sort_button = NodePath("../../../Header/Header2/FileTemplate")

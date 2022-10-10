@@ -9,13 +9,13 @@ namespace TQDBEditor.Files
     public partial class FilesViewAssets : FilesViewBase
     {
         [Export]
-        private VBoxContainer column2; // status
+        private ItemList column2; // status
 
         protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
-        protected override VBoxContainer[] GetAdditionalColumns()
+        protected override ItemList[] GetAdditionalColumns()
         {
-            return new VBoxContainer[] { column2 };
+            return new ItemList[] { column2 };
         }
 
         protected override bool InitFile(string path)

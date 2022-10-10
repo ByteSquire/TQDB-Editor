@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://3dcvr6vwmxed"]
+[gd_scene load_steps=4 format=3 uid="uid://bi45sj82oqs4g"]
 
-[ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewSource.cs" id="1_rwkoj"]
-[ext_resource type="PackedScene" uid="uid://c6bc5wixsu6pg" path="res://Scenes/Files/FileNameLabel.tscn" id="2_sqc1i"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="2_4x23f"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.gd" id="2_l67qc"]
+[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_puc0o"]
 
-[node name="Container" type="ScrollContainer" node_paths=PackedStringArray("column1")]
+[node name="FilesViewBase" type="VBoxContainer"]
 custom_minimum_size = Vector2i(100, 0)
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,28 +12,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-script = ExtResource("1_rwkoj")
-column1 = NodePath("Column1/Column1")
-fileNameLabelTemplate = ExtResource("2_sqc1i")
-
-[node name="Column1" type="HSplitContainer" parent="."]
-offset_right = 1152.0
-offset_bottom = 648.0
-size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Column1" type="VBoxContainer" parent="Column1"]
-custom_minimum_size = Vector2i(100, 0)
+[node name="Header" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 31.0
+script = ExtResource("2_puc0o")
+other = NodePath("../Columns")
+
+[node name="FileName" parent="Header" instance=ExtResource("2_4x23f")]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+offset_top = 35.0
+offset_right = 1152.0
+offset_bottom = 39.0
+
+[node name="Columns" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
+layout_mode = 2
+offset_top = 43.0
 offset_right = 1152.0
 offset_bottom = 648.0
+size_flags_vertical = 3
+script = ExtResource("2_puc0o")
+other = NodePath("../Header")
 
-[node name="Filename" type="Label" parent="Column1/Column1"]
+[node name="Column1" type="ItemList" parent="Columns" node_paths=PackedStringArray("sort_button")]
+custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 1152.0
-offset_bottom = 26.0
-size_flags_vertical = 1
-text = "Name"
-
-[node name="HSeparator" type="HSeparator" parent="Column1/Column1"]
-offset_top = 30.0
-offset_right = 1152.0
-offset_bottom = 34.0
+offset_bottom = 605.0
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
+script = ExtResource("2_l67qc")
+sort_button = NodePath("../../Header/FileName")

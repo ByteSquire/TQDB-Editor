@@ -11,10 +11,10 @@ namespace TQDBEditor.Files
     {
         protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
-        protected override VBoxContainer[] GetAdditionalColumns()
+        protected override ItemList[] GetAdditionalColumns()
         {
             // no additional columns
-            return System.Array.Empty<VBoxContainer>();
+            return System.Array.Empty<ItemList>();
         }
 
         protected override bool InitFile(string path)

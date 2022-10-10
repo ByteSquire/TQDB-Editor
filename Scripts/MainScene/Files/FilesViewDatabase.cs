@@ -12,38 +12,51 @@ namespace TQDBEditor.Files
     public partial class FilesViewDatabase : FilesViewBase
     {
         [Export]
-        private VBoxContainer column2; // descriptions
+        private ItemList column2; // descriptions
         [Export]
-        private VBoxContainer column3; // templates
+        private ItemList column3; // templates
 
         protected override Func<string, bool> IsSupportedFileExtension => x => x == ".dbr";
 
-        protected override VBoxContainer[] GetAdditionalColumns()
+        protected override ItemList[] GetAdditionalColumns()
         {
-            return new VBoxContainer[] { column2, column3 };
+            return new ItemList[] { column2, column3 };
         }
 
         protected override bool InitFile(string path)
         {
             try
             {
-                var metaData = DBRMetaParser.ParseFile(path);
-                column2.AddChild(new Label
-                {
-                    Text = metaData.FileDescription,
-                    TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis
-                });
-                column3.AddChild(new Label
-                {
-                    Text = metaData.TemplateName,
-                    TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis
-                });
+                var metaData = DBRMetaParser.ParseFile(path, this.GetConsoleLogger());
+                var desc = metaData.FileDescription;
+                var tplName = metaData.TemplateName;
+                var index2 = column2.AddItem(string.IsNullOrEmpty(desc) ? " " : desc, selectable: false);
+                var index3 = column3.AddItem(string.IsNullOrEmpty(tplName) ? " " : tplName, selectable: false);
+                if (index2 != index3)
+                    GD.PrintErr("What? Rows don't match!!");
+
+                // add to vboxcontainer
+                //column2.AddChild(new Label
+                //{
+                //    Text = metaData.FileDescription,
+                //    TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis
+                //});
+                //column3.AddChild(new Label
+                //{
+                //    Text = metaData.TemplateName,
+                //    TextOverrunBehavior = TextServer.OverrunBehavior.TrimEllipsis
+                //});
             }
-            catch (ParseException e)
+            catch (ParseException)
             {
-                this.GetConsoleLogger().LogError(e.Message);
-                column2.AddChild(new Label());
-                column3.AddChild(new Label());
+                var index2 = column2.AddItem(" ", selectable: false);
+                var index3 = column3.AddItem(" ", selectable: false);
+                if (index2 != index3)
+                    GD.PrintErr("What? Rows don't match!!");
+
+                // add to vboxcontainer
+                //column2.AddChild(new Label());
+                //column3.AddChild(new Label());
                 return false;
             }
             return true;
