@@ -26,6 +26,11 @@ config/features=PackedStringArray("4.0", "C#", "Mobile")
 run/low_processor_mode=true
 config/icon="res://icon.svg"
 
+[autoload]
+
+Logging="*res://Scripts/ConsoleLogHandler.cs"
+Config="*res://Scripts/Init/Config.cs"
+
 [dotnet]
 
 project/assembly_name="TQDB-Editor"
