@@ -6,7 +6,10 @@ using System.IO;
 using System.Text;
 using System.Transactions;
 
-public partial class DirViewSource : DirViewBase
+namespace TQDBEditor.Files
 {
-    protected override string SubPath => "source";
+    public partial class DirViewSource : DirViewBase
+    {
+        protected override string SubPath => "source";
+    }
 }

@@ -5,19 +5,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-public partial class FilesViewSource : FilesViewBase
+namespace TQDBEditor.Files
 {
-    protected override Func<string, bool> IsSupportedFileExtension => x => true;
-
-    protected override VBoxContainer[] GetAdditionalColumns()
+    public partial class FilesViewSource : FilesViewBase
     {
-        // no additional columns
-        return System.Array.Empty<VBoxContainer>();
-    }
+        protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
-    protected override bool InitFile(string path)
-    {
-        // nothing additional to do
-        return true;
+        protected override VBoxContainer[] GetAdditionalColumns()
+        {
+            // no additional columns
+            return System.Array.Empty<VBoxContainer>();
+        }
+
+        protected override bool InitFile(string path)
+        {
+            // nothing additional to do
+            return true;
+        }
     }
 }

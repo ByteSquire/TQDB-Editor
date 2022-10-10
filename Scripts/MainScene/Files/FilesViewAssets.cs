@@ -4,21 +4,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-public partial class FilesViewAssets : FilesViewBase
+namespace TQDBEditor.Files
 {
-    [Export]
-    private VBoxContainer column2; // status
-
-    protected override Func<string, bool> IsSupportedFileExtension => x => true;
-
-    protected override VBoxContainer[] GetAdditionalColumns()
+    public partial class FilesViewAssets : FilesViewBase
     {
-        return new VBoxContainer[] { column2 };
-    }
+        [Export]
+        private VBoxContainer column2; // status
 
-    protected override bool InitFile(string path)
-    {
+        protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
-        return true;
+        protected override VBoxContainer[] GetAdditionalColumns()
+        {
+            return new VBoxContainer[] { column2 };
+        }
+
+        protected override bool InitFile(string path)
+        {
+
+            return true;
+        }
     }
 }
