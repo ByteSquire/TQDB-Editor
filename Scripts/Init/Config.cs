@@ -17,16 +17,59 @@ namespace TQDBEditor
         private ILogger logger;
         const string configPath = "user://config.cfg";
 
-        public string WorkingDir { get; set; }
+        [Signal]
+        public delegate void WorkingDirChangedEventHandler();
+        [Signal]
+        public delegate void ModNameChangedEventHandler();
+        [Signal]
+        public delegate void ShowDescriptionToggledEventHandler();
+
+        private string _workingDir;
+        public string WorkingDir
+        {
+            get => _workingDir;
+            set
+            {
+                if (_workingDir.Equals(value))
+                    return;
+
+                _workingDir = value;
+                EmitSignal(nameof(WorkingDirChanged));
+            }
+        }
         public string BuildDir { get; set; }
         public string ToolsDir { get; set; }
         public Array<string> AdditionalDirs { get; set; }
-        public string ModDir => Path.Combine(WorkingDir, "CustomMaps", modSubDir);
-        public string ModName => modSubDir;
+        public string ModDir => Path.Combine(ModsDir, modSubDir);
+        public string ModsDir => Path.Combine(WorkingDir, "CustomMaps");
+        public string ModName
+        {
+            get => modSubDir;
+            set
+            {
+                if (modSubDir.Equals(value))
+                    return;
+
+                modSubDir = value;
+                EmitSignal(nameof(ModNameChanged));
+            }
+        }
         private string modSubDir;
 
 
-        public bool ViewDescriptions { get; set; }
+        private bool viewDescriptions;
+        public bool ViewDescriptions
+        {
+            get => viewDescriptions;
+            set
+            {
+                if (viewDescriptions.Equals(value))
+                    return;
+
+                viewDescriptions = value;
+                EmitSignal(nameof(ShowDescriptionToggled));
+            }
+        }
         public int NameColumnWidth { get; set; }
         public int ClassColumnWidth { get; set; }
         public int TypeColumnWidth { get; set; }
@@ -105,7 +148,7 @@ namespace TQDBEditor
             }
 
             // Load directory values
-            WorkingDir = (string)config.GetValue(dirSection, "workingDir", WorkingDir);
+            _workingDir = (string)config.GetValue(dirSection, "workingDir", WorkingDir);
             BuildDir = (string)config.GetValue(dirSection, "buildDir", BuildDir);
             ToolsDir = (string)config.GetValue(dirSection, "toolsDir", ToolsDir);
             AdditionalDirs = new Array<string>(config.GetValue(dirSection, "additionalbuildDirs", AdditionalDirs).AsStringArray());
@@ -154,7 +197,7 @@ namespace TQDBEditor
                     switch (key)
                     {
                         case "localdir":
-                            WorkingDir = value;
+                            _workingDir = value;
                             break;
                         case "builddir":
                             BuildDir = value;
