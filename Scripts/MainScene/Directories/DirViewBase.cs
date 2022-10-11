@@ -38,7 +38,7 @@ namespace TQDBEditor.Files
 
             if (!Directory.Exists(dirPath))
             {
-                GD.PrintErr($"The source directory {dirPath} could not be found, creating...");
+                GD.PrintErr($"The {SubPath} directory {dirPath} could not be found, creating...");
                 Directory.CreateDirectory(dirPath);
             }
 
