@@ -6,8 +6,3 @@ func _ready():
 	var submenus = get_children().filter(func(x): return x is PopupMenu)
 	for submenu in submenus:
 		add_submenu_item(submenu.name, submenu.name)
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
