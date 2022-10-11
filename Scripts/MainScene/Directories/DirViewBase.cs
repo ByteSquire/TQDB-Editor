@@ -1,4 +1,5 @@
 using Godot;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace TQDBEditor.Files
 
         private TreeItem root;
 
+        protected ILogger logger;
         protected abstract string SubPath { get; }
 
         [Signal]
@@ -27,18 +29,34 @@ namespace TQDBEditor.Files
         public override void _Ready()
         {
             configNode = this.GetEditorConfig();
+            logger = this.GetConsoleLogger();
             if (configNode is null)
                 return;
+            if (logger is null)
+                return;
+
+            ItemSelected += OnDirSelected;
+            configNode.ModNameChanged += OnModChanged;
+            Init();
+        }
+
+        private void OnModChanged()
+        {
+            Clear();
+            sourceWatcher.Dispose();
+            Init();
+        }
+
+        private void Init()
+        {
             dirPath = Path.Combine(configNode.ModDir, SubPath);
 
             root = CreateItem();
             root.SetText(0, Path.Combine(configNode.ModName, SubPath));
 
-            ItemSelected += OnDirSelected;
-
             if (!Directory.Exists(dirPath))
             {
-                GD.PrintErr($"The {SubPath} directory {dirPath} could not be found, creating...");
+                logger.LogWarning("The {SubPath} directory {dirPath} could not be found, creating...", SubPath, dirPath);
                 Directory.CreateDirectory(dirPath);
             }
 
@@ -139,7 +157,7 @@ namespace TQDBEditor.Files
             //GD.Print("");
             if (remaining.Length > 1)
             {
-                GD.PrintErr("Whoops, trying to delete a directory inside a subdirectory that wasn't picked up yet");
+                logger.LogError("Whoops, trying to delete a directory inside a subdirectory that wasn't picked up yet");
                 return;
             }
             var currDir = closest.GetChild(0);
@@ -149,7 +167,7 @@ namespace TQDBEditor.Files
             }
             if (currDir is null)
             {
-                GD.PrintErr("Whoops, trying to delete a directory that wasn't picked up yet");
+                logger.LogError("Whoops, trying to delete a directory that wasn't picked up yet");
                 return;
             }
             if (currDir.GetText(0) == remaining[0])
