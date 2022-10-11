@@ -13,10 +13,11 @@ namespace TQDBEditor
         {
             var console = GetNode<RichTextLabel>("/root/MainWindow/MainView/FilesConsole/ConsoleContainer/Console");
 
+            var config = this.GetEditorConfig();
             if (!OS.HasFeature("editor"))
-                logger = new ConsoleLogger(LogLevel.Trace, console);
+                logger = new ConsoleLogger(LogLevel.Trace, console, config);
             else
-                logger = new ConsoleLogger(LogLevel.Information, console);
+                logger = new ConsoleLogger(LogLevel.Information, console, config);
         }
 
         public ILogger Logger => logger;
@@ -28,7 +29,10 @@ namespace TQDBEditor
 
             private readonly RichTextLabel _console;
 
-            public ConsoleLogger(LogLevel level, RichTextLabel console) => (_level, _console) = (level, console);
+            private readonly Config _config;
+
+            public ConsoleLogger(LogLevel level, RichTextLabel console, Config config) =>
+                (_level, _console, _config) = (level, console, config);
 
             public IDisposable BeginScope<TState>(TState state) => default!;
 
@@ -75,14 +79,21 @@ namespace TQDBEditor
                 _console.AddText($"[{logLevel}]: ");
                 if (state.ToString() != "[null]")
                 {
-                    _console.AddText(formatter(state, exception));
+                    _console.AppendText(ReplaceKnownPaths(formatter(state, exception)));
                     if (exception is not null)
                         _console.AddText("\n");
                 }
                 if (exception is not null)
-                    _console.AddText(exception.ToString());
+                    _console.AppendText(ReplaceKnownPaths(exception.ToString()));
                 _console.Pop();
                 _console.AddText("\n");
+            }
+
+            private string ReplaceKnownPaths(string text)
+            {
+                var ret = text.Replace(_config.ModDir, $"[i]{_config.ModName}[/i]");
+                ret = ret.Replace(_config.WorkingDir, "[i]WorkingDir[/i]");
+                return ret;
             }
         }
     }
