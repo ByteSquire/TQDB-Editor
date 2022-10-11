@@ -15,48 +15,46 @@ column3 = NodePath("Columns/Columns23/Column3")
 offset_right = 100.0
 
 [node name="Header2" type="HSplitContainer" parent="Header" index="1" node_paths=PackedStringArray("other")]
-layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 31.0
 script = ExtResource("3_13c8a")
-other = NodePath("../../HSplitContainer/HSplitContainer")
+other = NodePath("../../Columns/Columns23")
 
 [node name="FileDescription" parent="Header/Header2" index="0" instance=ExtResource("4_0d73h")]
-layout_mode = 2
 offset_right = 100.0
+disabled = true
 text = "Description"
 
 [node name="FileTemplate" parent="Header/Header2" index="1" instance=ExtResource("4_0d73h")]
-layout_mode = 2
 offset_left = 112.0
 offset_right = 1040.0
+disabled = true
 text = "Template"
 
 [node name="Column1" parent="Columns" index="0"]
 offset_right = 100.0
 
 [node name="Columns23" type="HSplitContainer" parent="Columns" index="1" node_paths=PackedStringArray("other")]
-layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0
 script = ExtResource("3_13c8a")
-other = NodePath("../../HSplitContainer2/HSplitContainer")
+other = NodePath("../../Header/Header2")
 
 [node name="Column2" type="ItemList" parent="Columns/Columns23" index="0" node_paths=PackedStringArray("sort_button")]
 custom_minimum_size = Vector2i(100, 0)
-layout_mode = 2
 offset_right = 100.0
 offset_bottom = 605.0
+mouse_filter = 2
 script = ExtResource("4_xw5th")
 sort_button = NodePath("../../../Header/Header2/FileDescription")
 
 [node name="Column3" type="ItemList" parent="Columns/Columns23" index="1" node_paths=PackedStringArray("sort_button")]
 custom_minimum_size = Vector2i(100, 0)
-layout_mode = 2
 offset_left = 112.0
 offset_right = 1040.0
 offset_bottom = 605.0
+mouse_filter = 2
 script = ExtResource("4_xw5th")
 sort_button = NodePath("../../../Header/Header2/FileTemplate")

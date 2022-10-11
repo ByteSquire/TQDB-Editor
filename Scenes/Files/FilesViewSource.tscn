@@ -5,18 +5,3 @@
 
 [node name="FilesViewSource" instance=ExtResource("1_tq10n")]
 script = ExtResource("2_ndekx")
-
-[node name="Header" parent="." index="0"]
-layout_mode = 3
-
-[node name="FileName" parent="Header" index="0"]
-layout_mode = 3
-
-[node name="HSeparator" parent="." index="1"]
-layout_mode = 3
-
-[node name="Columns" parent="." index="2"]
-layout_mode = 3
-
-[node name="Column1" parent="Columns" index="0"]
-layout_mode = 3

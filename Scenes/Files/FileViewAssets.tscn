@@ -13,8 +13,8 @@ column2 = NodePath("Columns/Column2")
 offset_right = 100.0
 
 [node name="FileStatus" parent="Header" index="1" instance=ExtResource("3_2qfng")]
-layout_mode = 2
 offset_left = 112.0
+disabled = true
 text = "Status"
 
 [node name="Column1" parent="Columns" index="0"]
@@ -22,9 +22,9 @@ offset_right = 100.0
 
 [node name="Column2" type="ItemList" parent="Columns" index="1" node_paths=PackedStringArray("sort_button")]
 custom_minimum_size = Vector2i(100, 0)
-layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0
+mouse_filter = 2
 script = ExtResource("3_b8k0l")
 sort_button = NodePath("../../Header/FileStatus")
