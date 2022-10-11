@@ -1,6 +1,6 @@
 extends PopupMenu
 
-signal import_record(path)
+signal import_record
 
 signal check_records
 signal move_records
@@ -12,9 +12,7 @@ signal stop
 func _on_id_pressed(id):
 	match(id):
 		0:
-			# open file dialog to choose record
-			# or use archivetool?
-			import_record.emit("test")
+			import_record.emit()
 		2:
 			check_records.emit()
 		3:

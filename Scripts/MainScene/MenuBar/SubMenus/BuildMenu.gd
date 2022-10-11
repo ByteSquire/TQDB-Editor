@@ -2,6 +2,7 @@ extends AutoPopupMenu
 
 signal build
 signal stop
+
 signal verify_build
 
 

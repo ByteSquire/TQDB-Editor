@@ -1,21 +1,28 @@
-[gd_scene load_steps=18 format=3 uid="uid://c253ukvs82240"]
+[gd_scene load_steps=25 format=3 uid="uid://dkqhwccbn7p1v"]
 
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/ModMenu.gd" id="1_35yvy"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/FileMenu.gd" id="1_x47lb"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/EditMenu.gd" id="2_bnssu"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/BuildMenu.gd" id="2_bwdgy"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModMenu.gd" id="1_35yvy"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarMananger.cs" id="1_hfkuf"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/FileMenu.gd" id="1_x47lb"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/EditMenu.gd" id="2_bnssu"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/BuildMenu.gd" id="2_bwdgy"]
 [ext_resource type="PackedScene" uid="uid://c0hiaxfoksa5j" path="res://Scenes/Popups/SelectWorkingFolder.tscn" id="2_ecwdp"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/ModSelectMenu.gd" id="4_c7fqa"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModSelectMenu.cs" id="5_mfoi0"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewSource.cs" id="5_x5gho"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewAssets.cs" id="6_4mdme"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/BuildVerifyOptionsMenu.gd" id="6_fceit"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/BuildVerifyOptionsMenu.gd" id="6_fceit"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileViewSwitcher.gd" id="6_fcgqe"]
 [ext_resource type="PackedScene" uid="uid://5vfh6iyyt47w" path="res://Scenes/Files/FilesViewSource.tscn" id="6_y1vhp"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewDatabase.cs" id="7_8khkc"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="7_k8qir"]
 [ext_resource type="PackedScene" uid="uid://csqo7qxycdea8" path="res://Scenes/Files/FileViewAssets.tscn" id="7_njte4"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/DatabaseMenu.gd" id="7_ux155"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/DatabaseMenu.gd" id="7_ux155"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ArchiveMenu.gd" id="8_bxck6"]
 [ext_resource type="PackedScene" uid="uid://uou1pmtqo7rb" path="res://Scenes/Files/FileViewDatabase.tscn" id="8_jodwh"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ToolsMenu.gd" id="9_h0s88"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ViewMenu.gd" id="10_rod4w"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/HelpMenu.gd" id="11_va2v8"]
+[ext_resource type="PackedScene" uid="uid://ca2r2ddfu6v4u" path="res://Scenes/Popups/CreateNewMod.tscn" id="22_5kqp3"]
+[ext_resource type="PackedScene" uid="uid://b8x5wcaw2o2hl" path="res://Scenes/Popups/SelectNewMod.tscn" id="23_kccxs"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -44,12 +51,16 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="MenuBar" type="MenuBar" parent="MainView"]
+[node name="MenuBar" type="MenuBar" parent="MainView" node_paths=PackedStringArray("workingDirDialog", "createModDialog", "selectNewModDialog")]
 layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 31.0
+script = ExtResource("1_hfkuf")
+workingDirDialog = NodePath("../../Popups/SelectWorkingFolder")
+createModDialog = NodePath("../../Popups/CreateNewMod")
+selectNewModDialog = NodePath("../../Popups/SelectNewMod")
 
-[node name="File" type="PopupMenu" parent="MainView/MenuBar" node_paths=PackedStringArray("file_dialog")]
+[node name="File" type="PopupMenu" parent="MainView/MenuBar"]
 size = Vector2i(188, 100)
 item_count = 4
 item_0/text = "Set Working Folder..."
@@ -63,8 +74,6 @@ item_2/separator = true
 item_3/text = "Exit"
 item_3/id = 3
 script = ExtResource("1_x47lb")
-files_node = NodePath("../../FilesConsole/DirectoriesFiles/Files")
-file_dialog = NodePath("../../../Popups/SelectWorkingFolder")
 
 [node name="Edit" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 6
@@ -73,6 +82,7 @@ item_0/id = 0
 item_0/disabled = true
 item_1/text = "Select All"
 item_1/id = 1
+item_1/disabled = true
 item_2/text = ""
 item_2/id = 2
 item_2/separator = true
@@ -84,6 +94,7 @@ item_4/id = 4
 item_4/disabled = true
 item_5/text = "Delete"
 item_5/id = 5
+item_5/disabled = true
 script = ExtResource("2_bnssu")
 
 [node name="Mod" type="PopupMenu" parent="MainView/MenuBar"]
@@ -98,11 +109,7 @@ item_2/separator = true
 script = ExtResource("1_35yvy")
 
 [node name="Select" type="PopupMenu" parent="MainView/MenuBar/Mod"]
-item_count = 1
-item_0/text = "test1"
-item_0/checkable = 1
-item_0/id = 0
-script = ExtResource("4_c7fqa")
+script = ExtResource("5_mfoi0")
 
 [node name="Build" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 4
@@ -165,6 +172,7 @@ item_2/id = 2
 item_2/separator = true
 item_3/text = "Statistics..."
 item_3/id = 3
+script = ExtResource("8_bxck6")
 
 [node name="Tools" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 3
@@ -175,6 +183,7 @@ item_1/id = 1
 item_1/separator = true
 item_2/text = "Options..."
 item_2/id = 2
+script = ExtResource("9_h0s88")
 
 [node name="View" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 2
@@ -184,6 +193,7 @@ item_0/checked = true
 item_0/id = 0
 item_1/text = "Refresh"
 item_1/id = 1
+script = ExtResource("10_rod4w")
 
 [node name="Help" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 5
@@ -198,6 +208,7 @@ item_3/text = "Install Templates..."
 item_3/id = 3
 item_4/text = "Install Tutorials..."
 item_4/id = 4
+script = ExtResource("11_va2v8")
 
 [node name="FilesConsole" type="VSplitContainer" parent="MainView"]
 layout_mode = 2
@@ -347,6 +358,7 @@ script = ExtResource("7_k8qir")
 configNode = NodePath("")
 
 [node name="Popups" type="Control" parent="."]
+layout_mode = 1
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -354,11 +366,52 @@ offset_bottom = 40.0
 [node name="SelectWorkingFolder" parent="Popups" instance=ExtResource("2_ecwdp")]
 ok_button_text = "Select Current Folder"
 
+[node name="CreateNewMod" parent="Popups" instance=ExtResource("22_5kqp3")]
+
+[node name="SelectNewMod" parent="Popups" instance=ExtResource("23_kccxs")]
+visible = false
+
+[connection signal="exit" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_exit"]
 [connection signal="id_pressed" from="MainView/MenuBar/File" to="MainView/MenuBar/File" method="_on_id_pressed"]
+[connection signal="rename" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_rename"]
+[connection signal="set_working_folder" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_set_working_folder"]
+[connection signal="copy" from="MainView/MenuBar/Edit" to="MainView/MenuBar" method="_on_edit_copy"]
+[connection signal="delete" from="MainView/MenuBar/Edit" to="MainView/MenuBar" method="_on_edit_delete"]
 [connection signal="id_pressed" from="MainView/MenuBar/Edit" to="MainView/MenuBar/Edit" method="_on_id_pressed"]
+[connection signal="paste" from="MainView/MenuBar/Edit" to="MainView/MenuBar" method="_on_edit_paste"]
+[connection signal="select_all" from="MainView/MenuBar/Edit" to="MainView/MenuBar" method="_on_edit_select_all"]
+[connection signal="undo" from="MainView/MenuBar/Edit" to="MainView/MenuBar" method="_on_edit_undo"]
+[connection signal="delete" from="MainView/MenuBar/Mod" to="MainView/MenuBar" method="_on_mod_delete"]
 [connection signal="id_pressed" from="MainView/MenuBar/Mod" to="MainView/MenuBar/Mod" method="_on_id_pressed"]
+[connection signal="new" from="MainView/MenuBar/Mod" to="MainView/MenuBar" method="_on_mod_new"]
+[connection signal="about_to_popup" from="MainView/MenuBar/Mod/Select" to="MainView/MenuBar/Mod/Select" method="_on_about_to_popup"]
 [connection signal="index_pressed" from="MainView/MenuBar/Mod/Select" to="MainView/MenuBar/Mod/Select" method="_on_select_index_pressed"]
+[connection signal="select" from="MainView/MenuBar/Mod/Select" to="MainView/MenuBar" method="_on_mod_select"]
+[connection signal="build" from="MainView/MenuBar/Build" to="MainView/MenuBar" method="_on_build_build"]
 [connection signal="id_pressed" from="MainView/MenuBar/Build" to="MainView/MenuBar/Build" method="_on_id_pressed"]
+[connection signal="stop" from="MainView/MenuBar/Build" to="MainView/MenuBar" method="_on_build_stop"]
+[connection signal="verify_build" from="MainView/MenuBar/Build" to="MainView/MenuBar" method="_on_build_verify_build"]
 [connection signal="index_pressed" from="MainView/MenuBar/Build/Verify Options" to="MainView/MenuBar/Build/Verify Options" method="_on_verify_options_index_pressed"]
+[connection signal="set_verify_option" from="MainView/MenuBar/Build/Verify Options" to="MainView/MenuBar" method="_on_build_set_verify_option"]
+[connection signal="check_records" from="MainView/MenuBar/Database" to="MainView/MenuBar" method="_on_database_check_records"]
 [connection signal="id_pressed" from="MainView/MenuBar/Database" to="MainView/MenuBar/Database" method="_on_id_pressed"]
+[connection signal="import_record" from="MainView/MenuBar/Database" to="MainView/MenuBar" method="_on_database_import_record"]
+[connection signal="move_records" from="MainView/MenuBar/Database" to="MainView/MenuBar" method="_on_database_move_records"]
+[connection signal="show_archive_stats" from="MainView/MenuBar/Database" to="MainView/MenuBar" method="_on_database_show_archive_stats"]
+[connection signal="stop" from="MainView/MenuBar/Database" to="MainView/MenuBar" method="_on_database_stop"]
+[connection signal="build" from="MainView/MenuBar/Archive" to="MainView/MenuBar" method="_on_archive_build"]
+[connection signal="compact" from="MainView/MenuBar/Archive" to="MainView/MenuBar" method="_on_archive_compact"]
+[connection signal="id_pressed" from="MainView/MenuBar/Archive" to="MainView/MenuBar/Archive" method="_on_id_pressed"]
+[connection signal="show_archive_stats" from="MainView/MenuBar/Archive" to="MainView/MenuBar" method="_on_archive_show_archive_stats"]
+[connection signal="extract_game_files" from="MainView/MenuBar/Tools" to="MainView/MenuBar" method="_on_tools_extract_game_files"]
+[connection signal="id_pressed" from="MainView/MenuBar/Tools" to="MainView/MenuBar/Tools" method="_on_id_pressed"]
+[connection signal="options" from="MainView/MenuBar/Tools" to="MainView/MenuBar" method="_on_tools_options"]
+[connection signal="id_pressed" from="MainView/MenuBar/View" to="MainView/MenuBar/View" method="_on_id_pressed"]
+[connection signal="refresh" from="MainView/MenuBar/View" to="MainView/MenuBar" method="_on_view_refresh"]
+[connection signal="toggle_status_bar" from="MainView/MenuBar/View" to="MainView/MenuBar" method="_on_view_toggle_status_bar"]
+[connection signal="about" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_about"]
+[connection signal="help" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_help"]
+[connection signal="id_pressed" from="MainView/MenuBar/Help" to="MainView/MenuBar/Help" method="_on_id_pressed"]
+[connection signal="install_templates" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_templates"]
+[connection signal="install_tutorials" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_tutorials"]
 [connection signal="tab_changed" from="MainView/FilesConsole/DirectoriesFiles/Directories" to="MainView/FilesConsole/DirectoriesFiles/Files" method="_on_directories_tab_changed"]

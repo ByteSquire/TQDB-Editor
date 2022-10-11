@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://ca2r2ddfu6v4u"]
+
+[node name="CreateNewMod" type="ConfirmationDialog"]
+title = "Create new mod"
+size = Vector2i(450, 500)
+min_size = Vector2i(70, 200)
+ok_button_text = "Create"
+
+[node name="Grid" type="GridContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 442.0
+offset_bottom = 451.0
+columns = 2
+
+[node name="NewModLabel" type="Label" parent="Grid"]
+offset_top = 2.0
+offset_right = 127.0
+offset_bottom = 28.0
+text = "New mod name:"
+
+[node name="NewModText" type="LineEdit" parent="Grid"]
+offset_left = 131.0
+offset_right = 434.0
+offset_bottom = 31.0
+size_flags_horizontal = 3
+
+[node name="CurrentModsLabel" type="Label" parent="Grid"]
+offset_top = 35.0
+offset_right = 127.0
+offset_bottom = 61.0
+size_flags_vertical = 2
+text = "Current mods:"
+
+[node name="ExistingMods" type="ItemList" parent="Grid"]
+offset_left = 131.0
+offset_top = 35.0
+offset_right = 434.0
+offset_bottom = 443.0
+size_flags_vertical = 3
