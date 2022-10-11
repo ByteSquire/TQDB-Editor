@@ -100,16 +100,7 @@ namespace TQDBEditor
             var editorSection = "Editor";
             if (config.Load(configPath) != Error.Ok)
             {
-                var documentsFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-                var myGamesFolder = Path.Combine(documentsFolder, "My Games");
-                var tqToolsConfig = Path.Combine(myGamesFolder, "Titan Quest - Immortal Throne", "Tools.ini");
-                if (!File.Exists(tqToolsConfig))
-                {
-                    tqToolsConfig = Path.Combine(myGamesFolder, "Titan Quest", "Tools.ini");
-                    if (!File.Exists(tqToolsConfig))
-                        return; // maybe continue fallback chain, depending on where else the Tools.ini can be
-                }
-                LoadArtManagerOptions(tqToolsConfig);
+                LoadArtManagerOptions();
                 return;
             }
 
@@ -131,8 +122,18 @@ namespace TQDBEditor
             logger.LogInformation("Loaded editor config");
         }
 
-        private void LoadArtManagerOptions(string tqToolsConfig)
+        private void LoadArtManagerOptions()
         {
+            var documentsFolder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            var myGamesFolder = Path.Combine(documentsFolder, "My Games");
+            var tqToolsConfig = Path.Combine(myGamesFolder, "Titan Quest - Immortal Throne", "Tools.ini");
+            if (!File.Exists(tqToolsConfig))
+            {
+                tqToolsConfig = Path.Combine(myGamesFolder, "Titan Quest", "Tools.ini");
+                if (!File.Exists(tqToolsConfig))
+                    return; // maybe continue fallback chain, depending on where else the Tools.ini can be
+            }
+
             var lines = File.ReadAllLines(tqToolsConfig);
 
             var currentSection = "[None]";
@@ -206,7 +207,8 @@ namespace TQDBEditor
                     continue;
                 }
             }
-            logger.LogInformation("Loaded ArtManager options from: {ArtManager-ToolsPath}", tqToolsConfig);
+            logger.LogInformation("Loaded ArtManager options from: [i]Documents[/i]{separator}{ArtManager-ToolsPath}",
+                Path.DirectorySeparatorChar, Path.GetRelativePath(documentsFolder, tqToolsConfig));
         }
     }
 }
