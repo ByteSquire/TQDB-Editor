@@ -1,12 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://5utvbcxropvi"]
+[gd_scene load_steps=5 format=3 uid="uid://5utvbcxropvi"]
 
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/ColumnSortButton.gd" id="1_y4aad"]
+[ext_resource type="Texture2D" uid="uid://chkkn76aim27v" path="res://Icons/UpDown.svg" id="2_4u314"]
+[ext_resource type="Texture2D" uid="uid://cj6u8rffv17wn" path="res://Icons/Down.svg" id="3_u4y16"]
+[ext_resource type="Texture2D" uid="uid://dngkvs3avrc4y" path="res://Icons/Up.svg" id="4_vmjbc"]
 
 [node name="FileName" type="Button"]
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 1152.0
 offset_bottom = 31.0
 text = "Name"
+clip_text = true
 alignment = 0
 expand_icon = true
 script = ExtResource("1_y4aad")
+undefined_state = ExtResource("2_4u314")
+sorted_state = ExtResource("3_u4y16")
+reversed_state = ExtResource("4_vmjbc")
