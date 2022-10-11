@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Godot.NativeInterop;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -22,6 +23,7 @@ namespace TQDBEditor.Files
         //[Signal]
         //public delegate void DeselectLabelEventHandler(Label other);
 
+        protected ILogger logger;
         protected Config configNode;
 
         protected FileSystemWatcher fileDirWatcher;
@@ -34,13 +36,29 @@ namespace TQDBEditor.Files
         public override void _Ready()
         {
             configNode = this.GetEditorConfig();
+            logger = this.GetConsoleLogger();
             if (dirView is null)
                 return;
             if (configNode is null)
                 return;
+            if (logger is null)
+                return;
             if (column1 is null)
                 return;
 
+            configNode.ModNameChanged += OnModChanged;
+            Init();
+        }
+
+        private void OnModChanged()
+        {
+            ClearTable();
+            fileDirWatcher.Dispose();
+            Init();
+        }
+
+        private void Init()
+        {
             dirView.DirSelected += OnSourceDirSelected;
 
             fileDirWatcher = new FileSystemWatcher()
@@ -87,7 +105,7 @@ namespace TQDBEditor.Files
         {
             if (!Directory.Exists(path))
             {
-                GD.PrintErr("Path: " + path + " could not be found");
+                logger.LogError("Path: {path} could not be found", path);
                 fileDirWatcher.EnableRaisingEvents = false;
                 return;
             }
@@ -209,7 +227,6 @@ namespace TQDBEditor.Files
 
         public void OnSourceDirSelected(string path)
         {
-            GD.Print("Hello " + path);
             ClearTable();
             InitDir(path);
         }
