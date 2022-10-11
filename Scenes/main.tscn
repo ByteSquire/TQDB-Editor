@@ -1,14 +1,20 @@
-[gd_scene load_steps=12 format=3 uid="uid://020mtmp7xixd"]
+[gd_scene load_steps=18 format=3 uid="uid://c253ukvs82240"]
 
-[ext_resource type="Script" path="res://Scripts/MainScene/ModMenu.gd" id="1_35yvy"]
-[ext_resource type="Script" path="res://Scripts/MainScene/BuildMenu.gd" id="2_bwdgy"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/ModMenu.gd" id="1_35yvy"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/FileMenu.gd" id="1_x47lb"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/EditMenu.gd" id="2_bnssu"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/BuildMenu.gd" id="2_bwdgy"]
+[ext_resource type="PackedScene" uid="uid://c0hiaxfoksa5j" path="res://Scenes/Popups/SelectWorkingFolder.tscn" id="2_ecwdp"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/ModSelectMenu.gd" id="4_c7fqa"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewSource.cs" id="5_x5gho"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewAssets.cs" id="6_4mdme"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/BuildVerifyOptionsMenu.gd" id="6_fceit"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileViewSwitcher.gd" id="6_fcgqe"]
 [ext_resource type="PackedScene" uid="uid://5vfh6iyyt47w" path="res://Scenes/Files/FilesViewSource.tscn" id="6_y1vhp"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewDatabase.cs" id="7_8khkc"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="7_k8qir"]
 [ext_resource type="PackedScene" uid="uid://csqo7qxycdea8" path="res://Scenes/Files/FileViewAssets.tscn" id="7_njte4"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/DatabaseMenu.gd" id="7_ux155"]
 [ext_resource type="PackedScene" uid="uid://uou1pmtqo7rb" path="res://Scenes/Files/FileViewDatabase.tscn" id="8_jodwh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
@@ -43,22 +49,28 @@ layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 31.0
 
-[node name="File" type="PopupMenu" parent="MainView/MenuBar"]
+[node name="File" type="PopupMenu" parent="MainView/MenuBar" node_paths=PackedStringArray("file_dialog")]
+size = Vector2i(188, 100)
 item_count = 4
 item_0/text = "Set Working Folder..."
 item_0/id = 0
 item_1/text = "Rename"
 item_1/id = 1
+item_1/disabled = true
 item_2/text = ""
 item_2/id = 2
 item_2/separator = true
 item_3/text = "Exit"
 item_3/id = 3
+script = ExtResource("1_x47lb")
+files_node = NodePath("../../FilesConsole/DirectoriesFiles/Files")
+file_dialog = NodePath("../../../Popups/SelectWorkingFolder")
 
 [node name="Edit" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 6
 item_0/text = "Undo"
 item_0/id = 0
+item_0/disabled = true
 item_1/text = "Select All"
 item_1/id = 1
 item_2/text = ""
@@ -66,10 +78,13 @@ item_2/id = 2
 item_2/separator = true
 item_3/text = "Copy"
 item_3/id = 3
+item_3/disabled = true
 item_4/text = "Paste"
 item_4/id = 4
+item_4/disabled = true
 item_5/text = "Delete"
 item_5/id = 5
+script = ExtResource("2_bnssu")
 
 [node name="Mod" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 3
@@ -85,7 +100,9 @@ script = ExtResource("1_35yvy")
 [node name="Select" type="PopupMenu" parent="MainView/MenuBar/Mod"]
 item_count = 1
 item_0/text = "test1"
+item_0/checkable = 1
 item_0/id = 0
+script = ExtResource("4_c7fqa")
 
 [node name="Build" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 4
@@ -93,6 +110,7 @@ item_0/text = "Build"
 item_0/id = 0
 item_1/text = "Stop"
 item_1/id = 1
+item_1/disabled = true
 item_2/text = ""
 item_2/id = 2
 item_2/separator = true
@@ -112,6 +130,7 @@ item_1/id = 1
 item_2/text = "Excessive"
 item_2/checkable = 2
 item_2/id = 2
+script = ExtResource("6_fceit")
 
 [node name="Database" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 7
@@ -124,6 +143,7 @@ item_2/text = "Check Records"
 item_2/id = 2
 item_3/text = "Move Records"
 item_3/id = 3
+item_3/disabled = true
 item_4/text = "Db Archive Stats"
 item_4/id = 4
 item_5/text = ""
@@ -131,6 +151,8 @@ item_5/id = 5
 item_5/separator = true
 item_6/text = "Stop"
 item_6/id = 6
+item_6/disabled = true
+script = ExtResource("7_ux155")
 
 [node name="Archive" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 4
@@ -324,4 +346,19 @@ text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handl
 script = ExtResource("7_k8qir")
 configNode = NodePath("")
 
+[node name="Popups" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SelectWorkingFolder" parent="Popups" instance=ExtResource("2_ecwdp")]
+ok_button_text = "Select Current Folder"
+
+[connection signal="id_pressed" from="MainView/MenuBar/File" to="MainView/MenuBar/File" method="_on_id_pressed"]
+[connection signal="id_pressed" from="MainView/MenuBar/Edit" to="MainView/MenuBar/Edit" method="_on_id_pressed"]
+[connection signal="id_pressed" from="MainView/MenuBar/Mod" to="MainView/MenuBar/Mod" method="_on_id_pressed"]
+[connection signal="index_pressed" from="MainView/MenuBar/Mod/Select" to="MainView/MenuBar/Mod/Select" method="_on_select_index_pressed"]
+[connection signal="id_pressed" from="MainView/MenuBar/Build" to="MainView/MenuBar/Build" method="_on_id_pressed"]
+[connection signal="index_pressed" from="MainView/MenuBar/Build/Verify Options" to="MainView/MenuBar/Build/Verify Options" method="_on_verify_options_index_pressed"]
+[connection signal="id_pressed" from="MainView/MenuBar/Database" to="MainView/MenuBar/Database" method="_on_id_pressed"]
 [connection signal="tab_changed" from="MainView/FilesConsole/DirectoriesFiles/Directories" to="MainView/FilesConsole/DirectoriesFiles/Files" method="_on_directories_tab_changed"]
