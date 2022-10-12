@@ -25,6 +25,9 @@ namespace TQDBEditor.Files
         [Signal]
         public delegate void DirSelectedEventHandler(string path);
 
+        private string relativePath;
+        public string SelectedDir => Path.Combine(dirPath, relativePath ?? string.Empty);
+
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
@@ -215,7 +218,7 @@ namespace TQDBEditor.Files
             }
             paths.Add(selected.GetText(0));
 
-            var relativePath = Path.Combine(paths.ToArray());
+            relativePath = Path.Combine(paths.ToArray());
             EmitSignal(nameof(DirSelected), Path.Combine(dirPath, relativePath));
         }
 
