@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dkqhwccbn7p1v"]
+[gd_scene load_steps=29 format=3 uid="uid://bjn30sqvxj4ih"]
 
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModMenu.gd" id="1_35yvy"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarMananger.cs" id="1_hfkuf"]
@@ -14,10 +14,10 @@
 [ext_resource type="PackedScene" uid="uid://5vfh6iyyt47w" path="res://Scenes/Files/FilesViewSource.tscn" id="6_y1vhp"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewDatabase.cs" id="7_8khkc"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="7_k8qir"]
-[ext_resource type="PackedScene" uid="uid://csqo7qxycdea8" path="res://Scenes/Files/FileViewAssets.tscn" id="7_njte4"]
+[ext_resource type="PackedScene" uid="uid://csqo7qxycdea8" path="res://Scenes/Files/FilesViewAssets.tscn" id="7_njte4"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/DatabaseMenu.gd" id="7_ux155"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ArchiveMenu.gd" id="8_bxck6"]
-[ext_resource type="PackedScene" uid="uid://uou1pmtqo7rb" path="res://Scenes/Files/FileViewDatabase.tscn" id="8_jodwh"]
+[ext_resource type="PackedScene" uid="uid://uou1pmtqo7rb" path="res://Scenes/Files/FilesViewDatabase.tscn" id="8_jodwh"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ToolsMenu.gd" id="9_h0s88"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ViewMenu.gd" id="10_rod4w"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/HelpMenu.gd" id="11_va2v8"]
@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://b8x5wcaw2o2hl" path="res://Scenes/Popups/SelectNewMod.tscn" id="23_kccxs"]
 [ext_resource type="PackedScene" uid="uid://cu8gtdofpky2o" path="res://Scenes/Popups/Options.tscn" id="24_dwd8p"]
 [ext_resource type="PackedScene" uid="uid://d15o4bu0bd7i1" path="res://Scenes/Popups/About.tscn" id="25_dng1u"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Util/OpenFile.cs" id="27_gqlxj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -290,7 +291,7 @@ layout_mode = 1
 dirView = NodePath("../../Directories/Assets")
 column1 = NodePath("Columns/Column1")
 
-[node name="FileViewDatabase" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("8_jodwh")]
+[node name="FilesViewDatabase" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("8_jodwh")]
 visible = false
 layout_mode = 1
 dirView = NodePath("../../Directories/Database")
@@ -381,6 +382,12 @@ visible = false
 [node name="Options" parent="Popups" instance=ExtResource("24_dwd8p")]
 
 [node name="About" parent="Popups" instance=ExtResource("25_dng1u")]
+
+[node name="Util" type="Node" parent="."]
+
+[node name="OpenFile" type="Node" parent="Util" node_paths=PackedStringArray("files")]
+script = ExtResource("27_gqlxj")
+files = NodePath("../../MainView/FilesConsole/DirectoriesFiles/Files")
 
 [connection signal="ToggleStatusBar" from="MainView/MenuBar" to="MainView/FootBar" method="_on_toggle_status_bar"]
 [connection signal="exit" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_exit"]

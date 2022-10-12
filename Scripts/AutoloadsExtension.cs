@@ -11,6 +11,11 @@ namespace TQDBEditor
             return me.GetNode<Config>("/root/Config");
         }
 
+        public static Templates GetTemplates(this Node me)
+        {
+            return me.GetNode<Templates>("/root/Templates");
+        }
+
         public static ILogger GetConsoleLogger(this Node me)
         {
             return me.GetNode<ConsoleLogHandler>("/root/Logging").Logger;
