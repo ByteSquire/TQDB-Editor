@@ -48,8 +48,8 @@ namespace TQDBEditor
 
         private void SortByMap(int[] map)
         {
-            for (var i = 0; i < map.Length; i++)
-                GD.Print(i + "->" + map[i]);
+            //for (var i = 0; i < map.Length; i++)
+            //    GD.Print(i + "->" + map[i]);
             if (map.Length != ItemCount)
             {
                 GD.PrintErr("Trying to sort lists of differing sizes!");
