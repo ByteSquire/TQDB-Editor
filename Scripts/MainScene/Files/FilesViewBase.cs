@@ -48,10 +48,18 @@ namespace TQDBEditor.Files
 
             if (column1 is FileList col1)
                 col1.otherLists = GetAdditionalColumns();
+            column1.ItemActivated += OnItemActivated;
 
             configNode.ModNameChanged += OnModChanged;
             Init();
         }
+
+        protected void OnItemActivated(long index)
+        {
+            ActivateItem(index, Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index)));
+        }
+
+        protected abstract void ActivateItem(long index, string path);
 
         private void OnModChanged()
         {
