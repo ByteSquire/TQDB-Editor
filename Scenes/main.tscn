@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dkqhwccbn7p1v"]
+[gd_scene load_steps=28 format=3 uid="uid://dkqhwccbn7p1v"]
 
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModMenu.gd" id="1_35yvy"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarMananger.cs" id="1_hfkuf"]
@@ -21,8 +21,11 @@
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ToolsMenu.gd" id="9_h0s88"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ViewMenu.gd" id="10_rod4w"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/HelpMenu.gd" id="11_va2v8"]
+[ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="20_owo0q"]
 [ext_resource type="PackedScene" uid="uid://ca2r2ddfu6v4u" path="res://Scenes/Popups/CreateNewMod.tscn" id="22_5kqp3"]
 [ext_resource type="PackedScene" uid="uid://b8x5wcaw2o2hl" path="res://Scenes/Popups/SelectNewMod.tscn" id="23_kccxs"]
+[ext_resource type="PackedScene" uid="uid://cu8gtdofpky2o" path="res://Scenes/Popups/Options.tscn" id="24_dwd8p"]
+[ext_resource type="PackedScene" uid="uid://d15o4bu0bd7i1" path="res://Scenes/Popups/About.tscn" id="25_dng1u"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -51,14 +54,16 @@ grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="MenuBar" type="MenuBar" parent="MainView" node_paths=PackedStringArray("workingDirDialog", "createModDialog", "selectNewModDialog")]
+[node name="MenuBar" type="MenuBar" parent="MainView" node_paths=PackedStringArray("workingDirDialog", "aboutPopup", "createModDialog", "selectNewModDialog", "optionsDialog")]
 layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 31.0
 script = ExtResource("1_hfkuf")
 workingDirDialog = NodePath("../../Popups/SelectWorkingFolder")
+aboutPopup = NodePath("../../Popups/About")
 createModDialog = NodePath("../../Popups/CreateNewMod")
 selectNewModDialog = NodePath("../../Popups/SelectNewMod")
+optionsDialog = NodePath("../../Popups/Options")
 
 [node name="File" type="PopupMenu" parent="MainView/MenuBar"]
 size = Vector2i(188, 100)
@@ -306,6 +311,7 @@ offset_bottom = 284.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
+scroll_following = true
 
 [node name="FootBar" type="HSplitContainer" parent="MainView"]
 layout_mode = 2
@@ -313,6 +319,7 @@ offset_top = 619.0
 offset_right = 1150.0
 offset_bottom = 646.0
 split_offset = 300
+script = ExtResource("20_owo0q")
 
 [node name="StatusLabel" type="RichTextLabel" parent="MainView/FootBar"]
 layout_mode = 2
@@ -371,6 +378,11 @@ ok_button_text = "Select Current Folder"
 [node name="SelectNewMod" parent="Popups" instance=ExtResource("23_kccxs")]
 visible = false
 
+[node name="Options" parent="Popups" instance=ExtResource("24_dwd8p")]
+
+[node name="About" parent="Popups" instance=ExtResource("25_dng1u")]
+
+[connection signal="ToggleStatusBar" from="MainView/MenuBar" to="MainView/FootBar" method="_on_toggle_status_bar"]
 [connection signal="exit" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_exit"]
 [connection signal="id_pressed" from="MainView/MenuBar/File" to="MainView/MenuBar/File" method="_on_id_pressed"]
 [connection signal="rename" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_rename"]

@@ -12,6 +12,7 @@ namespace TQDBEditor
             config = this.GetEditorConfig();
 
             InitModManagement();
+            InitFileManagement();
         }
     }
 }

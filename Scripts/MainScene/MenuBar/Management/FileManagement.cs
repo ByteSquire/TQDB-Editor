@@ -11,6 +11,11 @@ namespace TQDBEditor
         [Signal]
         public delegate void RenameFileClickedEventHandler();
 
+        private void InitFileManagement()
+        {
+            workingDirDialog.DirSelected += OnWorkingDirSelected;
+        }
+
         public void _on_file_set_working_folder()
         {
             GD.Print("File -> Set working folder");
@@ -18,9 +23,6 @@ namespace TQDBEditor
 
             if (!string.IsNullOrWhiteSpace(current))
                 workingDirDialog.CurrentPath = current;
-
-            workingDirDialog.DirSelected -= OnWorkingDirSelected;
-            workingDirDialog.DirSelected += OnWorkingDirSelected;
 
             workingDirDialog.PopupCenteredRatio(.5f);
         }
