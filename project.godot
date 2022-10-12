@@ -30,6 +30,7 @@ config/icon="res://icon.svg"
 
 Logging="*res://Scripts/ConsoleLogHandler.cs"
 Config="*res://Scripts/Init/Config.cs"
+Templates="*res://Scripts/Init/Templates.cs"
 
 [dotnet]
 
