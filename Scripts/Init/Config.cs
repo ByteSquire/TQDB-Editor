@@ -162,7 +162,7 @@ namespace TQDBEditor
             DefaultValueColumnWidth = (int)config.GetValue(editorSection, "defaultValueColumnWidth", -1);
             DescriptionColumnWidth = (int)config.GetValue(editorSection, "descriptionColumnWidth", -1);
 
-            logger.LogInformation("Loaded editor config");
+            logger?.LogInformation("Loaded editor config");
         }
 
         private void LoadArtManagerOptions()
@@ -250,7 +250,7 @@ namespace TQDBEditor
                     continue;
                 }
             }
-            logger.LogInformation("Loaded ArtManager options from: [i]Documents[/i]{separator}{ArtManager-ToolsPath}",
+            logger?.LogInformation("Loaded ArtManager options from: [i]Documents[/i]{separator}{ArtManager-ToolsPath}",
                 Path.DirectorySeparatorChar, Path.GetRelativePath(documentsFolder, tqToolsConfig));
         }
     }
