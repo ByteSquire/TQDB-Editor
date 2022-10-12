@@ -16,7 +16,7 @@ namespace TQDBEditor.Files
         [Export]
         protected DirViewBase dirView;
         [Export]
-        private ItemList column1;
+        protected ItemList column1;
         //[Export]
         //protected PackedScene fileNameLabelTemplate;
 
@@ -45,6 +45,9 @@ namespace TQDBEditor.Files
                 return;
             if (column1 is null)
                 return;
+
+            if (column1 is FileList col1)
+                col1.otherLists = GetAdditionalColumns();
 
             configNode.ModNameChanged += OnModChanged;
             Init();

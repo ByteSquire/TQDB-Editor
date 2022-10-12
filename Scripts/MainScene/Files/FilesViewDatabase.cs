@@ -20,6 +20,14 @@ namespace TQDBEditor.Files
 
         protected override ItemList[] GetAdditionalColumns()
         {
+            if (column2 is FileList col2)
+                col2.otherLists = new ItemList[] { column1, column3 };
+            column2.GetVScrollBar().Visible = false;
+
+            if (column3 is FileList col3)
+                col3.otherLists = new ItemList[] { column1, column2 };
+            column3.GetVScrollBar().Visible = false;
+
             return new ItemList[] { column2, column3 };
         }
 

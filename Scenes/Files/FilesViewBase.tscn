@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bi45sj82oqs4g"]
 
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="2_4x23f"]
-[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.gd" id="2_l67qc"]
 [ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_puc0o"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_anm70"]
 
 [node name="FilesViewBase" type="VBoxContainer"]
 custom_minimum_size = Vector2i(100, 0)
@@ -35,12 +35,12 @@ size_flags_vertical = 3
 script = ExtResource("2_puc0o")
 other = NodePath("../Header")
 
-[node name="Column1" type="ItemList" parent="Columns" node_paths=PackedStringArray("sort_button")]
+[node name="Column1" type="ItemList" parent="Columns" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 1152.0
 offset_bottom = 605.0
 select_mode = 1
 allow_reselect = true
 allow_rmb_select = true
-script = ExtResource("2_l67qc")
-sort_button = NodePath("../../Header/FileName")
+script = ExtResource("3_anm70")
+sortButton = NodePath("../../Header/FileName")

@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewAssets.cs" id="2_jwlqo"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="3_2qfng"]
-[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.gd" id="3_b8k0l"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="4_tvj55"]
 
 [node name="FilesViewAssets" node_paths=PackedStringArray("column2") instance=ExtResource("1_88eub")]
 script = ExtResource("2_jwlqo")
@@ -14,17 +14,15 @@ offset_right = 100.0
 
 [node name="FileStatus" parent="Header" index="1" instance=ExtResource("3_2qfng")]
 offset_left = 112.0
-disabled = true
 text = "Status"
 
 [node name="Column1" parent="Columns" index="0"]
 offset_right = 100.0
 
-[node name="Column2" type="ItemList" parent="Columns" index="1" node_paths=PackedStringArray("sort_button")]
+[node name="Column2" type="ItemList" parent="Columns" index="1" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0
-mouse_filter = 2
-script = ExtResource("3_b8k0l")
-sort_button = NodePath("../../Header/FileStatus")
+script = ExtResource("4_tvj55")
+sortButton = NodePath("../../Header/FileStatus")
