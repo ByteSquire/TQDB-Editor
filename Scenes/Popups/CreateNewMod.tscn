@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://ca2r2ddfu6v4u"]
+[gd_scene load_steps=2 format=3 uid="uid://ca2r2ddfu6v4u"]
+
+[ext_resource type="Script" path="res://Scripts/Popups/NewModValidity.cs" id="1_b6gkp"]
 
 [node name="CreateNewMod" type="ConfirmationDialog"]
 title = "Create new mod"
@@ -24,6 +26,7 @@ offset_left = 131.0
 offset_right = 434.0
 offset_bottom = 31.0
 size_flags_horizontal = 3
+script = ExtResource("1_b6gkp")
 
 [node name="CurrentModsLabel" type="Label" parent="Grid"]
 offset_top = 35.0
@@ -38,3 +41,6 @@ offset_top = 35.0
 offset_right = 434.0
 offset_bottom = 443.0
 size_flags_vertical = 3
+
+[connection signal="about_to_popup" from="." to="Grid/NewModText" method="_on_about_to_popup"]
+[connection signal="text_changed" from="Grid/NewModText" to="Grid/NewModText" method="_on_text_changed"]

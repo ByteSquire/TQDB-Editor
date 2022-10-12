@@ -34,7 +34,7 @@ namespace TQDBEditor
             GD.Print("Mod -> New");
 
             var existingList = createModDialog.GetNode<ItemList>("Grid/ExistingMods");
-            var existingMods = Directory.EnumerateDirectories(Path.Combine(config.WorkingDir, "CustomMaps"), "*", SearchOption.TopDirectoryOnly);
+            var existingMods = Directory.EnumerateDirectories(config.ModsDir, "*", SearchOption.TopDirectoryOnly);
             existingList.Clear();
             foreach (var mod in existingMods)
                 existingList.AddItem(Path.GetFileName(mod), selectable: false);
@@ -48,27 +48,7 @@ namespace TQDBEditor
             var modName = lineEdit.Text;
             lineEdit.Clear();
 
-            var additionalInvalidChars = new char[] { '.' };
-            var invalidChars = Path.GetInvalidFileNameChars().Concat(additionalInvalidChars);
-
-            if (modName.Any(x => invalidChars.Contains(x)))
-            {
-                this.GetConsoleLogger()
-                    .LogError("The provided directory name: {modName} for the new mod is invalid!",
-                    modName);
-                _on_mod_new();
-                return;
-            }
-            if (Directory.Exists(Path.Combine(config.WorkingDir, "CustomMaps", modName)))
-            {
-                this.GetConsoleLogger()
-                    .LogError("The provided directory name: {modName} for the new mod already exists!",
-                    modName);
-                _on_mod_new();
-                return;
-            }
-
-            Directory.CreateDirectory(Path.Combine(config.WorkingDir, "CustomMaps", modName));
+            Directory.CreateDirectory(Path.Combine(config.ModsDir, modName));
 
             selectNewModDialog.GetNode<Label>("ModScroll/ModName").Text = modName;
 
