@@ -12,6 +12,8 @@ namespace TQDBEditor
         public override void _Ready()
         {
             var console = GetNode<RichTextLabel>("/root/MainWindow/MainView/FilesConsole/ConsoleContainer/Console");
+            if (console is null)
+                return;
 
             var config = this.GetEditorConfig();
             if (!OS.HasFeature("editor"))
