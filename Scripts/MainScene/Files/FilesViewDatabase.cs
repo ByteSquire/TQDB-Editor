@@ -16,6 +16,14 @@ namespace TQDBEditor.Files
         [Export]
         private ItemList column3; // templates
 
+        [Signal]
+        public delegate void FileActivatedEventHandler(string path, string template);
+
+        protected override void ActivateItem(long index, string path)
+        {
+            EmitSignal(nameof(FileActivated), path, column3.GetItemText((int)index));
+        }
+
         protected override Func<string, bool> IsSupportedFileExtension => x => x == ".dbr";
 
         protected override ItemList[] GetAdditionalColumns()
