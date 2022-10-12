@@ -1,0 +1,139 @@
+[gd_scene load_steps=5 format=3 uid="uid://cbdtmnxvxyywf"]
+
+[ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="1_nr8cs"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="1_p0yk6"]
+[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_4e4f4"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_da7mp"]
+
+[node name="VariablesView" type="VBoxContainer" node_paths=PackedStringArray("column1", "column2", "column3", "column4", "column5")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nr8cs")
+column1 = NodePath("Columns/Column1")
+column2 = NodePath("Columns/Column23/Column2")
+column3 = NodePath("Columns/Column23/Column34/Column3")
+column4 = NodePath("Columns/Column23/Column34/Column45/Column4")
+column5 = NodePath("Columns/Column23/Column34/Column45/Column5")
+
+[node name="Header" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
+offset_right = 1152.0
+offset_bottom = 31.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../Columns")
+
+[node name="VariableName" parent="Header" instance=ExtResource("1_p0yk6")]
+offset_right = 100.0
+
+[node name="Column23" type="HSplitContainer" parent="Header" node_paths=PackedStringArray("other")]
+offset_left = 112.0
+offset_right = 1152.0
+offset_bottom = 31.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../../Columns/Column23")
+
+[node name="VariableClass" parent="Header/Column23" instance=ExtResource("1_p0yk6")]
+offset_right = 100.0
+text = "Class"
+
+[node name="Column34" type="HSplitContainer" parent="Header/Column23" node_paths=PackedStringArray("other")]
+offset_left = 112.0
+offset_right = 1040.0
+offset_bottom = 31.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../../../Columns/Column23/Column34")
+
+[node name="VariableType" parent="Header/Column23/Column34" instance=ExtResource("1_p0yk6")]
+offset_right = 100.0
+text = "Type"
+
+[node name="Column45" type="HSplitContainer" parent="Header/Column23/Column34" node_paths=PackedStringArray("other")]
+offset_left = 112.0
+offset_right = 928.0
+offset_bottom = 31.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../../../../Columns/Column23/Column34/Column45")
+
+[node name="VariableDescription" parent="Header/Column23/Column34/Column45" instance=ExtResource("1_p0yk6")]
+offset_right = 100.0
+text = "Description"
+
+[node name="VariableValue" parent="Header/Column23/Column34/Column45" instance=ExtResource("1_p0yk6")]
+offset_left = 112.0
+offset_right = 816.0
+text = "Value"
+
+[node name="HSeparator" type="HSeparator" parent="."]
+offset_top = 35.0
+offset_right = 1152.0
+offset_bottom = 39.0
+
+[node name="Columns" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
+offset_top = 43.0
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_vertical = 3
+script = ExtResource("2_4e4f4")
+other = NodePath("../Header")
+
+[node name="Column1" type="ItemList" parent="Columns" node_paths=PackedStringArray("sortButton")]
+custom_minimum_size = Vector2i(100, 0)
+offset_right = 100.0
+offset_bottom = 605.0
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
+script = ExtResource("3_da7mp")
+sortButton = NodePath("../../Header/VariableName")
+
+[node name="Column23" type="HSplitContainer" parent="Columns" node_paths=PackedStringArray("other")]
+offset_left = 112.0
+offset_right = 1152.0
+offset_bottom = 605.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../../Header/Column23")
+
+[node name="Column2" type="ItemList" parent="Columns/Column23" node_paths=PackedStringArray("sortButton")]
+custom_minimum_size = Vector2i(100, 0)
+offset_right = 100.0
+offset_bottom = 605.0
+script = ExtResource("3_da7mp")
+sortButton = NodePath("../../../Header/Column23/VariableClass")
+
+[node name="Column34" type="HSplitContainer" parent="Columns/Column23" node_paths=PackedStringArray("other")]
+offset_left = 112.0
+offset_right = 1040.0
+offset_bottom = 605.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../../../Header/Column23/Column34")
+
+[node name="Column3" type="ItemList" parent="Columns/Column23/Column34" node_paths=PackedStringArray("sortButton")]
+custom_minimum_size = Vector2i(100, 0)
+offset_right = 100.0
+offset_bottom = 605.0
+script = ExtResource("3_da7mp")
+sortButton = NodePath("../../../../Header/Column23/Column34/VariableType")
+
+[node name="Column45" type="HSplitContainer" parent="Columns/Column23/Column34" node_paths=PackedStringArray("other")]
+offset_left = 112.0
+offset_right = 928.0
+offset_bottom = 605.0
+script = ExtResource("2_4e4f4")
+other = NodePath("../../../../Header/Column23/Column34/Column45")
+
+[node name="Column4" type="ItemList" parent="Columns/Column23/Column34/Column45" node_paths=PackedStringArray("sortButton")]
+custom_minimum_size = Vector2i(100, 0)
+offset_right = 100.0
+offset_bottom = 605.0
+script = ExtResource("3_da7mp")
+sortButton = NodePath("../../../../../Header/Column23/Column34/Column45/VariableDescription")
+
+[node name="Column5" type="ItemList" parent="Columns/Column23/Column34/Column45" node_paths=PackedStringArray("sortButton")]
+custom_minimum_size = Vector2i(100, 0)
+offset_left = 112.0
+offset_right = 816.0
+offset_bottom = 605.0
+script = ExtResource("3_da7mp")
+sortButton = NodePath("../../../../../Header/Column23/Column34/Column45/VariableValue")

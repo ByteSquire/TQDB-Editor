@@ -5,6 +5,7 @@ using TQDBEditor.Files;
 using TQDB_Parser;
 using TQDB_Parser.DBR;
 using Microsoft.Extensions.Logging;
+using TQDBEditor.EditorScripts;
 
 namespace TQDBEditor
 {
@@ -25,6 +26,8 @@ namespace TQDBEditor
             if (files is null)
                 return;
 
+            GetTree().Root.GuiEmbedSubwindows = false;
+
             files.GetNode<FilesViewSource>("FilesViewSource").FileActivated += OnFileActivated;
             files.GetNode<FilesViewAssets>("FilesViewAssets").FileActivated += OnFileActivated;
             files.GetNode<FilesViewDatabase>("FilesViewDatabase").FileActivated += OnDBRActivated;
@@ -38,10 +41,21 @@ namespace TQDBEditor
 
         private void OnDBRActivated(string filePath, string template)
         {
+            templates.TemplateManager.ResolveIncludes(templates.TemplateManager.GetRoot(template));
             var dbrParser = new DBRParser(templates.TemplateManager, logger);
 
             var dbrFile = dbrParser.ParseFile(filePath);
-            GD.Print(dbrFile);
+            //GD.Print(dbrFile);
+
+            var genericEditor = ResourceLoader.Load<PackedScene>("res://Editors/Generic.tscn")
+                .Instantiate<EditorWindow>();
+
+            genericEditor.DBRFile = dbrFile;
+
+            genericEditor.Position = GetTree().Root.Position + new Vector2i(40, 40);
+
+            GetTree().Root.CallDeferred("add_child", genericEditor);
+            //genericEditor.Show();
         }
     }
 }
