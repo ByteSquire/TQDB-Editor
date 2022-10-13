@@ -16,7 +16,7 @@ column1 = NodePath("Columns/Column1")
 column2 = NodePath("Columns/Column23/Column2")
 column3 = NodePath("Columns/Column23/Column34/Column3")
 column4 = NodePath("Columns/Column23/Column34/Column45/Column4")
-column5 = NodePath("Columns/Column23/Column34/Column45/Column5")
+column5 = NodePath("Columns/Column23/Column34/Column45/MarginContainer/Column5")
 
 [node name="Header" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
 offset_right = 1152.0
@@ -130,10 +130,14 @@ offset_bottom = 605.0
 script = ExtResource("3_da7mp")
 sortButton = NodePath("../../../../../Header/Column23/Column34/Column45/VariableDescription")
 
-[node name="Column5" type="ItemList" parent="Columns/Column23/Column34/Column45" node_paths=PackedStringArray("sortButton")]
-custom_minimum_size = Vector2i(100, 0)
+[node name="MarginContainer" type="MarginContainer" parent="Columns/Column23/Column34/Column45"]
 offset_left = 112.0
 offset_right = 816.0
 offset_bottom = 605.0
-script = ExtResource("3_da7mp")
-sortButton = NodePath("../../../../../Header/Column23/Column34/Column45/VariableValue")
+theme_override_constants/margin_top = 3
+
+[node name="Column5" type="VBoxContainer" parent="Columns/Column23/Column34/Column45/MarginContainer"]
+offset_top = 3.0
+offset_right = 704.0
+offset_bottom = 605.0
+theme_override_constants/separation = 0

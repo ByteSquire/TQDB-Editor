@@ -18,9 +18,12 @@ namespace TQDBEditor.EditorScripts
 
         private TreeItem root;
 
+        private List<GroupBlock> groups;
+
         public override void _Ready()
         {
             dbrTemplate = editorWindow.DBRFile.TemplateRoot;
+            groups = new List<GroupBlock>(dbrTemplate.GetGroups(true).Count);
 
             ItemSelected += OnItemSelected;
 
@@ -32,22 +35,27 @@ namespace TQDBEditor.EditorScripts
             EmitSignal(nameof(GroupSelected));
         }
 
-        public (GroupBlock, DBRFile) GetSelectedAndFile()
+        public (IReadOnlyList<VariableBlock>, DBRFile) GetSelectedAndFile()
         {
-            return (GetSelectedGroup(), editorWindow.DBRFile);
+            return (GetSelectedGroupVariables(), editorWindow.DBRFile);
         }
 
-        private GroupBlock GetSelectedGroup()
+        private IReadOnlyList<VariableBlock> GetSelectedGroupVariables()
         {
-            return (GetSelected().GetMeta("group_block").AsGodotObject() as GroupBlockHolder).Block;
+            return groups[GetSelected().GetMeta("group_index").AsInt32()].GetVariables();
         }
 
         private void Init()
         {
+            GD.Print("Hello from before clear");
             Clear();
 
             root = CreateItem();
             root.SetText(0, "All Groups");
+            GD.Print("Hello from GroupView.Init");
+            // TODO: fix crash when the block is big
+            groups.Add(dbrTemplate);
+            root.SetMeta("group_index", Variant.CreateFrom(groups.Count - 1));
 
             foreach (var group in dbrTemplate.GetGroups())
             {
@@ -57,24 +65,20 @@ namespace TQDBEditor.EditorScripts
 
         private void AddGroup(TreeItem parentGroup, GroupBlock group)
         {
+            //GD.Print($"Adding group: {group}");
+            GD.Print("Adding group: " + group.Name + " from: " + group.FileName);
             var newGroup = CreateItem(parentGroup);
             newGroup.Collapsed = true;
             newGroup.SetText(0, group.Name);
-            newGroup.SetMeta("group_block", Variant.CreateFrom(new GroupBlockHolder(group)));
+            groups.Add(group);
+            newGroup.SetMeta("group_index", Variant.CreateFrom(groups.Count - 1));
 
-            if (group.GetGroups().Count > 0)
-                foreach (var subGroup in group.GetGroups())
-                    AddGroup(newGroup, subGroup);
-        }
-
-        private partial class GroupBlockHolder : Godot.Object
-        {
-            public GroupBlock Block { get; private set; }
-
-            public GroupBlockHolder(GroupBlock block)
+            foreach (var subGroup in group.GetGroups())
             {
-                Block = block;
+                //GD.Print("Adding subgroup: " + subGroup.Name + " from: " + subGroup.FileName);
+                AddGroup(newGroup, subGroup);
             }
+            GD.Print("Done adding group: " + group.Name + " from: " + group.FileName);
         }
     }
 }
