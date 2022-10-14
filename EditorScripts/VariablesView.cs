@@ -20,6 +20,7 @@ namespace TQDBEditor.EditorScripts
         [Export]
         private VBoxContainer column5;
 
+        private Config config;
 
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
@@ -98,6 +99,13 @@ namespace TQDBEditor.EditorScripts
                     column4Scroll
                 });
             }
+
+            config = this.GetEditorConfig();
+
+            column1.GetParent<SplitContainer>().Call("set_synced_offset", config.NameColumnWidth - 100);
+            column2.GetParent<SplitContainer>().Call("set_synced_offset", config.ClassColumnWidth - 100);
+            column3.GetParent<SplitContainer>().Call("set_synced_offset", config.TypeColumnWidth - 100);
+            column4.GetParent<SplitContainer>().Call("set_synced_offset", config.DescriptionColumnWidth - 100);
         }
 
         private void Clear()
@@ -211,6 +219,15 @@ namespace TQDBEditor.EditorScripts
 
                 column5.AddChild(valueElement);
             }
+        }
+
+        public override void _ExitTree()
+        {
+            config.NameColumnWidth = column1.GetParent<SplitContainer>().SplitOffset + 100;
+            config.ClassColumnWidth = column2.GetParent<SplitContainer>().SplitOffset + 100;
+            config.TypeColumnWidth = column3.GetParent<SplitContainer>().SplitOffset + 100;
+            config.DescriptionColumnWidth = column4.GetParent<SplitContainer>().SplitOffset + 100;
+            base._ExitTree();
         }
     }
 }
