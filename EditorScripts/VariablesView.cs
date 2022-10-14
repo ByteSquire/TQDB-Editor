@@ -151,18 +151,19 @@ namespace TQDBEditor.EditorScripts
                 switch (variable.Class)
                 {
                     case TQDB_Parser.VariableClass.variable:
-                        valueElement = new TextEdit
+                        valueElement = new LineEdit
                         {
                             Text = value,
                             PlaceholderText = variable.GetDefaultValue(),
                             CustomMinimumSize = size,
                             Size = size,
                         };
-                        (valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
-                        (valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
+                        (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
+                        //(valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
+                        //(valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
                         break;
                     case TQDB_Parser.VariableClass.@static:
-                        valueElement = new TextEdit
+                        valueElement = new LineEdit
                         {
                             Editable = false,
                             Text = value,
@@ -170,8 +171,9 @@ namespace TQDBEditor.EditorScripts
                             CustomMinimumSize = size,
                             Size = size,
                         };
-                        (valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
-                        (valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
+                        (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
+                        //(valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
+                        //(valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
                         break;
                     case TQDB_Parser.VariableClass.picklist:
                         valueElement = new OptionButton { ClipContents = true };
@@ -184,7 +186,8 @@ namespace TQDBEditor.EditorScripts
                                 valueId = i;
                         }
 
-                        (valueElement as OptionButton).GetItemIndex(valueId);
+                        (valueElement as OptionButton).Select((valueElement as OptionButton).GetItemIndex(valueId));
+                        (valueElement as OptionButton).ItemSelected += x => file.UpdateEntry(variable.Name, (valueElement as OptionButton).GetItemText((int)x));
                         break;
                     case TQDB_Parser.VariableClass.array:
                         valueElement = new HBoxContainer();
@@ -196,7 +199,7 @@ namespace TQDBEditor.EditorScripts
                             Size = size,
                         });
 
-                        var textEdit = new TextEdit
+                        var lineEdit = new LineEdit
                         {
                             Text = value,
                             SizeFlagsHorizontal = (int)SizeFlags.ExpandFill,
@@ -205,10 +208,11 @@ namespace TQDBEditor.EditorScripts
                             CustomMinimumSize = size,
                             Size = size,
                         };
-                        textEdit.GetVScrollBar().Scale = new Vector2(0, 0);
-                        textEdit.GetHScrollBar().Scale = new Vector2(0, 0);
+                        lineEdit.TextSubmitted += x => file.UpdateEntry(variable.Name, x);
+                        //textEdit.GetVScrollBar().Scale = new Vector2(0, 0);
+                        //textEdit.GetHScrollBar().Scale = new Vector2(0, 0);
 
-                        valueElement.AddChild(textEdit);
+                        valueElement.AddChild(lineEdit);
                         break;
                     default:
                         continue;
