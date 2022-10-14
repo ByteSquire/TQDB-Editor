@@ -47,13 +47,10 @@ namespace TQDBEditor.EditorScripts
 
         private void Init()
         {
-            GD.Print("Hello from before clear");
             Clear();
 
             root = CreateItem();
             root.SetText(0, "All Groups");
-            GD.Print("Hello from GroupView.Init");
-            // TODO: fix crash when the block is big
             groups.Add(dbrTemplate);
             root.SetMeta("group_index", Variant.CreateFrom(groups.Count - 1));
 
@@ -65,8 +62,7 @@ namespace TQDBEditor.EditorScripts
 
         private void AddGroup(TreeItem parentGroup, GroupBlock group)
         {
-            //GD.Print($"Adding group: {group}");
-            GD.Print("Adding group: " + group.Name + " from: " + group.FileName);
+            //GD.Print("Adding group: " + group.Name + " from: " + group.FileName);
             var newGroup = CreateItem(parentGroup);
             newGroup.Collapsed = true;
             newGroup.SetText(0, group.Name);
@@ -75,10 +71,8 @@ namespace TQDBEditor.EditorScripts
 
             foreach (var subGroup in group.GetGroups())
             {
-                //GD.Print("Adding subgroup: " + subGroup.Name + " from: " + subGroup.FileName);
                 AddGroup(newGroup, subGroup);
             }
-            GD.Print("Done adding group: " + group.Name + " from: " + group.FileName);
         }
     }
 }

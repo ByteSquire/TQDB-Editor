@@ -26,17 +26,78 @@ namespace TQDBEditor.EditorScripts
         {
             groupsView.GroupSelected += OnGroupSelected;
 
+            var column1Scroll = column1.GetVScrollBar();
+            column1Scroll.Scale = new Vector2(0, 0);
+
+            var column2Scroll = column2.GetVScrollBar();
+            column2Scroll.Scale = new Vector2(0, 0);
+
+            var column3Scroll = column3.GetVScrollBar();
+            column3Scroll.Scale = new Vector2(0, 0);
+
+            var column4Scroll = column4.GetVScrollBar();
+            column4Scroll.Scale = new Vector2(0, 0);
+
+            var column5Scroll = column5.GetParent<ScrollContainer>().GetVScrollBar();
+
             if (column1 is FileList col1)
+            {
                 col1.otherLists = new ItemList[] { column2, column3, column4 };
+                col1.syncedScrollBars = new VScrollBar[]
+                {
+                    column2Scroll,
+                    column3Scroll,
+                    column4Scroll,
+                    column5Scroll
+                };
+            }
 
             if (column2 is FileList col2)
+            {
                 col2.otherLists = new ItemList[] { column1, column3, column4 };
+                col2.syncedScrollBars = new VScrollBar[]
+                {
+                    column1Scroll,
+                    column3Scroll,
+                    column4Scroll,
+                    column5Scroll
+                };
+            }
 
             if (column3 is FileList col3)
+            {
                 col3.otherLists = new ItemList[] { column2, column1, column4 };
+                col3.syncedScrollBars = new VScrollBar[]
+                {
+                    column2Scroll,
+                    column1Scroll,
+                    column4Scroll,
+                    column5Scroll
+                };
+            }
 
             if (column4 is FileList col4)
+            {
                 col4.otherLists = new ItemList[] { column2, column3, column1 };
+                col4.syncedScrollBars = new VScrollBar[]
+                {
+                    column2Scroll,
+                    column3Scroll,
+                    column1Scroll,
+                    column5Scroll
+                };
+            }
+
+            if (column5.GetParent() is ScrollContainer column5Parent)
+            {
+                column5Parent.Set("other_scrolls", new VScrollBar[]
+                {
+                    column2Scroll,
+                    column3Scroll,
+                    column1Scroll,
+                    column4Scroll
+                });
+            }
         }
 
         private void Clear()
@@ -78,6 +139,7 @@ namespace TQDBEditor.EditorScripts
                 if (string.IsNullOrEmpty(value))
                     value = " ";
                 Control valueElement;
+                var size = new Vector2i(10, 28);
                 switch (variable.Class)
                 {
                     case TQDB_Parser.VariableClass.variable:
@@ -85,11 +147,11 @@ namespace TQDBEditor.EditorScripts
                         {
                             Text = value,
                             PlaceholderText = variable.GetDefaultValue(),
-                            CustomMinimumSize = new Vector2i(10, 27),
-                            Size = new Vector2i(10, 27),
+                            CustomMinimumSize = size,
+                            Size = size,
                         };
-                        (valueElement.GetChild(0, true) as ScrollBar).Scale = new Vector2(0, 0);
-                        (valueElement.GetChild(1, true) as ScrollBar).Scale = new Vector2(0, 0);
+                        (valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
+                        (valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
                         break;
                     case TQDB_Parser.VariableClass.@static:
                         valueElement = new TextEdit
@@ -97,11 +159,11 @@ namespace TQDBEditor.EditorScripts
                             Editable = false,
                             Text = value,
                             PlaceholderText = variable.GetDefaultValue(),
-                            CustomMinimumSize = new Vector2i(10, 27),
-                            Size = new Vector2i(10, 27),
+                            CustomMinimumSize = size,
+                            Size = size,
                         };
-                        (valueElement.GetChild(0, true) as ScrollBar).Scale = new Vector2(0, 0);
-                        (valueElement.GetChild(1, true) as ScrollBar).Scale = new Vector2(0, 0);
+                        (valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
+                        (valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
                         break;
                     case TQDB_Parser.VariableClass.picklist:
                         valueElement = new OptionButton { ClipContents = true };
@@ -122,8 +184,8 @@ namespace TQDBEditor.EditorScripts
                         {
                             Text = "...",
                             SizeFlagsVertical = (int)SizeFlags.Fill,
-                            CustomMinimumSize = new Vector2i(10, 27),
-                            Size = new Vector2i(10, 27),
+                            CustomMinimumSize = size,
+                            Size = size,
                         });
 
                         var textEdit = new TextEdit
@@ -132,11 +194,11 @@ namespace TQDBEditor.EditorScripts
                             SizeFlagsHorizontal = (int)SizeFlags.ExpandFill,
                             SizeFlagsVertical = (int)SizeFlags.ExpandFill,
                             PlaceholderText = variable.GetDefaultValue(),
-                            CustomMinimumSize = new Vector2i(10, 27),
-                            Size = new Vector2i(10, 27),
+                            CustomMinimumSize = size,
+                            Size = size,
                         };
-                        (textEdit.GetChild(0, true) as ScrollBar).Scale = new Vector2(0, 0);
-                        (textEdit.GetChild(1, true) as ScrollBar).Scale = new Vector2(0, 0);
+                        textEdit.GetVScrollBar().Scale = new Vector2(0, 0);
+                        textEdit.GetHScrollBar().Scale = new Vector2(0, 0);
 
                         valueElement.AddChild(textEdit);
                         break;
@@ -145,7 +207,7 @@ namespace TQDBEditor.EditorScripts
                 }
                 valueElement.TooltipText = variable.DefaultValue;
                 valueElement.SizeFlagsHorizontal = (int)SizeFlags.Fill;
-                valueElement.Size = valueElement.CustomMinimumSize = new Vector2i(100, 27);
+                valueElement.Size = valueElement.CustomMinimumSize = new Vector2i(100, size.y);
 
                 column5.AddChild(valueElement);
             }

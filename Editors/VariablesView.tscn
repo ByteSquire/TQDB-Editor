@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cbdtmnxvxyywf"]
+[gd_scene load_steps=6 format=3 uid="uid://cbdtmnxvxyywf"]
 
 [ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="1_nr8cs"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="1_p0yk6"]
 [ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_4e4f4"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_da7mp"]
+[ext_resource type="Script" path="res://Scripts/ScrollSync.gd" id="5_t5jr0"]
 
 [node name="VariablesView" type="VBoxContainer" node_paths=PackedStringArray("column1", "column2", "column3", "column4", "column5")]
 anchors_preset = 15
@@ -16,7 +17,7 @@ column1 = NodePath("Columns/Column1")
 column2 = NodePath("Columns/Column23/Column2")
 column3 = NodePath("Columns/Column23/Column34/Column3")
 column4 = NodePath("Columns/Column23/Column34/Column45/Column4")
-column5 = NodePath("Columns/Column23/Column34/Column45/MarginContainer/Column5")
+column5 = NodePath("Columns/Column23/Column34/Column45/MarginContainer/ScrollContainer/Column5")
 
 [node name="Header" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
 offset_right = 1152.0
@@ -82,6 +83,7 @@ other = NodePath("../Header")
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 100.0
 offset_bottom = 605.0
+theme_type_variation = &"VariableItemList"
 select_mode = 1
 allow_reselect = true
 allow_rmb_select = true
@@ -99,6 +101,10 @@ other = NodePath("../../Header/Column23")
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 100.0
 offset_bottom = 605.0
+theme_type_variation = &"VariableItemList"
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
 script = ExtResource("3_da7mp")
 sortButton = NodePath("../../../Header/Column23/VariableClass")
 
@@ -113,6 +119,10 @@ other = NodePath("../../../Header/Column23/Column34")
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 100.0
 offset_bottom = 605.0
+theme_type_variation = &"VariableItemList"
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
 script = ExtResource("3_da7mp")
 sortButton = NodePath("../../../../Header/Column23/Column34/VariableType")
 
@@ -127,17 +137,29 @@ other = NodePath("../../../../Header/Column23/Column34/Column45")
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 100.0
 offset_bottom = 605.0
+theme_type_variation = &"VariableItemList"
+select_mode = 1
+allow_reselect = true
+allow_rmb_select = true
 script = ExtResource("3_da7mp")
 sortButton = NodePath("../../../../../Header/Column23/Column34/Column45/VariableDescription")
 
 [node name="MarginContainer" type="MarginContainer" parent="Columns/Column23/Column34/Column45"]
+custom_minimum_size = Vector2i(100, 0)
 offset_left = 112.0
 offset_right = 816.0
 offset_bottom = 605.0
 theme_override_constants/margin_top = 3
 
-[node name="Column5" type="VBoxContainer" parent="Columns/Column23/Column34/Column45/MarginContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Columns/Column23/Column34/Column45/MarginContainer"]
 offset_top = 3.0
 offset_right = 704.0
 offset_bottom = 605.0
+script = ExtResource("5_t5jr0")
+
+[node name="Column5" type="VBoxContainer" parent="Columns/Column23/Column34/Column45/MarginContainer/ScrollContainer"]
+offset_right = 704.0
+offset_bottom = 602.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_constants/separation = 0

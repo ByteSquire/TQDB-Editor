@@ -9,6 +9,7 @@ namespace TQDBEditor
         [Export]
         private Button sortButton;
         public ItemList[] otherLists;
+        public VScrollBar[] syncedScrollBars;
 
         private bool sorted = false;
 
@@ -23,9 +24,9 @@ namespace TQDBEditor
 
         private void OnScrollChanged(double value)
         {
-            if (otherLists is not null)
-                foreach (var otherList in otherLists)
-                    otherList.GetVScrollBar().Value = value;
+            if (syncedScrollBars is not null)
+                foreach (var scrollBar in syncedScrollBars)
+                    scrollBar.Value = value;
         }
 
         private void OnSortPressed()
