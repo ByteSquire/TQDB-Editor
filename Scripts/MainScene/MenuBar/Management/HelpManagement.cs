@@ -15,7 +15,7 @@ namespace TQDBEditor
         public void _on_help_about()
         {
             GD.Print("Help -> About...");
-            aboutPopup.PopupCenteredRatio(.4f);
+            aboutPopup.PopupCentered();
         }
 
         public void _on_help_help()

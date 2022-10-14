@@ -6,6 +6,7 @@
 [node name="About" type="AcceptDialog"]
 title = "About TQDB-Editor"
 size = Vector2i(526, 278)
+unresizable = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 anchors_preset = 15
