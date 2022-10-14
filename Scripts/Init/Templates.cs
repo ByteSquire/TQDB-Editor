@@ -21,7 +21,7 @@ namespace TQDBEditor
         {
             config = this.GetEditorConfig();
             logger = this.GetConsoleLogger();
-            templateManager = new TemplateManager(config.WorkingDir, logger);
+            templateManager = new TemplateManager(config.WorkingDir, useParallel: false, logger: logger);
         }
 
     }
