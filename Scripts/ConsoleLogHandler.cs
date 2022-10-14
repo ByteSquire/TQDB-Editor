@@ -78,17 +78,35 @@ namespace TQDBEditor
                         _console.PushColor(Colors.Brown);
                         break;
                 }
+                var builder = new StringBuilder();
+                builder.Append($"[{logLevel}]: ");
+
                 _console.AddText($"[{logLevel}]: ");
+
                 if (state.ToString() != "[null]")
                 {
                     _console.AppendText(ReplaceKnownPaths(formatter(state, exception)));
+                    builder.Append(formatter(state, exception));
                     if (exception is not null)
+                    {
                         _console.AddText("\n");
+                        builder.AppendLine();
+                    }
                 }
+
                 if (exception is not null)
+                {
                     _console.AppendText(ReplaceKnownPaths(exception.ToString()));
+                    builder.Append(exception.ToString());
+                }
+
                 _console.Pop();
                 _console.AddText("\n");
+
+                if (logLevel >= LogLevel.Error)
+                    GD.PrintErr(builder);
+                else
+                    GD.Print(builder);
             }
 
             private string ReplaceKnownPaths(string text)
