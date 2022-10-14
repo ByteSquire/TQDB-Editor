@@ -365,11 +365,7 @@ text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handl
 script = ExtResource("7_k8qir")
 configNode = NodePath("")
 
-[node name="Popups" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Popups" type="Node" parent="."]
 
 [node name="SelectWorkingFolder" parent="Popups" instance=ExtResource("2_ecwdp")]
 ok_button_text = "Select Current Folder"
