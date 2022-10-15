@@ -1,9 +1,8 @@
 extends Label
 
-@export var configNode : Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	if configNode:
-		set_text(configNode.call("GetModPath"))
+	if Config:
+		set_text(Config.call("GetModPath"))
 

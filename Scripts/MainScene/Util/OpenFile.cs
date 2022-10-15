@@ -15,6 +15,7 @@ namespace TQDBEditor
         private Node files;
 
         private Templates templates;
+        private TemplateManager tplManager;
         private ILogger logger;
 
         public override void _Ready()
@@ -25,6 +26,7 @@ namespace TQDBEditor
             logger = this.GetConsoleLogger();
             if (files is null)
                 return;
+            tplManager = templates.TemplateManager;
 
             GetTree().Root.GuiEmbedSubwindows = false;
 
@@ -41,8 +43,8 @@ namespace TQDBEditor
 
         private void OnDBRActivated(string filePath, string template)
         {
-            templates.TemplateManager.ResolveIncludes(templates.TemplateManager.GetRoot(template));
-            var dbrParser = new DBRParser(templates.TemplateManager, logger);
+            tplManager.ResolveIncludes(tplManager.GetRoot(template));
+            var dbrParser = new DBRParser(tplManager, logger);
 
             var dbrFile = dbrParser.ParseFile(filePath);
             //GD.Print(dbrFile);

@@ -14,10 +14,10 @@
 [ext_resource type="PackedScene" uid="uid://5vfh6iyyt47w" path="res://Scenes/Files/FilesViewSource.tscn" id="6_y1vhp"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Directories/DirViewDatabase.cs" id="7_8khkc"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="7_k8qir"]
-[ext_resource type="PackedScene" uid="uid://csqo7qxycdea8" path="res://Scenes/Files/FilesViewAssets.tscn" id="7_njte4"]
+[ext_resource type="PackedScene" path="res://Scenes/Files/FilesViewAssets.tscn" id="7_njte4"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/DatabaseMenu.gd" id="7_ux155"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ArchiveMenu.gd" id="8_bxck6"]
-[ext_resource type="PackedScene" uid="uid://uou1pmtqo7rb" path="res://Scenes/Files/FilesViewDatabase.tscn" id="8_jodwh"]
+[ext_resource type="PackedScene" path="res://Scenes/Files/FilesViewDatabase.tscn" id="8_jodwh"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ToolsMenu.gd" id="9_h0s88"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ViewMenu.gd" id="10_rod4w"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/HelpMenu.gd" id="11_va2v8"]
@@ -355,7 +355,7 @@ offset_right = 269.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
-[node name="Path" type="Label" parent="MainView/FootBar/ProgressPath/PathContainer" node_paths=PackedStringArray("configNode")]
+[node name="Path" type="Label" parent="MainView/FootBar/ProgressPath/PathContainer"]
 layout_mode = 2
 offset_right = 634.0
 offset_bottom = 26.0
@@ -363,7 +363,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 1
 text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handles/that"
 script = ExtResource("7_k8qir")
-configNode = NodePath("")
 
 [node name="Popups" type="Node" parent="."]
 

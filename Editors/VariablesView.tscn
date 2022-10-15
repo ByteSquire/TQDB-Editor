@@ -1,7 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cbdtmnxvxyywf"]
+[gd_scene load_steps=6 format=3 uid="uid://svexx27ixvev"]
 
 [ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="1_nr8cs"]
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="1_p0yk6"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="1_p0yk6"]
 [ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_4e4f4"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_da7mp"]
 [ext_resource type="Script" path="res://Scripts/ScrollSync.gd" id="5_t5jr0"]
