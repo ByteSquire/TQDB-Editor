@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://sg2dior04wic"]
+
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="1_hjlqh"]
+[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="1_s880l"]
+
+[node name="TableHeader" type="HSplitContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s880l")
+
+[node name="ColumnX" parent="." instance=ExtResource("1_hjlqh")]
+offset_bottom = 648.0
+text = ""

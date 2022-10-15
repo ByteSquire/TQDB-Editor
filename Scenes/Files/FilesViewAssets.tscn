@@ -1,8 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://csqo7qxycdea8"]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewAssets.cs" id="2_jwlqo"]
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="3_2qfng"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="3_2qfng"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="4_tvj55"]
 
 [node name="FilesViewAssets" node_paths=PackedStringArray("column2") instance=ExtResource("1_88eub")]

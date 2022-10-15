@@ -1,9 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://uou1pmtqo7rb"]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewDatabase.cs" id="2_oktei"]
 [ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="3_13c8a"]
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="4_0d73h"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="4_0d73h"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="5_16apx"]
 
 [node name="FileViewDatabase" node_paths=PackedStringArray("column2", "column3") instance=ExtResource("1_6p5jd")]

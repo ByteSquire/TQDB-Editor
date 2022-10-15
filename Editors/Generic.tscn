@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_m0a30"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="1_mn4yn"]
-[ext_resource type="PackedScene" uid="uid://cbdtmnxvxyywf" path="res://Editors/VariablesView.tscn" id="1_sevis"]
 [ext_resource type="Script" path="res://EditorScripts/GroupsView.cs" id="1_xvxrf"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="2_jsrii"]
+[ext_resource type="PackedScene" uid="uid://natiymby15em" path="res://Scenes/Table/Table.tscn" id="3_aci43"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f37s"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -47,16 +47,16 @@ offset_bottom = 582.0
 script = ExtResource("1_xvxrf")
 editorWindow = NodePath("../../..")
 
-[node name="VariablesView" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView") instance=ExtResource("1_sevis")]
+[node name="Table" parent="VBoxContainer/GroupsVariables" instance=ExtResource("3_aci43")]
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 582.0
-grow_horizontal = 1
+grow_horizontal = 2
 grow_vertical = 1
-groupsView = NodePath("../Groups")
+columns = ["Name", "Type", "Class", "Description", "Value"]
 
 [node name="FootBar" type="HSplitContainer" parent="VBoxContainer"]
 offset_top = 621.0
@@ -95,11 +95,10 @@ offset_right = 270.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
-[node name="Path" type="Label" parent="VBoxContainer/FootBar/ProgressPath/PathContainer" node_paths=PackedStringArray("configNode")]
+[node name="Path" type="Label" parent="VBoxContainer/FootBar/ProgressPath/PathContainer"]
 offset_right = 634.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
 text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handles/that"
 script = ExtResource("2_jsrii")
-configNode = NodePath("")

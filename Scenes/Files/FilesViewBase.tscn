@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://bi45sj82oqs4g"]
+[gd_scene load_steps=4 format=3]
 
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Files/ColumnButton.tscn" id="2_4x23f"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="2_4x23f"]
 [ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_puc0o"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_anm70"]
 

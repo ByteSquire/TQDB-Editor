@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://natiymby15em"]
+
+[ext_resource type="Script" path="res://Scripts/Table.gd" id="1_hbs0x"]
+[ext_resource type="PackedScene" uid="uid://sg2dior04wic" path="res://Scenes/Table/TableHeader.tscn" id="2_4cm3t"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="3_pnhq3"]
+[ext_resource type="PackedScene" uid="uid://cfuxug2lbi53g" path="res://Scenes/Table/TableColumn.tscn" id="4_fjvrm"]
+
+[node name="Table" type="ScrollContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_hbs0x")
+header_column = ExtResource("2_4cm3t")
+column_button = ExtResource("3_pnhq3")
+column = ExtResource("4_fjvrm")
+
+[node name="Heading-Entries" type="VBoxContainer" parent="."]
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Entries" type="PanelContainer" parent="Heading-Entries"]
+offset_right = 1152.0
+offset_bottom = 648.0
+size_flags_vertical = 3
