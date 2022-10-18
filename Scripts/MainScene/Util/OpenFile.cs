@@ -43,21 +43,28 @@ namespace TQDBEditor
 
         private void OnDBRActivated(string filePath, string template)
         {
-            tplManager.ResolveIncludes(tplManager.GetRoot(template));
-            var dbrParser = new DBRParser(tplManager, logger);
+            GD.Print(filePath, template);
+            try
+            {
+                var dbrParser = new DBRParser(tplManager, logger);
 
-            var dbrFile = dbrParser.ParseFile(filePath);
-            //GD.Print(dbrFile);
+                tplManager.ResolveIncludes(tplManager.GetRoot(template));
+                var dbrFile = dbrParser.ParseFile(filePath);
 
-            var genericEditor = ResourceLoader.Load<PackedScene>("res://Editors/Generic.tscn")
-                .Instantiate<EditorWindow>();
 
-            genericEditor.DBRFile = dbrFile;
+                var genericEditor = ResourceLoader.Load<PackedScene>("res://Editors/Generic.tscn")
+                    .Instantiate<EditorWindow>();
 
-            genericEditor.Position = GetTree().Root.Position + new Vector2i(40, 40);
+                genericEditor.DBRFile = dbrFile;
 
-            GetTree().Root.CallDeferred("add_child", genericEditor);
-            //genericEditor.Show();
+                genericEditor.Position = GetTree().Root.Position + new Vector2i(40, 40);
+
+                GetTree().Root.CallDeferred("add_child", genericEditor);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Failed to parse file {file}", filePath);
+            }
         }
     }
 }
