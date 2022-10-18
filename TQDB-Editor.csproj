@@ -16,6 +16,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="TQArchive-Wrapper" Version="1.0.0" />
-    <PackageReference Include="TQDB-Parser" Version="1.1.2" />
+    <PackageReference Include="TQDB-Parser" Version="1.1.3" />
   </ItemGroup>
 </Project>
