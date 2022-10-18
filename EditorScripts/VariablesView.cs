@@ -4,21 +4,25 @@ using System.Collections.Generic;
 
 namespace TQDBEditor.EditorScripts
 {
-    public partial class VariablesView : VBoxContainer
+    struct TableColumn
+    {
+        public SplitContainer Heading { get; set; }
+        public VBoxContainer Column { get; set; }
+    }
+
+    public partial class VariablesView : Control
     {
         [Export]
         private GroupsView groupsView;
 
         [Export]
-        private ItemList column1;
-        [Export]
-        private ItemList column2;
-        [Export]
-        private ItemList column3;
-        [Export]
-        private ItemList column4;
-        [Export]
-        private VBoxContainer column5;
+        private Control table;
+
+        private TableColumn nameColumn;
+        private TableColumn classColumn;
+        private TableColumn typeColumn;
+        private TableColumn descriptionColumn;
+        private TableColumn valueColumn;
 
         private Config config;
 
@@ -27,113 +31,73 @@ namespace TQDBEditor.EditorScripts
         {
             groupsView.GroupSelected += OnGroupSelected;
 
-            var column1Scroll = column1.GetVScrollBar();
-            column1Scroll.Scale = new Vector2(0, 0);
-
-            var column2Scroll = column2.GetVScrollBar();
-            column2Scroll.Scale = new Vector2(0, 0);
-
-            var column3Scroll = column3.GetVScrollBar();
-            column3Scroll.Scale = new Vector2(0, 0);
-
-            var column4Scroll = column4.GetVScrollBar();
-            column4Scroll.Scale = new Vector2(0, 0);
-
-            var column5Scroll = column5.GetParent<ScrollContainer>().GetVScrollBar();
-
-            if (column1 is FileList col1)
-            {
-                col1.otherLists = new ItemList[] { column2, column3, column4 };
-                col1.syncedScrollBars = new VScrollBar[]
-                {
-                    column2Scroll,
-                    column3Scroll,
-                    column4Scroll,
-                    column5Scroll
-                };
-            }
-
-            if (column2 is FileList col2)
-            {
-                col2.otherLists = new ItemList[] { column1, column3, column4 };
-                col2.syncedScrollBars = new VScrollBar[]
-                {
-                    column1Scroll,
-                    column3Scroll,
-                    column4Scroll,
-                    column5Scroll
-                };
-            }
-
-            if (column3 is FileList col3)
-            {
-                col3.otherLists = new ItemList[] { column2, column1, column4 };
-                col3.syncedScrollBars = new VScrollBar[]
-                {
-                    column2Scroll,
-                    column1Scroll,
-                    column4Scroll,
-                    column5Scroll
-                };
-            }
-
-            if (column4 is FileList col4)
-            {
-                col4.otherLists = new ItemList[] { column2, column3, column1 };
-                col4.syncedScrollBars = new VScrollBar[]
-                {
-                    column2Scroll,
-                    column3Scroll,
-                    column1Scroll,
-                    column5Scroll
-                };
-            }
-
-            if (column5.GetParent() is ScrollContainer column5Parent)
-            {
-                column5Parent.Set("other_scrolls", new VScrollBar[]
-                {
-                    column2Scroll,
-                    column3Scroll,
-                    column1Scroll,
-                    column4Scroll
-                });
-            }
-
             config = this.GetEditorConfig();
 
-            column1.GetParent<SplitContainer>().Call("set_synced_offset", config.NameColumnWidth - 100);
-            column2.GetParent<SplitContainer>().Call("set_synced_offset", config.ClassColumnWidth - 100);
-            column3.GetParent<SplitContainer>().Call("set_synced_offset", config.TypeColumnWidth - 100);
-            column4.GetParent<SplitContainer>().Call("set_synced_offset", config.DescriptionColumnWidth - 100);
+            var nameHeading = table.GetChild(0).GetChild<SplitContainer>(0);
+            var classHeading = nameHeading.GetChild<SplitContainer>(1);
+            var typeHeading = classHeading.GetChild<SplitContainer>(1);
+            var descriptionHeading = typeHeading.GetChild<SplitContainer>(1);
+            var valueHeading = descriptionHeading.GetChild<SplitContainer>(1);
+
+            nameHeading.Call("set_synced_offset", config.NameColumnWidth - 100);
+            classHeading.Call("set_synced_offset", config.ClassColumnWidth - 100);
+            typeHeading.Call("set_synced_offset", config.TypeColumnWidth - 100);
+            descriptionHeading.Call("set_synced_offset", config.DescriptionColumnWidth - 100);
+            //valueHeading.Call("set_synced_offset", config.DefaultValueColumnWidth - 100);
+
+            var nameColumnSplit = table.GetChild(0).GetChild(1).GetChild<SplitContainer>(0);
+            var classColumnSplit = nameColumnSplit.GetChild<SplitContainer>(1);
+            var typeColumnSplit = classColumnSplit.GetChild<SplitContainer>(1);
+            var descriptionColumnSplit = typeColumnSplit.GetChild<SplitContainer>(1);
+            var valueColumnSplit = descriptionColumnSplit.GetChild<SplitContainer>(1);
+
+            nameColumn = new TableColumn
+            { Heading = nameHeading, Column = nameColumnSplit.GetChild<VBoxContainer>(0) };
+            classColumn = new TableColumn
+            { Heading = classHeading, Column = classColumnSplit.GetChild<VBoxContainer>(0) };
+            typeColumn = new TableColumn
+            { Heading = typeHeading, Column = typeColumnSplit.GetChild<VBoxContainer>(0) };
+            descriptionColumn = new TableColumn
+            {
+                Heading = descriptionHeading,
+                Column = descriptionColumnSplit.GetChild<VBoxContainer>(0)
+            };
+            valueColumn = new TableColumn
+            { Heading = valueHeading, Column = valueColumnSplit.GetChild<VBoxContainer>(0) };
         }
 
         private void Clear()
         {
-            column1.Clear();
-            column2.Clear();
-            column3.Clear();
-            column4.Clear();
-            foreach (var child in column5.GetChildren())
+            ClearBox(nameColumn.Column);
+            ClearBox(classColumn.Column);
+            ClearBox(typeColumn.Column);
+            ClearBox(descriptionColumn.Column);
+            ClearBox(valueColumn.Column);
+        }
+
+        private void ClearBox(BoxContainer container)
+        {
+            foreach (var child in container.GetChildren())
                 child.QueueFree();
         }
 
         private void OnGroupSelected()
         {
             Clear();
-            GD.Print("Hello from VariablesView.OnGroupSelected");
             (var variables, var file) = groupsView.GetSelectedAndFile();
 
+            var size = new Vector2i(100, 38);
             foreach (var variable in variables)
             {
-                column1.AddItem(variable.Name);
-                column2.AddItem(variable.Class.ToString());
-                column3.AddItem(variable.Type.ToString());
+                var row = new Control[5];
+                row[0] = new RichTextLabel { Text = variable.Name, CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
+                row[1] = new RichTextLabel { Text = variable.Class.ToString(), CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
+                row[2] = new RichTextLabel { Text = variable.Type.ToString(), CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
 
                 var desc = variable.Description;
                 if (string.IsNullOrEmpty(desc))
                     desc = " ";
-                column4.AddItem(desc);
+                row[3] = new RichTextLabel { Text = desc, CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
 
                 string value;
                 try
@@ -146,8 +110,8 @@ namespace TQDBEditor.EditorScripts
                 }
                 if (string.IsNullOrEmpty(value))
                     value = " ";
+
                 Control valueElement;
-                var size = new Vector2i(10, 28);
                 switch (variable.Class)
                 {
                     case TQDB_Parser.VariableClass.variable:
@@ -155,8 +119,8 @@ namespace TQDBEditor.EditorScripts
                         {
                             Text = value,
                             PlaceholderText = variable.GetDefaultValue(),
-                            CustomMinimumSize = size,
-                            Size = size,
+                            //CustomMinimumSize = size,
+                            //Size = size,
                         };
                         (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
                         //(valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
@@ -168,15 +132,15 @@ namespace TQDBEditor.EditorScripts
                             Editable = false,
                             Text = value,
                             PlaceholderText = variable.GetDefaultValue(),
-                            CustomMinimumSize = size,
-                            Size = size,
+                            //CustomMinimumSize = size,
+                            //Size = size,
                         };
                         (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
                         //(valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
                         //(valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
                         break;
                     case TQDB_Parser.VariableClass.picklist:
-                        valueElement = new OptionButton { ClipContents = true };
+                        valueElement = new OptionButton { ClipText = true };
                         var defaultValues = variable.DefaultValue.Split(';');
                         var valueId = -1;
                         for (int i = 0; i < defaultValues.Length; i++)
@@ -195,8 +159,8 @@ namespace TQDBEditor.EditorScripts
                         {
                             Text = "...",
                             SizeFlagsVertical = (int)SizeFlags.Fill,
-                            CustomMinimumSize = size,
-                            Size = size,
+                            //CustomMinimumSize = size,
+                            //Size = size,
                         });
 
                         var lineEdit = new LineEdit
@@ -206,7 +170,7 @@ namespace TQDBEditor.EditorScripts
                             SizeFlagsVertical = (int)SizeFlags.ExpandFill,
                             PlaceholderText = variable.GetDefaultValue(),
                             CustomMinimumSize = size,
-                            Size = size,
+                            //Size = size,
                         };
                         lineEdit.TextSubmitted += x => file.UpdateEntry(variable.Name, x);
                         //textEdit.GetVScrollBar().Scale = new Vector2(0, 0);
@@ -219,18 +183,22 @@ namespace TQDBEditor.EditorScripts
                 }
                 valueElement.TooltipText = variable.DefaultValue;
                 valueElement.SizeFlagsHorizontal = (int)SizeFlags.Fill;
-                valueElement.Size = valueElement.CustomMinimumSize = new Vector2i(100, size.y);
+                /*valueElement.Size = */
+                valueElement.CustomMinimumSize = size;
 
-                column5.AddChild(valueElement);
+                row[4] = valueElement;
+
+                GD.Print("adding row: " + string.Join<Control>(", ", row));
+                table.Call("AddRow", /*new Godot.Collections.Array<Control>*/(row));
             }
         }
 
         public override void _ExitTree()
         {
-            config.NameColumnWidth = column1.GetParent<SplitContainer>().SplitOffset + 100;
-            config.ClassColumnWidth = column2.GetParent<SplitContainer>().SplitOffset + 100;
-            config.TypeColumnWidth = column3.GetParent<SplitContainer>().SplitOffset + 100;
-            config.DescriptionColumnWidth = column4.GetParent<SplitContainer>().SplitOffset + 100;
+            config.NameColumnWidth = nameColumn.Heading.SplitOffset + 100;
+            config.ClassColumnWidth = classColumn.Heading.SplitOffset + 100;
+            config.TypeColumnWidth = typeColumn.Heading.SplitOffset + 100;
+            config.DescriptionColumnWidth = descriptionColumn.Heading.SplitOffset + 100;
             base._ExitTree();
         }
     }

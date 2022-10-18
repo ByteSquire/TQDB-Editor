@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://usu1aub34fpy"]
+[gd_scene load_steps=8 format=3 uid="uid://usu1aub34fpy"]
 
 [ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_m0a30"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="1_mn4yn"]
 [ext_resource type="Script" path="res://EditorScripts/GroupsView.cs" id="1_xvxrf"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="2_jsrii"]
 [ext_resource type="PackedScene" uid="uid://natiymby15em" path="res://Scenes/Table/Table.tscn" id="3_aci43"]
+[ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="3_l02mb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f37s"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -47,15 +48,18 @@ offset_bottom = 582.0
 script = ExtResource("1_xvxrf")
 editorWindow = NodePath("../../..")
 
-[node name="Table" parent="VBoxContainer/GroupsVariables" instance=ExtResource("3_aci43")]
+[node name="Control" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table")]
+layout_mode = 3
 anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 582.0
-grow_horizontal = 2
-grow_vertical = 1
+size_flags_horizontal = 3
+script = ExtResource("3_l02mb")
+groupsView = NodePath("../Groups")
+table = NodePath("Table")
+
+[node name="Table" parent="VBoxContainer/GroupsVariables/Control" instance=ExtResource("3_aci43")]
 columns = ["Name", "Type", "Class", "Description", "Value"]
 
 [node name="FootBar" type="HSplitContainer" parent="VBoxContainer"]

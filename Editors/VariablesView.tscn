@@ -6,18 +6,13 @@
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_da7mp"]
 [ext_resource type="Script" path="res://Scripts/ScrollSync.gd" id="5_t5jr0"]
 
-[node name="VariablesView" type="VBoxContainer" node_paths=PackedStringArray("column1", "column2", "column3", "column4", "column5")]
+[node name="VariablesView" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nr8cs")
-column1 = NodePath("Columns/Column1")
-column2 = NodePath("Columns/Column23/Column2")
-column3 = NodePath("Columns/Column23/Column34/Column3")
-column4 = NodePath("Columns/Column23/Column34/Column45/Column4")
-column5 = NodePath("Columns/Column23/Column34/Column45/MarginContainer/ScrollContainer/Column5")
 
 [node name="Header" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
 offset_right = 1152.0
