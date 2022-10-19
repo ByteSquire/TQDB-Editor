@@ -1,18 +1,24 @@
-[gd_scene load_steps=8 format=3 uid="uid://usu1aub34fpy"]
+[gd_scene load_steps=13 format=3 uid="uid://usu1aub34fpy"]
 
 [ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_m0a30"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="1_mn4yn"]
 [ext_resource type="Script" path="res://EditorScripts/GroupsView.cs" id="1_xvxrf"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="2_jsrii"]
+[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/FileMenu.gd" id="2_o7n4f"]
+[ext_resource type="Script" path="res://EditorScripts/MenuBar/Management/MenuBarManager.cs" id="2_w8ijh"]
 [ext_resource type="PackedScene" uid="uid://natiymby15em" path="res://Scenes/Table/Table.tscn" id="3_aci43"]
 [ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="3_l02mb"]
+[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/EditMenu.gd" id="3_vpord"]
+[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ViewMenu.gd" id="4_g67q8"]
+[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ToolsMenu.gd" id="5_tqk4h"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f37s"]
 bg_color = Color(0, 0.686275, 0, 1)
 
-[node name="Generic" type="Window"]
+[node name="Generic" type="Window" node_paths=PackedStringArray("footBarPathLabel")]
 size = Vector2i(1152, 648)
 script = ExtResource("1_m0a30")
+footBarPathLabel = NodePath("VBoxContainer/FootBar/ProgressPath/PathContainer/Path")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -23,17 +29,89 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MenuBar" type="MenuBar" parent="VBoxContainer"]
+[node name="MenuBar" type="MenuBar" parent="VBoxContainer" node_paths=PackedStringArray("findDialog", "saveAsPopup", "changeTemplatePopup", "showTemplate")]
 offset_right = 1152.0
 offset_bottom = 31.0
+script = ExtResource("2_w8ijh")
+findDialog = NodePath("../../Popups/Find")
+saveAsPopup = NodePath("../../Popups/SaveAs")
+changeTemplatePopup = NodePath("../../Popups/ChangeTemplate")
+showTemplate = NodePath("../../Popups/Template")
 
 [node name="File" type="PopupMenu" parent="VBoxContainer/MenuBar"]
+item_count = 9
+item_0/text = "New..."
+item_0/id = 0
+item_0/disabled = true
+item_1/text = "Open..."
+item_1/id = 1
+item_1/disabled = true
+item_2/text = "Close..."
+item_2/id = 2
+item_2/disabled = true
+item_3/text = "Save"
+item_3/id = 3
+item_4/text = "Save As..."
+item_4/id = 4
+item_5/text = ""
+item_5/id = 5
+item_5/separator = true
+item_6/text = "Set Template..."
+item_6/id = 6
+item_7/text = ""
+item_7/id = 7
+item_7/separator = true
+item_8/text = "Exit"
+item_8/id = 8
+script = ExtResource("2_o7n4f")
 
 [node name="Edit" type="PopupMenu" parent="VBoxContainer/MenuBar"]
+item_count = 8
+item_0/text = "Undo"
+item_0/id = 0
+item_1/text = "Redo"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+item_2/separator = true
+item_3/text = "Edit Entry"
+item_3/id = 3
+item_4/text = ""
+item_4/id = 6
+item_4/separator = true
+item_5/text = "Find..."
+item_5/id = 5
+item_6/text = ""
+item_6/id = 6
+item_6/separator = true
+item_7/text = "Set default column widths"
+item_7/id = 7
+item_7/disabled = true
+script = ExtResource("3_vpord")
 
 [node name="View" type="PopupMenu" parent="VBoxContainer/MenuBar"]
+item_count = 5
+item_0/text = "Show Template file..."
+item_0/id = 0
+item_1/text = ""
+item_1/id = 1
+item_1/separator = true
+item_2/text = "Descriptions"
+item_2/checkable = 1
+item_2/checked = true
+item_2/id = 2
+item_2/disabled = true
+item_3/text = "Toolbar"
+item_3/checkable = 1
+item_3/id = 3
+item_4/text = "Status Bar"
+item_4/checkable = 1
+item_4/checked = true
+item_4/id = 4
+script = ExtResource("4_g67q8")
 
 [node name="Tools" type="PopupMenu" parent="VBoxContainer/MenuBar"]
+script = ExtResource("5_tqk4h")
 
 [node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer"]
 offset_top = 35.0
@@ -106,3 +184,66 @@ size_flags_horizontal = 3
 size_flags_vertical = 1
 text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handles/that"
 script = ExtResource("2_jsrii")
+
+[node name="Popups" type="Node" parent="."]
+
+[node name="ChangeTemplate" type="FileDialog" parent="Popups"]
+title = "Select a new template"
+size = Vector2i(784, 324)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+
+[node name="SaveAs" type="FileDialog" parent="Popups"]
+title = "Save as"
+size = Vector2i(784, 324)
+access = 2
+
+[node name="Find" type="ConfirmationDialog" parent="Popups"]
+title = "Search in file"
+ok_button_text = "Search"
+
+[node name="SearchText" type="TextEdit" parent="Popups/Find"]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+placeholder_text = "Search..."
+
+[node name="Template" type="AcceptDialog" parent="Popups"]
+title = "Template file"
+
+[node name="PathText" type="Label" parent="Popups/Template"]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -11.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+
+[connection signal="ToggleStatusbar" from="VBoxContainer/MenuBar" to="VBoxContainer/FootBar" method="_on_toggle_status_bar"]
+[connection signal="exit" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_exit"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar/File" method="_on_id_pressed"]
+[connection signal="save" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_save"]
+[connection signal="save_as" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_save_as"]
+[connection signal="set_template" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_set_template"]
+[connection signal="edit_entry" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar" method="_on_edit_edit_entry"]
+[connection signal="find" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar" method="_on_edit_find"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar/Edit" method="_on_id_pressed"]
+[connection signal="redo" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar" method="_on_edit_redo"]
+[connection signal="set_default_width" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar" method="_on_edit_set_default_width"]
+[connection signal="undo" from="VBoxContainer/MenuBar/Edit" to="VBoxContainer/MenuBar" method="_on_edit_undo"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/View" to="VBoxContainer/MenuBar/View" method="_on_id_pressed"]
+[connection signal="show_template" from="VBoxContainer/MenuBar/View" to="VBoxContainer/MenuBar" method="_on_view_show_template"]
+[connection signal="toggle_descriptions" from="VBoxContainer/MenuBar/View" to="VBoxContainer/MenuBar" method="_on_view_toggle_descriptions"]
+[connection signal="toggle_statusbar" from="VBoxContainer/MenuBar/View" to="VBoxContainer/MenuBar" method="_on_view_toggle_statusbar"]
+[connection signal="toggle_toolbar" from="VBoxContainer/MenuBar/View" to="VBoxContainer/MenuBar" method="_on_view_toggle_toolbar"]
+[connection signal="id_pressed" from="VBoxContainer/MenuBar/Tools" to="VBoxContainer/MenuBar/Tools" method="_on_id_pressed"]
