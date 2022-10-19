@@ -19,19 +19,17 @@ namespace TQDBEditor
         private FilesViewAssets assetsView;
         private FilesViewDatabase databaseView;
 
-        private Templates templates;
         private TemplateManager tplManager;
         private ILogger logger;
 
         public override void _Ready()
         {
-            templates = this.GetTemplates();
-            if (templates is null)
-                return;
             logger = this.GetConsoleLogger();
             if (files is null)
                 return;
-            tplManager = templates.TemplateManager;
+            tplManager = this.GetTemplateManager();
+            if (tplManager is null)
+                return;
 
             GetTree().Root.GuiEmbedSubwindows = false;
 

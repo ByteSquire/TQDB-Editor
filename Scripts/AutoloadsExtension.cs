@@ -1,6 +1,7 @@
 using Godot;
 using Microsoft.Extensions.Logging;
 using System;
+using TQDB_Parser;
 
 namespace TQDBEditor
 {
@@ -11,9 +12,9 @@ namespace TQDBEditor
             return me.GetNode<Config>("/root/Config");
         }
 
-        public static Templates GetTemplates(this Node me)
+        public static TemplateManager GetTemplateManager(this Node me)
         {
-            return me.GetNode<Templates>("/root/Templates");
+            return me.GetNode<Templates>("/root/Templates").TemplateManager;
         }
 
         public static ILogger GetConsoleLogger(this Node me)

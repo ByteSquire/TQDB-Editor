@@ -20,7 +20,7 @@ namespace TQDBEditor.EditorScripts
         {
             GD.Print("View -> Show template");
 
-            var templatePath = Path.Combine(this.GetTemplates().TemplateManager.TemplateBaseDir,
+            var templatePath = Path.Combine(this.GetTemplateManager().TemplateBaseDir,
                 editorWindow.DBRFile.TemplateRoot.FileName);
             showTemplate.GetNode<Label>("PathText").Text = templatePath;
             showTemplate.PopupCentered();

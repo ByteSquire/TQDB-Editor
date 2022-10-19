@@ -19,7 +19,7 @@ namespace TQDBEditor.EditorScripts
         private void InitFileManagement()
         {
             changeTemplatePopup.FileSelected += ChangeTemplate;
-            var templatePath = Path.Combine(this.GetTemplates().TemplateManager.TemplateBaseDir,
+            var templatePath = Path.Combine(this.GetTemplateManager().TemplateBaseDir,
                 editorWindow.DBRFile.TemplateRoot.FileName);
             changeTemplatePopup.CurrentFile = templatePath;
 
@@ -62,7 +62,7 @@ namespace TQDBEditor.EditorScripts
 
         private void ChangeTemplate(string path)
         {
-            var manager = this.GetTemplates().TemplateManager;
+            var manager = this.GetTemplateManager();
             var parser = new DBRParser(manager, this.GetConsoleLogger());
 
             var templateName = manager.GetTemplateName(path);
