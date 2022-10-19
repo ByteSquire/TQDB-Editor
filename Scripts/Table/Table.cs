@@ -12,21 +12,21 @@ public partial class Table : Control
     [Export]
     private PackedScene column;
     [Export]
-    private Vector2i CellSize
+    private int CellHeight
     {
-        get => cellSize;
+        get => cellHeight;
         set
         {
-            if (cellSize != value)
+            if (cellHeight != value)
             {
-                cellSize = value;
+                cellHeight = value;
                 OnChangedCellSize();
             }
         }
     }
-    private Vector2i cellSize;
+    private int cellHeight;
 
-    private Godot.Collections.Array<VBoxContainer> _columns;
+    private Godot.Collections.Array<Container> _columns;
 
     private Control _content;
 
@@ -51,22 +51,19 @@ public partial class Table : Control
 
                 var _column = column.Instantiate();
 
+                _column.GetChild(0).Set("cell_height", cellHeight);
                 _column.GetChild(0).Name = "Column" + (i + 1);
 
-
                 header.Set("other", _column);
-
                 _column.Set("other", header);
 
                 node.AddChild(header);
-
                 node = header;
 
                 node1.AddChild(_column);
-
                 node1 = _column;
 
-                _columns.Add(_column.GetChild<VBoxContainer>(0));
+                _columns.Add(_column.GetChild<Container>(0));
             }
             node.AddChild(new Control());
             node1.AddChild(new Control());
@@ -96,7 +93,6 @@ public partial class Table : Control
 
         for (int i = 0; i < values.Count; i++)
         {
-            values[i].CustomMinimumSize = cellSize;
             values[i].SetMeta("table_cell_position", new Vector2i(i, _columns[i].GetChildCount()));
             _columns[i].AddChild(values[i]);
             _columns[i].AddChild(new HSeparator());
@@ -145,9 +141,7 @@ public partial class Table : Control
             return;
         foreach (var column in _columns)
         {
-            foreach (var child in column.GetChildren())
-                if (child is Control controlChild)
-                    controlChild.CustomMinimumSize = cellSize;
+            column.Set("cell_height", cellHeight);
         }
     }
 }

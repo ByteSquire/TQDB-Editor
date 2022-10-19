@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://svexx27ixvev"]
+[gd_scene load_steps=6 format=3 uid="uid://bpe4u8jfedu82"]
 
 [ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="1_nr8cs"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="1_p0yk6"]
-[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_4e4f4"]
+[ext_resource type="Script" path="res://Scripts/Table/SplitContainerSync.gd" id="2_4e4f4"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_da7mp"]
 [ext_resource type="Script" path="res://Scripts/ScrollSync.gd" id="5_t5jr0"]
 
@@ -15,15 +15,18 @@ grow_vertical = 2
 script = ExtResource("1_nr8cs")
 
 [node name="Header" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 31.0
 script = ExtResource("2_4e4f4")
 other = NodePath("../Columns")
 
 [node name="VariableName" parent="Header" instance=ExtResource("1_p0yk6")]
+layout_mode = 2
 offset_right = 100.0
 
 [node name="Column23" type="HSplitContainer" parent="Header" node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 31.0
@@ -31,10 +34,12 @@ script = ExtResource("2_4e4f4")
 other = NodePath("../../Columns/Column23")
 
 [node name="VariableClass" parent="Header/Column23" instance=ExtResource("1_p0yk6")]
+layout_mode = 2
 offset_right = 100.0
 text = "Class"
 
 [node name="Column34" type="HSplitContainer" parent="Header/Column23" node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 1040.0
 offset_bottom = 31.0
@@ -42,10 +47,12 @@ script = ExtResource("2_4e4f4")
 other = NodePath("../../../Columns/Column23/Column34")
 
 [node name="VariableType" parent="Header/Column23/Column34" instance=ExtResource("1_p0yk6")]
+layout_mode = 2
 offset_right = 100.0
 text = "Type"
 
 [node name="Column45" type="HSplitContainer" parent="Header/Column23/Column34" node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 928.0
 offset_bottom = 31.0
@@ -53,20 +60,24 @@ script = ExtResource("2_4e4f4")
 other = NodePath("../../../../Columns/Column23/Column34/Column45")
 
 [node name="VariableDescription" parent="Header/Column23/Column34/Column45" instance=ExtResource("1_p0yk6")]
+layout_mode = 2
 offset_right = 100.0
 text = "Description"
 
 [node name="VariableValue" parent="Header/Column23/Column34/Column45" instance=ExtResource("1_p0yk6")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 816.0
 text = "Value"
 
 [node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
 offset_top = 35.0
 offset_right = 1152.0
 offset_bottom = 39.0
 
 [node name="Columns" type="HSplitContainer" parent="." node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_top = 43.0
 offset_right = 1152.0
 offset_bottom = 648.0
@@ -76,6 +87,7 @@ other = NodePath("../Header")
 
 [node name="Column1" type="ItemList" parent="Columns" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 100.0
 offset_bottom = 605.0
 theme_type_variation = &"VariableItemList"
@@ -86,6 +98,7 @@ script = ExtResource("3_da7mp")
 sortButton = NodePath("../../Header/VariableName")
 
 [node name="Column23" type="HSplitContainer" parent="Columns" node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0
@@ -94,6 +107,7 @@ other = NodePath("../../Header/Column23")
 
 [node name="Column2" type="ItemList" parent="Columns/Column23" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 100.0
 offset_bottom = 605.0
 theme_type_variation = &"VariableItemList"
@@ -104,6 +118,7 @@ script = ExtResource("3_da7mp")
 sortButton = NodePath("../../../Header/Column23/VariableClass")
 
 [node name="Column34" type="HSplitContainer" parent="Columns/Column23" node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 1040.0
 offset_bottom = 605.0
@@ -112,6 +127,7 @@ other = NodePath("../../../Header/Column23/Column34")
 
 [node name="Column3" type="ItemList" parent="Columns/Column23/Column34" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 100.0
 offset_bottom = 605.0
 theme_type_variation = &"VariableItemList"
@@ -122,6 +138,7 @@ script = ExtResource("3_da7mp")
 sortButton = NodePath("../../../../Header/Column23/Column34/VariableType")
 
 [node name="Column45" type="HSplitContainer" parent="Columns/Column23/Column34" node_paths=PackedStringArray("other")]
+layout_mode = 2
 offset_left = 112.0
 offset_right = 928.0
 offset_bottom = 605.0
@@ -130,6 +147,7 @@ other = NodePath("../../../../Header/Column23/Column34/Column45")
 
 [node name="Column4" type="ItemList" parent="Columns/Column23/Column34/Column45" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 100.0
 offset_bottom = 605.0
 theme_type_variation = &"VariableItemList"
@@ -141,18 +159,21 @@ sortButton = NodePath("../../../../../Header/Column23/Column34/Column45/Variable
 
 [node name="MarginContainer" type="MarginContainer" parent="Columns/Column23/Column34/Column45"]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_left = 112.0
 offset_right = 816.0
 offset_bottom = 605.0
 theme_override_constants/margin_top = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Columns/Column23/Column34/Column45/MarginContainer"]
+layout_mode = 2
 offset_top = 3.0
 offset_right = 704.0
 offset_bottom = 605.0
 script = ExtResource("5_t5jr0")
 
 [node name="Column5" type="VBoxContainer" parent="Columns/Column23/Column34/Column45/MarginContainer/ScrollContainer"]
+layout_mode = 2
 offset_right = 704.0
 offset_bottom = 602.0
 size_flags_horizontal = 3

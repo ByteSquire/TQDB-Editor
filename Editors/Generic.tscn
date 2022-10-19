@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://usu1aub34fpy"]
+[gd_scene load_steps=14 format=3 uid="uid://usu1aub34fpy"]
 
 [ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_m0a30"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="1_mn4yn"]
@@ -6,11 +6,12 @@
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="2_jsrii"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/FileMenu.gd" id="2_o7n4f"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/Management/MenuBarManager.cs" id="2_w8ijh"]
-[ext_resource type="PackedScene" uid="uid://natiymby15em" path="res://Scenes/Table/Table.tscn" id="3_aci43"]
+[ext_resource type="PackedScene" uid="uid://cvkus34exumtj" path="res://Scenes/Table/Table.tscn" id="3_aci43"]
 [ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="3_l02mb"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/EditMenu.gd" id="3_vpord"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ViewMenu.gd" id="4_g67q8"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ToolsMenu.gd" id="5_tqk4h"]
+[ext_resource type="PackedScene" uid="uid://cx3xyydqf58e1" path="res://Editors/VariableCell.tscn" id="9_larw3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f37s"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -30,6 +31,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="MenuBar" type="MenuBar" parent="VBoxContainer" node_paths=PackedStringArray("findDialog", "saveAsPopup", "changeTemplatePopup", "showTemplate")]
+layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 31.0
 script = ExtResource("2_w8ijh")
@@ -114,6 +116,7 @@ script = ExtResource("4_g67q8")
 script = ExtResource("5_tqk4h")
 
 [node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
 offset_top = 35.0
 offset_right = 1152.0
 offset_bottom = 617.0
@@ -121,13 +124,14 @@ size_flags_vertical = 3
 
 [node name="Groups" type="Tree" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("editorWindow")]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 100.0
 offset_bottom = 582.0
 script = ExtResource("1_xvxrf")
 editorWindow = NodePath("../../..")
 
 [node name="Control" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table")]
-layout_mode = 3
+layout_mode = 2
 anchors_preset = 0
 offset_left = 112.0
 offset_right = 1152.0
@@ -136,11 +140,15 @@ size_flags_horizontal = 3
 script = ExtResource("3_l02mb")
 groupsView = NodePath("../Groups")
 table = NodePath("Table")
+variableCell = ExtResource("9_larw3")
 
 [node name="Table" parent="VBoxContainer/GroupsVariables/Control" instance=ExtResource("3_aci43")]
+layout_mode = 1
 columns = ["Name", "Type", "Class", "Description", "Value"]
+CellSize = Vector2i(100, 30)
 
 [node name="FootBar" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
 offset_top = 621.0
 offset_right = 1152.0
 offset_bottom = 648.0
@@ -149,6 +157,7 @@ split_offset = 300
 script = ExtResource("1_mn4yn")
 
 [node name="StatusLabel" type="RichTextLabel" parent="VBoxContainer/FootBar"]
+layout_mode = 2
 offset_right = 870.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
@@ -156,6 +165,7 @@ bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
 [node name="ProgressPath" type="HSplitContainer" parent="VBoxContainer/FootBar"]
+layout_mode = 2
 offset_left = 882.0
 offset_right = 1152.0
 offset_bottom = 27.0
@@ -163,6 +173,7 @@ size_flags_horizontal = 3
 
 [node name="Progress" type="ProgressBar" parent="VBoxContainer/FootBar/ProgressPath"]
 custom_minimum_size = Vector2i(50, 0)
+layout_mode = 2
 offset_right = 129.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
@@ -172,12 +183,14 @@ step = 1.0
 rounded = true
 
 [node name="PathContainer" type="ScrollContainer" parent="VBoxContainer/FootBar/ProgressPath"]
+layout_mode = 2
 offset_left = 141.0
 offset_right = 270.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="Path" type="Label" parent="VBoxContainer/FootBar/ProgressPath/PathContainer"]
+layout_mode = 2
 offset_right = 634.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
@@ -188,7 +201,7 @@ script = ExtResource("2_jsrii")
 [node name="Popups" type="Node" parent="."]
 
 [node name="ChangeTemplate" type="FileDialog" parent="Popups"]
-title = "Select a new template"
+title = "Open a File"
 size = Vector2i(784, 324)
 ok_button_text = "Open"
 file_mode = 0

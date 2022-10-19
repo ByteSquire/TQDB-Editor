@@ -13,6 +13,7 @@ var _content
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	_columns = []
 	_content = get_child(0)
 	if columns != null and columns.size() > 0:
 		var node = _content
@@ -39,6 +40,8 @@ func _ready():
 			node = header
 			node1.add_child(_column)
 			node1 = _column
+			
+			_columns.append(_column.get_child(0))
 		
 		(node.get_parent() as HSplitContainer).dragged.connect(_on_last_split_dragged)
 		
@@ -55,7 +58,7 @@ func _on_last_split_dragged(x):
 	
 
 
-func add_row(values : Array[Control]):
+func add_row_by_values(values : Array[Control]):
 	if not values is Array:
 		printerr("You must pass an array containing the control elements inside the row")
 		return
@@ -64,8 +67,11 @@ func add_row(values : Array[Control]):
 		printerr("You must pass an array that contains a value for every column!")
 		return
 	
+	print("adding children")
 	for i in values.size():
 		values[i].custom_minimum_size = Vector2(100,0)
+		values[i].set_meta("table_cell_position", Vector2i(i, _columns[i].get_child_count()))
+		print("adding: " + str(values[i].name))
 		_columns[i].add_child(values[i])
 	
 	return _columns[0].get_child_count()
@@ -84,4 +90,19 @@ func get_row(index : int):
 		ret += [_column.get_child(index)]
 	
 	return ret
+	
+
+
+func get_cell_position(cell : Control):
+	if not cell.has_meta("table_cell_position"):
+		printerr("The passed node is not part of a table")
+		return -1
+	else:
+		var parent = cell.owner
+		for i in _columns.size():
+			if _columns[i] == parent:
+				return cell.get_meta("table_cell_position")
+	
+	printerr("The passed node is not part of this table")
+	return -1
 	

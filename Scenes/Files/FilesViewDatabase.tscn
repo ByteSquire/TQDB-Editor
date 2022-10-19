@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bx14q4xl3tn2m"]
+[gd_scene load_steps=6 format=3 uid="uid://b0etq518jd7pn"]
 
-[ext_resource type="PackedScene" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
+[ext_resource type="PackedScene" uid="uid://dep437w8jdmqr" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewDatabase.cs" id="2_oktei"]
-[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="3_13c8a"]
+[ext_resource type="Script" path="res://Scripts/Table/SplitContainerSync.gd" id="3_26ow5"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="4_0d73h"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="5_16apx"]
 
@@ -11,11 +11,7 @@ script = ExtResource("2_oktei")
 column2 = NodePath("Columns/Columns23/Column2")
 column3 = NodePath("Columns/Columns23/Column3")
 
-[node name="Header" parent="." index="0"]
-layout_mode = 2
-
 [node name="FileName" parent="Header" index="0"]
-layout_mode = 2
 offset_right = 100.0
 
 [node name="Header2" type="HSplitContainer" parent="Header" index="1" node_paths=PackedStringArray("other")]
@@ -23,7 +19,7 @@ layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 31.0
-script = ExtResource("3_13c8a")
+script = ExtResource("3_26ow5")
 other = NodePath("../../Columns/Columns23")
 
 [node name="FileDescription" parent="Header/Header2" index="0" instance=ExtResource("4_0d73h")]
@@ -37,14 +33,7 @@ offset_left = 112.0
 offset_right = 1040.0
 text = "Template"
 
-[node name="HSeparator" parent="." index="1"]
-layout_mode = 2
-
-[node name="Columns" parent="." index="2"]
-layout_mode = 2
-
 [node name="Column1" parent="Columns" index="0"]
-layout_mode = 2
 offset_right = 100.0
 
 [node name="Columns23" type="HSplitContainer" parent="Columns" index="1" node_paths=PackedStringArray("other")]
@@ -52,7 +41,7 @@ layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0
-script = ExtResource("3_13c8a")
+script = ExtResource("3_26ow5")
 other = NodePath("../../Header/Header2")
 
 [node name="Column2" type="ItemList" parent="Columns/Columns23" index="0" node_paths=PackedStringArray("sortButton")]

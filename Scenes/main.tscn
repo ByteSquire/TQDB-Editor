@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://bjrhgcr8n0v4e" path="res://Scenes/Files/FilesViewAssets.tscn" id="7_njte4"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/DatabaseMenu.gd" id="7_ux155"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ArchiveMenu.gd" id="8_bxck6"]
-[ext_resource type="PackedScene" uid="uid://bx14q4xl3tn2m" path="res://Scenes/Files/FilesViewDatabase.tscn" id="8_jodwh"]
+[ext_resource type="PackedScene" uid="uid://b0etq518jd7pn" path="res://Scenes/Files/FilesViewDatabase.tscn" id="8_jodwh"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ToolsMenu.gd" id="9_h0s88"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ViewMenu.gd" id="10_rod4w"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/HelpMenu.gd" id="11_va2v8"]

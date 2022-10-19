@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cfuxug2lbi53g"]
+[gd_scene load_steps=3 format=3 uid="uid://dmyeih7dad08l"]
 
-[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="1_kpe8p"]
+[ext_resource type="Script" path="res://Scripts/Table/SplitContainerSync.gd" id="1_epl2u"]
+[ext_resource type="Script" path="res://Scripts/Table/TableColumn.gd" id="2_mb17i"]
 
 [node name="TableColumns" type="HSplitContainer"]
 anchors_preset = 15
@@ -8,9 +9,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_kpe8p")
+script = ExtResource("1_epl2u")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="Container" parent="."]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 648.0
+script = ExtResource("2_mb17i")

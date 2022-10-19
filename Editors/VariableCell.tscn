@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cx3xyydqf58e1"]
+
+[node name="VariableCell" type="RichTextLabel"]
+focus_mode = 2
+autowrap_mode = 0
+selection_enabled = true

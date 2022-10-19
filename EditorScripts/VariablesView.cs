@@ -1,13 +1,14 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using TQDB_Parser;
 
 namespace TQDBEditor.EditorScripts
 {
     struct TableColumn
     {
         public SplitContainer Heading { get; set; }
-        public VBoxContainer Column { get; set; }
+        public Container Column { get; set; }
     }
 
     public partial class VariablesView : Control
@@ -16,7 +17,10 @@ namespace TQDBEditor.EditorScripts
         private GroupsView groupsView;
 
         [Export]
-        private Control table;
+        private Table table;
+
+        [Export]
+        private PackedScene variableCell;
 
         private TableColumn nameColumn;
         private TableColumn classColumn;
@@ -52,30 +56,30 @@ namespace TQDBEditor.EditorScripts
             var valueColumnSplit = descriptionColumnSplit.GetChild<SplitContainer>(1);
 
             nameColumn = new TableColumn
-            { Heading = nameHeading, Column = nameColumnSplit.GetChild<VBoxContainer>(0) };
+            { Heading = nameHeading, Column = nameColumnSplit.GetChild<Container>(0) };
             classColumn = new TableColumn
-            { Heading = classHeading, Column = classColumnSplit.GetChild<VBoxContainer>(0) };
+            { Heading = classHeading, Column = classColumnSplit.GetChild<Container>(0) };
             typeColumn = new TableColumn
-            { Heading = typeHeading, Column = typeColumnSplit.GetChild<VBoxContainer>(0) };
+            { Heading = typeHeading, Column = typeColumnSplit.GetChild<Container>(0) };
             descriptionColumn = new TableColumn
             {
                 Heading = descriptionHeading,
-                Column = descriptionColumnSplit.GetChild<VBoxContainer>(0)
+                Column = descriptionColumnSplit.GetChild<Container>(0)
             };
             valueColumn = new TableColumn
-            { Heading = valueHeading, Column = valueColumnSplit.GetChild<VBoxContainer>(0) };
+            { Heading = valueHeading, Column = valueColumnSplit.GetChild<Container>(0) };
         }
 
         private void Clear()
         {
-            ClearBox(nameColumn.Column);
-            ClearBox(classColumn.Column);
-            ClearBox(typeColumn.Column);
-            ClearBox(descriptionColumn.Column);
-            ClearBox(valueColumn.Column);
+            ClearContainer(nameColumn.Column);
+            ClearContainer(classColumn.Column);
+            ClearContainer(typeColumn.Column);
+            ClearContainer(descriptionColumn.Column);
+            ClearContainer(valueColumn.Column);
         }
 
-        private void ClearBox(BoxContainer container)
+        private void ClearContainer(Container container)
         {
             foreach (var child in container.GetChildren())
                 child.QueueFree();
@@ -90,14 +94,23 @@ namespace TQDBEditor.EditorScripts
             foreach (var variable in variables)
             {
                 var row = new Control[5];
-                row[0] = new RichTextLabel { Text = variable.Name, CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
-                row[1] = new RichTextLabel { Text = variable.Class.ToString(), CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
-                row[2] = new RichTextLabel { Text = variable.Type.ToString(), CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
+                var nameLabel = variableCell.Instantiate<RichTextLabel>();
+                nameLabel.Text = variable.Name;
+                var classLabel = variableCell.Instantiate<RichTextLabel>();
+                classLabel.Text = variable.Class.ToString();
+                var typeLabel = variableCell.Instantiate<RichTextLabel>();
+                typeLabel.Text = variable.Type.ToString();
+                var descriptionLabel = variableCell.Instantiate<RichTextLabel>();
+
+                row[0] = nameLabel;
+                row[1] = classLabel;
+                row[2] = typeLabel;
 
                 var desc = variable.Description;
                 if (string.IsNullOrEmpty(desc))
                     desc = " ";
-                row[3] = new RichTextLabel { Text = desc, CustomMinimumSize = size, AutowrapMode = TextServer.AutowrapMode.Off, };
+                descriptionLabel.Text = desc;
+                row[3] = descriptionLabel;
 
                 string value;
                 try
@@ -114,32 +127,17 @@ namespace TQDBEditor.EditorScripts
                 Control valueElement;
                 switch (variable.Class)
                 {
-                    case TQDB_Parser.VariableClass.variable:
+                    case VariableClass.variable:
+                    case VariableClass.@static:
                         valueElement = new LineEdit
                         {
+                            Editable = variable.Class == VariableClass.variable,
                             Text = value,
                             PlaceholderText = variable.GetDefaultValue(),
-                            //CustomMinimumSize = size,
-                            //Size = size,
                         };
                         (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
-                        //(valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
-                        //(valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
                         break;
-                    case TQDB_Parser.VariableClass.@static:
-                        valueElement = new LineEdit
-                        {
-                            Editable = false,
-                            Text = value,
-                            PlaceholderText = variable.GetDefaultValue(),
-                            //CustomMinimumSize = size,
-                            //Size = size,
-                        };
-                        (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
-                        //(valueElement as TextEdit).GetVScrollBar().Scale = new Vector2(0, 0);
-                        //(valueElement as TextEdit).GetHScrollBar().Scale = new Vector2(0, 0);
-                        break;
-                    case TQDB_Parser.VariableClass.picklist:
+                    case VariableClass.picklist:
                         valueElement = new OptionButton { ClipText = true };
                         var defaultValues = variable.DefaultValue.Split(';');
                         var valueId = -1;
@@ -153,14 +151,12 @@ namespace TQDBEditor.EditorScripts
                         (valueElement as OptionButton).Select((valueElement as OptionButton).GetItemIndex(valueId));
                         (valueElement as OptionButton).ItemSelected += x => file.UpdateEntry(variable.Name, (valueElement as OptionButton).GetItemText((int)x));
                         break;
-                    case TQDB_Parser.VariableClass.array:
+                    case VariableClass.array:
                         valueElement = new HBoxContainer();
                         valueElement.AddChild(new Button
                         {
                             Text = "...",
                             SizeFlagsVertical = (int)SizeFlags.Fill,
-                            //CustomMinimumSize = size,
-                            //Size = size,
                         });
 
                         var lineEdit = new LineEdit
@@ -170,7 +166,6 @@ namespace TQDBEditor.EditorScripts
                             SizeFlagsVertical = (int)SizeFlags.ExpandFill,
                             PlaceholderText = variable.GetDefaultValue(),
                             CustomMinimumSize = size,
-                            //Size = size,
                         };
                         lineEdit.TextSubmitted += x => file.UpdateEntry(variable.Name, x);
                         //textEdit.GetVScrollBar().Scale = new Vector2(0, 0);
@@ -183,13 +178,11 @@ namespace TQDBEditor.EditorScripts
                 }
                 valueElement.TooltipText = variable.DefaultValue;
                 valueElement.SizeFlagsHorizontal = (int)SizeFlags.Fill;
-                /*valueElement.Size = */
-                valueElement.CustomMinimumSize = size;
 
                 row[4] = valueElement;
 
                 GD.Print("adding row: " + string.Join<Control>(", ", row));
-                table.Call("AddRow", /*new Godot.Collections.Array<Control>*/(row));
+                table.AddRow(new Godot.Collections.Array<Control>(row));
             }
         }
 

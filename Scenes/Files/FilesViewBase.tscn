@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dm1gw2euo3r7y"]
+[gd_scene load_steps=4 format=3 uid="uid://dep437w8jdmqr"]
 
+[ext_resource type="Script" path="res://Scripts/Table/SplitContainerSync.gd" id="1_2dr5j"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="2_4x23f"]
-[ext_resource type="Script" path="res://Scripts/SplitContainerSync.gd" id="2_puc0o"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_anm70"]
 
 [node name="FilesViewBase" type="VBoxContainer"]
@@ -18,7 +18,7 @@ size_flags_vertical = 3
 layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 31.0
-script = ExtResource("2_puc0o")
+script = ExtResource("1_2dr5j")
 other = NodePath("../Columns")
 
 [node name="FileName" parent="Header" instance=ExtResource("2_4x23f")]
@@ -36,7 +36,7 @@ offset_top = 43.0
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_vertical = 3
-script = ExtResource("2_puc0o")
+script = ExtResource("1_2dr5j")
 other = NodePath("../Header")
 
 [node name="Column1" type="ItemList" parent="Columns" node_paths=PackedStringArray("sortButton")]
