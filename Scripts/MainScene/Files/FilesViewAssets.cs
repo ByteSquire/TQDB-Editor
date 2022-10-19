@@ -11,14 +11,10 @@ namespace TQDBEditor.Files
         [Export]
         private ItemList column2; // status
 
-        [Signal]
-        public delegate void FileActivatedEventHandler(string path);
-
         protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
         protected override void ActivateItem(long index, string path)
         {
-            EmitSignal(nameof(FileActivated), path);
         }
 
         protected override ItemList[] GetAdditionalColumns()

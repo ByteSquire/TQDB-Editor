@@ -20,8 +20,8 @@ namespace TQDBEditor.Files
         //[Export]
         //protected PackedScene fileNameLabelTemplate;
 
-        //[Signal]
-        //public delegate void DeselectLabelEventHandler(Label other);
+        [Signal]
+        public delegate void FileActivatedEventHandler();
 
         protected ILogger logger;
         protected Config configNode;
@@ -54,10 +54,17 @@ namespace TQDBEditor.Files
             Init();
         }
 
+        protected string activeFile;
+
         protected void OnItemActivated(long index)
         {
+            activeFile = Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index));
             ActivateItem(index, Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index)));
+
+            EmitSignal(nameof(FileActivated));
         }
+
+        public string GetActiveFile() => activeFile;
 
         protected abstract void ActivateItem(long index, string path);
 
@@ -236,10 +243,10 @@ namespace TQDBEditor.Files
         //    }
         //}
 
-        public void OnSourceDirSelected(string path)
+        public void OnSourceDirSelected()
         {
             ClearTable();
-            InitDir(path);
+            InitDir(dirView.GetCurrentDir());
         }
 
         public override void _ExitTree()

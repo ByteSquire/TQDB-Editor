@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=5 format=3 uid="uid://bjrhgcr8n0v4e"]
 
-[ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
+[ext_resource type="PackedScene" uid="uid://dm1gw2euo3r7y" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewAssets.cs" id="2_jwlqo"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="3_2qfng"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="4_tvj55"]
@@ -13,6 +13,7 @@ column2 = NodePath("Columns/Column2")
 offset_right = 100.0
 
 [node name="FileStatus" parent="Header" index="1" instance=ExtResource("3_2qfng")]
+layout_mode = 2
 offset_left = 112.0
 text = "Status"
 
@@ -21,6 +22,7 @@ offset_right = 100.0
 
 [node name="Column2" type="ItemList" parent="Columns" index="1" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0

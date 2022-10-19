@@ -23,7 +23,7 @@ namespace TQDBEditor.Files
         protected abstract string SubPath { get; }
 
         [Signal]
-        public delegate void DirSelectedEventHandler(string path);
+        public delegate void DirSelectedEventHandler();
 
         private string relativePath;
         public string SelectedDir => Path.Combine(dirPath, relativePath ?? string.Empty);
@@ -219,8 +219,10 @@ namespace TQDBEditor.Files
             paths.Add(selected.GetText(0));
 
             relativePath = Path.Combine(paths.ToArray());
-            EmitSignal(nameof(DirSelected), Path.Combine(dirPath, relativePath));
+            EmitSignal(nameof(DirSelected));
         }
+
+        public string GetCurrentDir() => Path.Combine(dirPath, relativePath);
 
         public override void _ExitTree()
         {

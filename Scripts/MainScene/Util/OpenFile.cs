@@ -6,6 +6,7 @@ using TQDB_Parser;
 using TQDB_Parser.DBR;
 using Microsoft.Extensions.Logging;
 using TQDBEditor.EditorScripts;
+using System.IO;
 
 namespace TQDBEditor
 {
@@ -13,6 +14,10 @@ namespace TQDBEditor
     {
         [Export]
         private Node files;
+
+        private FilesViewSource sourceView;
+        private FilesViewAssets assetsView;
+        private FilesViewDatabase databaseView;
 
         private Templates templates;
         private TemplateManager tplManager;
@@ -30,19 +35,35 @@ namespace TQDBEditor
 
             GetTree().Root.GuiEmbedSubwindows = false;
 
-            files.GetNode<FilesViewSource>("FilesViewSource").FileActivated += OnFileActivated;
-            files.GetNode<FilesViewAssets>("FilesViewAssets").FileActivated += OnFileActivated;
-            files.GetNode<FilesViewDatabase>("FilesViewDatabase").FileActivated += OnDBRActivated;
+            sourceView = files.GetNode<FilesViewSource>("FilesViewSource");
+            assetsView = files.GetNode<FilesViewAssets>("FilesViewAssets");
+            databaseView = files.GetNode<FilesViewDatabase>("FilesViewDatabase");
+
+            sourceView.FileActivated += OnFileActivated;
+            assetsView.FileActivated += OnAssetActivated;
+            databaseView.FileActivated += OnDBRActivated;
         }
 
-        private void OnFileActivated(string filePath)
+        private void OnFileActivated()
+        {
+            OpenFileExternal(sourceView.GetActiveFile());
+        }
+
+        private void OnAssetActivated()
+        {
+            OpenFileExternal(assetsView.GetActiveFile());
+        }
+
+        private void OpenFileExternal(string filePath)
         {
             // TODO: use known file extensions like msh and so on to start the right tool
             OS.ShellOpen(filePath);
         }
 
-        private void OnDBRActivated(string filePath, string template)
+        private void OnDBRActivated()
         {
+            var filePath = databaseView.GetActiveFile();
+            var template = databaseView.GetActiveTemplate();
             GD.Print(filePath, template);
             try
             {

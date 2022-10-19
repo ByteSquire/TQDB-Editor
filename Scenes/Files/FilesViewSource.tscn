@@ -1,7 +1,22 @@
 [gd_scene load_steps=3 format=3 uid="uid://5vfh6iyyt47w"]
 
-[ext_resource type="PackedScene" uid="uid://bi45sj82oqs4g" path="res://Scenes/Files/FilesViewBase.tscn" id="1_tq10n"]
+[ext_resource type="PackedScene" path="res://Scenes/Files/FilesViewBase.tscn" id="1_tq10n"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewSource.cs" id="2_ndekx"]
 
 [node name="FilesViewSource" instance=ExtResource("1_tq10n")]
 script = ExtResource("2_ndekx")
+
+[node name="Header" parent="." index="0"]
+layout_mode = 2
+
+[node name="FileName" parent="Header" index="0"]
+layout_mode = 2
+
+[node name="HSeparator" parent="." index="1"]
+layout_mode = 2
+
+[node name="Columns" parent="." index="2"]
+layout_mode = 2
+
+[node name="Column1" parent="Columns" index="0"]
+layout_mode = 2
