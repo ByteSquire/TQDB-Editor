@@ -89,7 +89,6 @@ public partial class Table : Control
             GD.PrintErr("You must pass an array that contains a value for every column!");
             return -1;
         }
-        GD.Print("adding children: " + values);
 
         for (int i = 0; i < values.Count; i++)
         {
