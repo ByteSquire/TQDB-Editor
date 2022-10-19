@@ -11,6 +11,20 @@ public partial class Table : Control
     private PackedScene column_button;
     [Export]
     private PackedScene column;
+    [Export]
+    private Vector2i CellSize
+    {
+        get => cellSize;
+        set
+        {
+            if (cellSize != value)
+            {
+                cellSize = value;
+                OnChangedCellSize();
+            }
+        }
+    }
+    private Vector2i cellSize;
 
     private Godot.Collections.Array<VBoxContainer> _columns;
 
@@ -54,7 +68,9 @@ public partial class Table : Control
 
                 _columns.Add(_column.GetChild<VBoxContainer>(0));
             }
-            (node.GetParent() as HSplitContainer).Dragged += (x) =>
+            node.AddChild(new Control());
+            node1.AddChild(new Control());
+            (node as HSplitContainer).Dragged += (x) =>
             {
                 _content.CustomMinimumSize += new Vector2i((int)x - lastDrag, 0);
                 lastDrag = (int)x;
@@ -68,7 +84,6 @@ public partial class Table : Control
 
     int lastDrag = 0;
 
-
     public int AddRow(Godot.Collections.Array<Control> values)
     {
 
@@ -81,7 +96,7 @@ public partial class Table : Control
 
         for (int i = 0; i < values.Count; i++)
         {
-            //values[i].CustomMinimumSize = new Vector2i(100, 0);
+            values[i].CustomMinimumSize = cellSize;
             values[i].SetMeta("table_cell_position", new Vector2i(i, _columns[i].GetChildCount()));
             _columns[i].AddChild(values[i]);
             _columns[i].AddChild(new HSeparator());
@@ -122,5 +137,17 @@ public partial class Table : Control
 
         GD.PrintErr("The passed node is not part of this table");
         return new Vector2i(-1, -1);
+    }
+
+    private void OnChangedCellSize()
+    {
+        if (_columns is null)
+            return;
+        foreach (var column in _columns)
+        {
+            foreach (var child in column.GetChildren())
+                if (child is Control controlChild)
+                    controlChild.CustomMinimumSize = cellSize;
+        }
     }
 }
