@@ -43,7 +43,7 @@ namespace TQDBEditor.EditorScripts
             classHeading.Call("set_synced_offset", config.ClassColumnWidth - 100);
             typeHeading.Call("set_synced_offset", config.TypeColumnWidth - 100);
             descriptionHeading.Call("set_synced_offset", config.DescriptionColumnWidth - 100);
-            //valueHeading.Call("set_synced_offset", config.DefaultValueColumnWidth - 100);
+            valueHeading.Call("set_synced_offset", config.DefaultValueColumnWidth - 100);
 
             var nameColumnSplit = table.GetChild(0).GetChild(1).GetChild<SplitContainer>(0);
             var classColumnSplit = nameColumnSplit.GetChild<SplitContainer>(1);
@@ -199,6 +199,7 @@ namespace TQDBEditor.EditorScripts
             config.ClassColumnWidth = classColumn.Heading.SplitOffset + 100;
             config.TypeColumnWidth = typeColumn.Heading.SplitOffset + 100;
             config.DescriptionColumnWidth = descriptionColumn.Heading.SplitOffset + 100;
+            config.DefaultValueColumnWidth = valueColumn.Heading.SplitOffset + 100;
             base._ExitTree();
         }
     }
