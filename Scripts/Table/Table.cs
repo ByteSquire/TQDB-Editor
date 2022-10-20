@@ -124,10 +124,9 @@ public partial class Table : Control
         }
         else
         {
-            var parent = cell.Owner;
-            foreach (var column in _columns)
-                if (column == parent)
-                    return cell.GetMeta("table_cell_position").AsVector2i();
+            var parent = cell.GetParent<Container>();
+            if (parent != null && _columns.Contains(parent))
+                return cell.GetMeta("table_cell_position").AsVector2i();
         }
 
         GD.PrintErr("The passed node is not part of this table");
