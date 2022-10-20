@@ -7,6 +7,7 @@ func _ready():
 	if not other:
 		return
 	other.connect("dragged", _on_other_dragged)
+	get_child(get_child_count(true)-1, true).gui_input.connect(_dragger_gui_input)
 
 
 func _on_other_dragged(offset):
@@ -21,3 +22,8 @@ func set_synced_offset(offset):
 	other.split_offset = offset
 	dragged.emit(offset)
 	other.dragged.emit(offset)
+
+
+func _dragger_gui_input(event):
+	if event is InputEventMouseButton and event.is_pressed() and event.double_click and event.button_index==1:
+		set_synced_offset(0)
