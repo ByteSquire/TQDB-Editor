@@ -20,6 +20,7 @@ namespace TQDBEditor
         private FilesViewDatabase databaseView;
 
         private TemplateManager tplManager;
+        private PCKHandler pckHandler;
         private ILogger logger;
 
         public override void _Ready()
@@ -29,6 +30,9 @@ namespace TQDBEditor
                 return;
             tplManager = this.GetTemplateManager();
             if (tplManager is null)
+                return;
+            pckHandler = this.GetPCKHandler();
+            if (pckHandler is null)
                 return;
 
             GetTree().Root.GuiEmbedSubwindows = false;
@@ -70,15 +74,21 @@ namespace TQDBEditor
                 tplManager.ResolveIncludes(tplManager.GetRoot(template));
                 var dbrFile = dbrParser.ParseFile(filePath);
 
+                var availableEditors = pckHandler.GetFileEditors(Path.GetFileName(template));
 
-                var genericEditor = ResourceLoader.Load<PackedScene>("res://Editors/Generic.tscn")
-                    .Instantiate<EditorWindow>();
+                EditorWindow editor;
+                if (availableEditors is null || availableEditors.Count < 1)
+                {
+                    logger.LogError("No editors found for file {file}", filePath);
+                    return;
+                }
+                else
+                    editor = availableEditors[0].Instantiate<EditorWindow>();
+                editor.DBRFile = dbrFile;
 
-                genericEditor.DBRFile = dbrFile;
+                editor.Position = GetTree().Root.Position + new Vector2i(40, 40);
 
-                genericEditor.Position = GetTree().Root.Position + new Vector2i(40, 40);
-
-                GetTree().Root.CallDeferred("add_child", genericEditor);
+                GetTree().Root.CallDeferred("add_child", editor);
             }
             catch (Exception e)
             {
