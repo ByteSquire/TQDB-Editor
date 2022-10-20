@@ -16,8 +16,6 @@ namespace TQDBEditor
             var textEdit = GetNode<LineEdit>("TextEdit");
             textEdit.Text = entry.Value;
             textEdit.PlaceholderText = entry.Value;
-
-            RegisterTextEnter(textEdit);
         }
     }
 }
