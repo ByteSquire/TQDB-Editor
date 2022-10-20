@@ -17,6 +17,11 @@ namespace TQDBEditor
             return me.GetNode<Templates>("/root/Templates").TemplateManager;
         }
 
+        public static PCKHandler GetPCKHandler(this Node me)
+        {
+            return me.GetNode<PCKHandler>("/root/PckHandler");
+        }
+
         public static ILogger GetConsoleLogger(this Node me)
         {
             return me.GetNode<ConsoleLogHandler>("/root/Logging").Logger;
