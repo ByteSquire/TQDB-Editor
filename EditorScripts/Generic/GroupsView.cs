@@ -35,14 +35,9 @@ namespace TQDBEditor.EditorScripts
             EmitSignal(nameof(GroupSelected));
         }
 
-        public (IReadOnlyList<VariableBlock>, DBRFile) GetSelectedAndFile()
+        public GroupBlock GetSelectedGroup()
         {
-            return (GetSelectedGroupVariables(), editorWindow.DBRFile);
-        }
-
-        private IReadOnlyList<VariableBlock> GetSelectedGroupVariables()
-        {
-            return groups[GetSelected().GetMeta("group_index").AsInt32()].GetVariables();
+            return groups[GetSelected().GetMeta("group_index").AsInt32()];
         }
 
         private void Init()

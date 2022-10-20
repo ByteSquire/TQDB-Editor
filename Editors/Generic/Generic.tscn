@@ -1,24 +1,24 @@
-[gd_scene load_steps=14 format=3 uid="uid://usu1aub34fpy"]
+[gd_scene load_steps=14 format=3 uid="uid://c8hom6ikhjo35"]
 
-[ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_m0a30"]
-[ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="1_mn4yn"]
-[ext_resource type="Script" path="res://EditorScripts/GroupsView.cs" id="1_xvxrf"]
-[ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="2_jsrii"]
-[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/FileMenu.gd" id="2_o7n4f"]
-[ext_resource type="Script" path="res://EditorScripts/MenuBar/Management/MenuBarManager.cs" id="2_w8ijh"]
-[ext_resource type="PackedScene" uid="uid://cvkus34exumtj" path="res://Scenes/Table/Table.tscn" id="3_aci43"]
-[ext_resource type="Script" path="res://EditorScripts/VariablesView.cs" id="3_l02mb"]
-[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/EditMenu.gd" id="3_vpord"]
-[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ViewMenu.gd" id="4_g67q8"]
-[ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ToolsMenu.gd" id="5_tqk4h"]
-[ext_resource type="PackedScene" uid="uid://cx3xyydqf58e1" path="res://Editors/VariableCell.tscn" id="9_larw3"]
+[ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_r0gj7"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/MenuBar/Management/MenuBarManager.cs" id="2_hle1i"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/MenuBar/SubMenus/FileMenu.gd" id="3_lf7he"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/MenuBar/SubMenus/EditMenu.gd" id="4_k5qgg"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/MenuBar/SubMenus/ViewMenu.gd" id="5_rusfw"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/MenuBar/SubMenus/ToolsMenu.gd" id="6_8mekh"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/GroupsView.cs" id="7_35nl6"]
+[ext_resource type="Script" path="res://EditorScripts/Generic/VariablesView.cs" id="8_01sgg"]
+[ext_resource type="PackedScene" uid="uid://cx3xyydqf58e1" path="res://Editors/Generic/VariableCell.tscn" id="9_4qcl0"]
+[ext_resource type="PackedScene" uid="uid://cvkus34exumtj" path="res://Scenes/Table/Table.tscn" id="10_n1bfr"]
+[ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="11_rhh7q"]
+[ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="12_147mc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f37s"]
 bg_color = Color(0, 0.686275, 0, 1)
 
 [node name="Generic" type="Window" node_paths=PackedStringArray("footBarPathLabel")]
 size = Vector2i(1152, 648)
-script = ExtResource("1_m0a30")
+script = ExtResource("1_r0gj7")
 footBarPathLabel = NodePath("VBoxContainer/FootBar/ProgressPath/PathContainer/Path")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -33,7 +33,7 @@ size_flags_vertical = 3
 [node name="MenuBar" type="MenuBar" parent="VBoxContainer" node_paths=PackedStringArray("findDialog", "saveAsPopup", "changeTemplatePopup", "showTemplate")]
 offset_right = 1152.0
 offset_bottom = 31.0
-script = ExtResource("2_w8ijh")
+script = ExtResource("2_hle1i")
 findDialog = NodePath("../../Popups/Find")
 saveAsPopup = NodePath("../../Popups/SaveAs")
 changeTemplatePopup = NodePath("../../Popups/ChangeTemplate")
@@ -64,7 +64,7 @@ item_7/id = 7
 item_7/separator = true
 item_8/text = "Exit"
 item_8/id = 8
-script = ExtResource("2_o7n4f")
+script = ExtResource("3_lf7he")
 
 [node name="Edit" type="PopupMenu" parent="VBoxContainer/MenuBar"]
 item_count = 8
@@ -88,7 +88,7 @@ item_6/separator = true
 item_7/text = "Set default column widths"
 item_7/id = 7
 item_7/disabled = true
-script = ExtResource("3_vpord")
+script = ExtResource("4_k5qgg")
 
 [node name="View" type="PopupMenu" parent="VBoxContainer/MenuBar"]
 item_count = 5
@@ -109,10 +109,10 @@ item_4/text = "Status Bar"
 item_4/checkable = 1
 item_4/checked = true
 item_4/id = 4
-script = ExtResource("4_g67q8")
+script = ExtResource("5_rusfw")
 
 [node name="Tools" type="PopupMenu" parent="VBoxContainer/MenuBar"]
-script = ExtResource("5_tqk4h")
+script = ExtResource("6_8mekh")
 
 [node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer"]
 offset_top = 35.0
@@ -124,22 +124,23 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2i(100, 0)
 offset_right = 100.0
 offset_bottom = 582.0
-script = ExtResource("1_xvxrf")
+script = ExtResource("7_35nl6")
 editorWindow = NodePath("../../..")
 
-[node name="Control" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table")]
+[node name="Control" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table", "editorWindow")]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 582.0
 size_flags_horizontal = 3
-script = ExtResource("3_l02mb")
+script = ExtResource("8_01sgg")
 groupsView = NodePath("../Groups")
 table = NodePath("Table")
-variableCell = ExtResource("9_larw3")
+variableCell = ExtResource("9_4qcl0")
+editorWindow = NodePath("../../..")
 
-[node name="Table" parent="VBoxContainer/GroupsVariables/Control" instance=ExtResource("3_aci43")]
+[node name="Table" parent="VBoxContainer/GroupsVariables/Control" instance=ExtResource("10_n1bfr")]
 columns = ["Name", "Type", "Class", "Description", "Value"]
 CellHeight = 25
 
@@ -149,7 +150,7 @@ offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_vertical = 8
 split_offset = 300
-script = ExtResource("1_mn4yn")
+script = ExtResource("11_rhh7q")
 
 [node name="StatusLabel" type="RichTextLabel" parent="VBoxContainer/FootBar"]
 offset_right = 870.0
@@ -186,7 +187,7 @@ offset_bottom = 26.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
 text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handles/that"
-script = ExtResource("2_jsrii")
+script = ExtResource("12_147mc")
 
 [node name="Popups" type="Node" parent="."]
 
@@ -232,7 +233,6 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 
-[connection signal="ToggleStatusbar" from="VBoxContainer/MenuBar" to="VBoxContainer/FootBar" method="_on_toggle_status_bar"]
 [connection signal="exit" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_exit"]
 [connection signal="id_pressed" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar/File" method="_on_id_pressed"]
 [connection signal="save" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_save"]

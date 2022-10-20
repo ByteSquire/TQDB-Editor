@@ -1,0 +1,15 @@
+[
+    {
+        "name": "Generic",
+        "templateName": null
+    },
+    {
+        "name": "GenericVariable",
+        "variable": 
+        {
+            "name": null,
+            "class": null,
+            "type" : null
+        }
+    }
+]
