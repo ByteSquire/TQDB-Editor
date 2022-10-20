@@ -23,6 +23,40 @@ namespace TQDBEditor.EditorScripts
             footBarPathLabel.Text += Title;
         }
 
+        protected Stack<(string key, string value)> undo_stack;
+        protected Stack<(string key, string value)> redo_stack;
+
+        protected int changed;
+
+        public void Do(string key, string value)
+        {
+            var entry = DBRFile[key];
+
+            undo_stack ??= new();
+            undo_stack.Push((key, entry.Value));
+            changed++;
+
+            entry.UpdateValue(value);
+        }
+
+        public void Undo()
+        {
+            var (key, value) = undo_stack.Pop();
+            var entry = DBRFile[key];
+
+            redo_stack ??= new();
+            redo_stack.Push((key, entry.Value));
+            changed--;
+
+            DBRFile[key].UpdateValue(value);
+        }
+
+        public void Redo()
+        {
+            var (key, value) = redo_stack.Pop();
+            Do(key, value);
+        }
+
         protected virtual void OnClose() { }
 
         public void OnCloseEditor()

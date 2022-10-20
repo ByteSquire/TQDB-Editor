@@ -48,7 +48,8 @@ namespace TQDBEditor
 
         private void OnConfirmed()
         {
-            entry.UpdateValue(GetChangedValue());
+            parent.Do(VarName, GetChangedValue());
+            CallDeferred("queue_free");
         }
     }
 }
