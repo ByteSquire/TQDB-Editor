@@ -21,9 +21,26 @@ namespace TQDBEditor.EditorScripts
 
         private UndoRedo undoRedo;
 
+        private ConfirmationDialog dialog;
+
+        private ulong lastVersion;
         public override void _Ready()
         {
             undoRedo = new();
+            lastVersion = undoRedo.GetVersion();
+
+            dialog = new ConfirmationDialog
+            {
+                DialogText = "You have unsaved changes, do you want to save before closing?",
+                OkButtonText = "Save",
+            };
+            dialog.AddButton("Discard", true).Pressed += Close;
+            dialog.Confirmed += () => { DBRFile.SaveFile(); Close(); };
+
+            AddChild(dialog);
+
+            undoRedo.VersionChanged += CheckVersion;
+
             CloseRequested += OnCloseEditor;
             Title = Path.GetFileName(DBRFile.FileName);
             footBarPathLabel.Text += Title;
@@ -64,9 +81,33 @@ namespace TQDBEditor.EditorScripts
 
         public void Redo() => undoRedo.Redo();
 
+        public void OnFileSaved()
+        {
+            lastVersion = undoRedo.GetVersion();
+            CheckVersion();
+        }
+
+        private void CheckVersion()
+        {
+            if (lastVersion != undoRedo.GetVersion())
+                Title = Path.GetFileName(DBRFile.FileName) + '*';
+            else
+                Title = Path.GetFileName(DBRFile.FileName);
+        }
+
         protected virtual void OnClose() { }
 
         public void OnCloseEditor()
+        {
+            if (lastVersion != undoRedo.GetVersion())
+            {
+                dialog.PopupCentered();
+            }
+            else
+                Close();
+        }
+
+        private void Close()
         {
             OnClose();
             CallDeferred("queue_free");
