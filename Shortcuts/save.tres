@@ -1,0 +1,9 @@
+[gd_resource type="Shortcut" load_steps=2 format=3 uid="uid://bsa88ktenbh20"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_h8w55"]
+resource_name = "Ctrl+S"
+ctrl_pressed = true
+keycode = 83
+
+[resource]
+events = [SubResource("InputEventKey_h8w55")]

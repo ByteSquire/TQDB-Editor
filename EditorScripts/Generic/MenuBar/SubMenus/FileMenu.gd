@@ -6,6 +6,13 @@ signal set_template
 signal exit
 
 
+var _save = preload("res://Shortcuts/save.tres")
+
+func _ready():
+	set_item_shortcut(get_item_index(3), _save)
+	
+
+
 func _on_id_pressed(id):
 	match(id):
 		3:
