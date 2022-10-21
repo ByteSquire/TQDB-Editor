@@ -13,9 +13,7 @@ namespace TQDBEditor.Files
 
         protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
-        protected override void ActivateItem(long index, string path)
-        {
-        }
+        protected override void ActivateItem(long index, string path) { }
 
         protected override ItemList[] GetAdditionalColumns()
         {
@@ -26,10 +24,8 @@ namespace TQDBEditor.Files
             return new ItemList[] { column2 };
         }
 
-        protected override bool InitFile(string path)
-        {
+        protected override bool InitFile(string path) => true;
 
-            return true;
-        }
+        protected override void RemoveFile(int index) { }
     }
 }

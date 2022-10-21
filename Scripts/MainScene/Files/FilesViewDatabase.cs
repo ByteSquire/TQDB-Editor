@@ -78,5 +78,11 @@ namespace TQDBEditor.Files
             }
             return true;
         }
+
+        protected override void RemoveFile(int index)
+        {
+            column2.RemoveItem(index);
+            column3.RemoveItem(index);
+        }
     }
 }

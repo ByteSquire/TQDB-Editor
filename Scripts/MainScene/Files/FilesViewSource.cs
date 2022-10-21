@@ -26,5 +26,7 @@ namespace TQDBEditor.Files
             // nothing additional to do
             return true;
         }
+
+        protected override void RemoveFile(int index) { }
     }
 }

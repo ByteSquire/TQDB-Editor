@@ -118,6 +118,7 @@ namespace TQDBEditor.Files
         }
 
         protected abstract bool InitFile(string path);
+        protected abstract void RemoveFile(int index);
 
         protected void InitDir(string path)
         {
@@ -174,6 +175,7 @@ namespace TQDBEditor.Files
                 {
                     if (column1.GetItemText(i) == fileName)
                     {
+                        RemoveFile(i);
                         column1.RemoveItem(i);
                         break;
                     }
