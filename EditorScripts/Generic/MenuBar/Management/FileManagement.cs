@@ -14,6 +14,9 @@ namespace TQDBEditor.EditorScripts
         [Export]
         private FileDialog changeTemplatePopup;
 
+        [Signal]
+        public delegate void SavedEventHandler();
+
         private Vector2i minSize = new(600, 500);
 
         private void InitFileManagement()
@@ -43,6 +46,7 @@ namespace TQDBEditor.EditorScripts
             GD.Print("File -> Save");
 
             editorWindow.DBRFile.SaveFile();
+            EmitSignal(nameof(Saved));
         }
 
         public void _on_file_save_as()
@@ -54,6 +58,7 @@ namespace TQDBEditor.EditorScripts
             //saveTree.GrabFocus();
             //saveTree.ScrollToItem(saveTree.GetSelected());
             saveAsPopup.PopupCentered(minSize);
+            EmitSignal(nameof(Saved));
         }
 
         private void SaveFile(string path)
