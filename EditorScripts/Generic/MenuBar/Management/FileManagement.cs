@@ -20,11 +20,15 @@ namespace TQDBEditor.EditorScripts
         {
             changeTemplatePopup.FileSelected += ChangeTemplate;
             var templatePath = Path.Combine(this.GetTemplateManager().TemplateBaseDir,
-                editorWindow.DBRFile.TemplateRoot.FileName);
-            changeTemplatePopup.CurrentFile = templatePath;
+                editorWindow.DBRFile.TemplateRoot.FileName.ToLowerInvariant());
+            // currently overwrites currentpath, not useful
+            //changeTemplatePopup.RootSubfolder = this.GetEditorConfig().WorkingDir;
+            changeTemplatePopup.CurrentPath = templatePath;
 
             saveAsPopup.FileSelected += SaveFile;
-            saveAsPopup.CurrentFile = editorWindow.DBRFile.FilePath;
+            // currently overwrites currentpath, not useful
+            //saveAsPopup.RootSubfolder = this.GetEditorConfig().ModDir;
+            saveAsPopup.CurrentPath = editorWindow.DBRFile.FilePath;
         }
 
         public void _on_file_exit()
@@ -45,6 +49,10 @@ namespace TQDBEditor.EditorScripts
         {
             GD.Print("File -> Save as");
 
+            // doesn't work, for some reason GetSelected still returns null
+            //var saveTree = saveAsPopup.GetVbox().GetChild(2, true).GetChild<Tree>(0, true);
+            //saveTree.GrabFocus();
+            //saveTree.ScrollToItem(saveTree.GetSelected());
             saveAsPopup.PopupCentered(minSize);
         }
 
@@ -57,6 +65,10 @@ namespace TQDBEditor.EditorScripts
         {
             GD.Print("File -> Set template");
 
+            // doesn't work, for some reason GetSelected still returns null
+            //var changeTplTree = changeTemplatePopup.GetVbox().GetChild(2, true).GetChild<Tree>(0, true);
+            //changeTplTree.GrabFocus();
+            //changeTplTree.ScrollToItem(changeTplTree.GetSelected());
             changeTemplatePopup.PopupCentered(minSize);
         }
 
