@@ -39,6 +39,7 @@ namespace TQDBEditor.EditorScripts
         public override void _Ready()
         {
             groupsView.GroupSelected += OnGroupSelected;
+            editorWindow.Reinit += OnGroupSelected;
 
             config = this.GetEditorConfig();
 

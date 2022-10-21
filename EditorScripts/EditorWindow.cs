@@ -14,48 +14,55 @@ namespace TQDBEditor.EditorScripts
         [Export]
         private Label footBarPathLabel;
 
+        [Signal]
+        public delegate void ReinitEventHandler();
+
         public DBRFile DBRFile { get; set; }
+
+        private UndoRedo undoRedo;
 
         public override void _Ready()
         {
+            undoRedo = new();
             CloseRequested += OnCloseEditor;
             Title = Path.GetFileName(DBRFile.FileName);
             footBarPathLabel.Text += Title;
         }
 
-        protected Stack<(string key, string value)> undo_stack;
-        protected Stack<(string key, string value)> redo_stack;
+        public Variant UndoRedoProp
+        {
+            get
+            {
+                // Should never be called
+                GD.Print("Getting");
+                return Variant.CreateFrom(0);
+            }
+            set
+            {
+                GD.Print("Doing: " + value);
+                var input = (string[])value;
+                (var key, var v) = (input[0], input[1]);
 
-        protected int changed;
+                DBRFile[key].UpdateValue(v);
+                EmitSignal(nameof(Reinit));
+            }
+        }
 
         public void Do(string key, string value)
         {
-            var entry = DBRFile[key];
+            undoRedo.CreateAction("Write value");
 
-            undo_stack ??= new();
-            undo_stack.Push((key, entry.Value));
-            changed++;
+            undoRedo.AddDoProperty(this, nameof(UndoRedoProp),
+                Variant.CreateFrom(new string[] { key, value }));
+            undoRedo.AddUndoProperty(this, nameof(UndoRedoProp),
+                Variant.CreateFrom(new string[] { key, DBRFile[key].Value }));
 
-            entry.UpdateValue(value);
+            undoRedo.CommitAction();
         }
 
-        public void Undo()
-        {
-            var (key, value) = undo_stack.Pop();
-            var entry = DBRFile[key];
+        public void Undo() => undoRedo.Undo();
 
-            redo_stack ??= new();
-            redo_stack.Push((key, entry.Value));
-            changed--;
-
-            DBRFile[key].UpdateValue(value);
-        }
-
-        public void Redo()
-        {
-            var (key, value) = redo_stack.Pop();
-            Do(key, value);
-        }
+        public void Redo() => undoRedo.Redo();
 
         protected virtual void OnClose() { }
 
