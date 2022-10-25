@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://bjn30sqvxj4ih"]
+[gd_scene load_steps=30 format=3 uid="uid://bjn30sqvxj4ih"]
 
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModMenu.gd" id="1_35yvy"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarMananger.cs" id="1_hfkuf"]
@@ -27,6 +27,7 @@
 [ext_resource type="PackedScene" uid="uid://cu8gtdofpky2o" path="res://Scenes/Popups/Options.tscn" id="24_dwd8p"]
 [ext_resource type="PackedScene" uid="uid://d15o4bu0bd7i1" path="res://Scenes/Popups/About.tscn" id="25_dng1u"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Util/OpenFile.cs" id="27_gqlxj"]
+[ext_resource type="Script" path="res://Scripts/MainScene/Util/BuildMod.cs" id="28_jkuo5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wpugc"]
 bg_color = Color(0, 0.686275, 0, 1)
@@ -47,6 +48,7 @@ size_flags_vertical = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="MainView" type="VBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -55,6 +57,7 @@ grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="MenuBar" type="MenuBar" parent="MainView" node_paths=PackedStringArray("workingDirDialog", "aboutPopup", "createModDialog", "selectNewModDialog", "optionsDialog")]
+layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 31.0
 script = ExtResource("1_hfkuf")
@@ -215,6 +218,7 @@ item_4/id = 4
 script = ExtResource("11_va2v8")
 
 [node name="FilesConsole" type="VSplitContainer" parent="MainView"]
+layout_mode = 2
 offset_top = 35.0
 offset_right = 1150.0
 offset_bottom = 615.0
@@ -222,12 +226,14 @@ size_flags_vertical = 3
 
 [node name="DirectoriesFiles" type="HSplitContainer" parent="MainView/FilesConsole"]
 custom_minimum_size = Vector2i(0, 100)
+layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 284.0
 size_flags_vertical = 3
 
 [node name="Directories" type="TabContainer" parent="MainView/FilesConsole/DirectoriesFiles"]
 custom_minimum_size = Vector2i(100, 0)
+layout_mode = 2
 offset_right = 569.0
 offset_bottom = 284.0
 size_flags_horizontal = 3
@@ -235,6 +241,7 @@ drag_to_rearrange_enabled = true
 use_hidden_tabs_for_min_size = true
 
 [node name="Sources" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
+layout_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -245,6 +252,7 @@ script = ExtResource("5_x5gho")
 
 [node name="Assets" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
 visible = false
+layout_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -255,6 +263,7 @@ script = ExtResource("6_4mdme")
 
 [node name="Database" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
 visible = false
+layout_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -264,7 +273,7 @@ grow_vertical = 2
 script = ExtResource("7_8khkc")
 
 [node name="Files" type="Control" parent="MainView/FilesConsole/DirectoriesFiles"]
-layout_mode = 3
+layout_mode = 2
 anchors_preset = 0
 offset_left = 581.0
 offset_right = 1150.0
@@ -273,27 +282,32 @@ size_flags_horizontal = 3
 script = ExtResource("6_fcgqe")
 
 [node name="FilesViewSource" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("6_y1vhp")]
+layout_mode = 1
 dirView = NodePath("../../Directories/Sources")
 column1 = NodePath("Columns/Column1")
 
 [node name="FilesViewAssets" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("7_njte4")]
 visible = false
+layout_mode = 1
 dirView = NodePath("../../Directories/Assets")
 column1 = NodePath("Columns/Column1")
 
 [node name="FilesViewDatabase" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("8_jodwh")]
 visible = false
+layout_mode = 1
 dirView = NodePath("../../Directories/Database")
 column1 = NodePath("Columns/Column1")
 
 [node name="ConsoleContainer" type="ScrollContainer" parent="MainView/FilesConsole"]
 custom_minimum_size = Vector2i(0, 40)
+layout_mode = 2
 offset_top = 296.0
 offset_right = 1150.0
 offset_bottom = 580.0
 size_flags_vertical = 3
 
 [node name="Console" type="RichTextLabel" parent="MainView/FilesConsole/ConsoleContainer"]
+layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 284.0
 size_flags_horizontal = 3
@@ -302,6 +316,7 @@ bbcode_enabled = true
 scroll_following = true
 
 [node name="FootBar" type="HSplitContainer" parent="MainView"]
+layout_mode = 2
 offset_top = 619.0
 offset_right = 1150.0
 offset_bottom = 646.0
@@ -309,6 +324,7 @@ split_offset = 300
 script = ExtResource("20_owo0q")
 
 [node name="StatusLabel" type="RichTextLabel" parent="MainView/FootBar"]
+layout_mode = 2
 offset_right = 869.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
@@ -316,6 +332,7 @@ bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
 [node name="ProgressPath" type="HSplitContainer" parent="MainView/FootBar"]
+layout_mode = 2
 offset_left = 881.0
 offset_right = 1150.0
 offset_bottom = 27.0
@@ -323,6 +340,7 @@ size_flags_horizontal = 3
 
 [node name="Progress" type="ProgressBar" parent="MainView/FootBar/ProgressPath"]
 custom_minimum_size = Vector2i(50, 0)
+layout_mode = 2
 offset_right = 128.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
@@ -332,12 +350,14 @@ step = 1.0
 rounded = true
 
 [node name="PathContainer" type="ScrollContainer" parent="MainView/FootBar/ProgressPath"]
+layout_mode = 2
 offset_left = 140.0
 offset_right = 269.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="Path" type="Label" parent="MainView/FootBar/ProgressPath/PathContainer"]
+layout_mode = 2
 offset_right = 634.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
@@ -365,6 +385,13 @@ visible = false
 script = ExtResource("27_gqlxj")
 files = NodePath("../../MainView/FilesConsole/DirectoriesFiles/Files")
 
+[node name="BuildMod" type="Node" parent="Util" node_paths=PackedStringArray("statusLabel", "progress")]
+script = ExtResource("28_jkuo5")
+statusLabel = NodePath("../../MainView/FootBar/StatusLabel")
+progress = NodePath("../../MainView/FootBar/ProgressPath/Progress")
+
+[connection signal="BuildClicked" from="MainView/MenuBar" to="Util/BuildMod" method="Build"]
+[connection signal="StopBuildClicked" from="MainView/MenuBar" to="Util/BuildMod" method="CancelBuild"]
 [connection signal="ToggleStatusBar" from="MainView/MenuBar" to="MainView/FootBar" method="_on_toggle_status_bar"]
 [connection signal="exit" from="MainView/MenuBar/File" to="MainView/MenuBar" method="_on_file_exit"]
 [connection signal="id_pressed" from="MainView/MenuBar/File" to="MainView/MenuBar/File" method="_on_id_pressed"]
@@ -410,3 +437,4 @@ files = NodePath("../../MainView/FilesConsole/DirectoriesFiles/Files")
 [connection signal="install_templates" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_templates"]
 [connection signal="install_tutorials" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_tutorials"]
 [connection signal="tab_changed" from="MainView/FilesConsole/DirectoriesFiles/Directories" to="MainView/FilesConsole/DirectoriesFiles/Files" method="_on_directories_tab_changed"]
+[connection signal="ToggleBuild" from="Util/BuildMod" to="MainView/MenuBar/Build" method="_on_build_mod_toggle_build"]
