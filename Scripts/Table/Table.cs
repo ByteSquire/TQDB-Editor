@@ -92,9 +92,10 @@ public partial class Table : Control
 
         for (int i = 0; i < values.Count; i++)
         {
+            if (_columns[i].GetChildCount() > 0)
+                _columns[i].AddChild(new HSeparator());
             values[i].SetMeta("table_cell_position", new Vector2i(i, _columns[i].GetChildCount()));
             _columns[i].AddChild(values[i]);
-            _columns[i].AddChild(new HSeparator());
         }
 
         return _columns[0].GetChildCount();
