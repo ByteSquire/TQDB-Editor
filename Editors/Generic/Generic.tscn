@@ -31,7 +31,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="MenuBar" type="MenuBar" parent="VBoxContainer" node_paths=PackedStringArray("findDialog", "saveAsPopup", "changeTemplatePopup", "showTemplate")]
-layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 31.0
 script = ExtResource("2_hle1i")
@@ -116,7 +115,6 @@ script = ExtResource("5_rusfw")
 script = ExtResource("6_8mekh")
 
 [node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer"]
-layout_mode = 2
 offset_top = 35.0
 offset_right = 1152.0
 offset_bottom = 617.0
@@ -124,14 +122,13 @@ size_flags_vertical = 3
 
 [node name="Groups" type="Tree" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("editorWindow")]
 custom_minimum_size = Vector2i(100, 0)
-layout_mode = 2
 offset_right = 100.0
 offset_bottom = 582.0
 script = ExtResource("7_35nl6")
 editorWindow = NodePath("../../..")
 
 [node name="Control" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table", "editorWindow")]
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_left = 112.0
 offset_right = 1152.0
@@ -144,12 +141,10 @@ variableCell = ExtResource("9_4qcl0")
 editorWindow = NodePath("../../..")
 
 [node name="Table" parent="VBoxContainer/GroupsVariables/Control" instance=ExtResource("10_n1bfr")]
-layout_mode = 1
 columns = ["Name", "Type", "Class", "Description", "Value"]
 CellHeight = 25
 
 [node name="FootBar" type="HSplitContainer" parent="VBoxContainer"]
-layout_mode = 2
 offset_top = 621.0
 offset_right = 1152.0
 offset_bottom = 648.0
@@ -158,7 +153,6 @@ split_offset = 300
 script = ExtResource("11_rhh7q")
 
 [node name="StatusLabel" type="RichTextLabel" parent="VBoxContainer/FootBar"]
-layout_mode = 2
 offset_right = 870.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
@@ -166,7 +160,6 @@ bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
 [node name="ProgressPath" type="HSplitContainer" parent="VBoxContainer/FootBar"]
-layout_mode = 2
 offset_left = 882.0
 offset_right = 1152.0
 offset_bottom = 27.0
@@ -174,7 +167,6 @@ size_flags_horizontal = 3
 
 [node name="Progress" type="ProgressBar" parent="VBoxContainer/FootBar/ProgressPath"]
 custom_minimum_size = Vector2i(50, 0)
-layout_mode = 2
 offset_right = 129.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
@@ -184,14 +176,12 @@ step = 1.0
 rounded = true
 
 [node name="PathContainer" type="ScrollContainer" parent="VBoxContainer/FootBar/ProgressPath"]
-layout_mode = 2
 offset_left = 141.0
 offset_right = 270.0
 offset_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="Path" type="Label" parent="VBoxContainer/FootBar/ProgressPath/PathContainer"]
-layout_mode = 2
 offset_right = 634.0
 offset_bottom = 26.0
 size_flags_horizontal = 3
@@ -246,6 +236,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 
 [connection signal="Redo" from="VBoxContainer/MenuBar" to="." method="Redo"]
+[connection signal="Saved" from="VBoxContainer/MenuBar" to="." method="OnFileSaved"]
 [connection signal="Undo" from="VBoxContainer/MenuBar" to="." method="Undo"]
 [connection signal="exit" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar" method="_on_file_exit"]
 [connection signal="id_pressed" from="VBoxContainer/MenuBar/File" to="VBoxContainer/MenuBar/File" method="_on_id_pressed"]
