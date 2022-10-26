@@ -98,7 +98,7 @@ public partial class Table : Control
             _columns[i].AddChild(values[i]);
         }
 
-        return _columns[0].GetChildCount();
+        return _columns[0].GetChildCount() - 1;
     }
 
     public Control GetCellAt(Vector2i cellPosition)
@@ -108,6 +108,11 @@ public partial class Table : Control
 
     public Godot.Collections.Array<Control> GetRow(int index)
     {
+        if (_columns[0].GetChildCount() <= index)
+        {
+            GD.PrintErr("The passed index " + index + " is out of range for this table");
+            return null;
+        }
         var ret = new Godot.Collections.Array<Control>();
 
         foreach (var column in _columns)
@@ -132,6 +137,13 @@ public partial class Table : Control
 
         GD.PrintErr("The passed node is not part of this table");
         return new Vector2i(-1, -1);
+    }
+
+    public void FocusRow(int index)
+    {
+        if (_columns is null)
+            return;
+        _columns[0].GetChild<Control>(index).GrabFocus();
     }
 
     private void OnChangedCellSize()
