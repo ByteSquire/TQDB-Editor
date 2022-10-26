@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TQDB_Parser.DBR;
@@ -16,7 +17,9 @@ namespace TQDBEditor.EditorScripts
         [Export]
         private EditorMenuBarManager menuBar;
         [Export]
-        private AcceptDialog findDialog;
+        private PackedScene findDialogScene;
+
+        private Window findDialog;
 
         [Signal]
         public delegate void ReinitEventHandler();
@@ -28,6 +31,7 @@ namespace TQDBEditor.EditorScripts
         private UndoRedo undoRedo;
 
         private ConfirmationDialog dialog;
+        private AcceptDialog searchFailedDialog;
 
         private ulong lastVersion;
 
@@ -39,10 +43,23 @@ namespace TQDBEditor.EditorScripts
         private CheckButton mClassButton;
         private CheckButton mDescButton;
         private CheckButton mDefaultButton;
+        private CheckButton mInvalidButton;
+
+
+        Timer changedTimer;
+
         public override void _Ready()
         {
             undoRedo = new();
             lastVersion = undoRedo.GetVersion();
+            changedTimer = new()
+            {
+                Autostart = false,
+                Name = "SearchText timer",
+                Paused = false
+            };
+            AddChild(changedTimer);
+            changedTimer.Timeout += DoSearch;
 
             dialog = new ConfirmationDialog
             {
@@ -54,32 +71,42 @@ namespace TQDBEditor.EditorScripts
 
             AddChild(dialog);
 
+            findDialog = findDialogScene.Instantiate<Window>();
+            AddChild(findDialog);
+
+            searchFailedDialog = new AcceptDialog()
+            {
+                Title = "Search failed",
+                DialogText = "No search results found",
+            };
+            findDialog.AddChild(searchFailedDialog);
+
             undoRedo.VersionChanged += CheckVersion;
 
             CloseRequested += OnCloseEditor;
             Title = Path.GetFileName(DBRFile.FileName);
             footBarPathLabel.Text += Title;
 
-            findDialog.Confirmed += OnFindCancelled;
+            findDialog.GetNode<Button>("Base/Buttons/Cancel").Pressed += OnFindCancelled;
+            findDialog.GetNode<Button>("Base/Buttons/Previous").Pressed += FindPrevious;
+            findDialog.GetNode<Button>("Base/Buttons/Next").Pressed += FindNext;
+            findDialog.CloseRequested += OnFindCancelled;
 
-            findDialog.AddButton("Previous", action: "FindPrevious");
-            findDialog.AddButton("Next", action: "FindNext");
-            findDialog.CustomAction += FindAction;
-
-            searchText = findDialog.GetNode<TextEdit>("Content/Split/SearchText");
+            searchText = findDialog.GetNode<TextEdit>("Base/Content/Split/SearchText");
             searchText.CustomMinimumSize = new Vector2i(300, 0);
             searchText.TextChanged += SearchTextChanged;
 
-            searchResults = findDialog.GetNode<ItemList>("Content/Split/ItemList");
+            searchResults = findDialog.GetNode<ItemList>("Base/Content/Split/ItemList");
             searchResults.CustomMinimumSize = new Vector2i(300, 0);
             searchResults.ItemSelected += SearchResults_ItemSelected;
 
-            mValueButton = findDialog.GetNode<CheckButton>("Content/Options/MatchValue");
-            mNameButton = findDialog.GetNode<CheckButton>("Content/Options/MatchName");
-            mClassButton = findDialog.GetNode<CheckButton>("Content/Options/MatchClass");
-            mTypeButton = findDialog.GetNode<CheckButton>("Content/Options/MatchType");
-            mDescButton = findDialog.GetNode<CheckButton>("Content/Options/MatchDescription");
-            mDefaultButton = findDialog.GetNode<CheckButton>("Content/Options/MatchDefaultValue");
+            mValueButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchValue");
+            mNameButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchName");
+            mClassButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchClass");
+            mTypeButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchType");
+            mDescButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchDescription");
+            mDefaultButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchDefaultValue");
+            mInvalidButton = findDialog.GetNode<CheckButton>("Base/Content/Options/MatchInvalid");
         }
 
         public Variant UndoRedoProp
@@ -126,26 +153,18 @@ namespace TQDBEditor.EditorScripts
         private void OnFindCancelled()
         {
             searchText.Text = string.Empty;
-        }
-
-        private void FindAction(StringName action)
-        {
-            switch (action)
-            {
-                case "FindPrevious":
-                    FindPrevious();
-                    break;
-                case "FindNext":
-                    FindNext();
-                    break;
-                default:
-                    GD.Print("Triggered unknown custom action " + action);
-                    break;
-            }
+            searchResults.Clear();
+            findDialog.Hide();
         }
 
         private void SearchTextChanged()
         {
+            changedTimer.Start(.3);
+        }
+
+        private void DoSearch()
+        {
+            changedTimer.Stop();
             var str = searchText.Text;
             searchResults.Clear();
 
@@ -155,26 +174,34 @@ namespace TQDBEditor.EditorScripts
             var matchType = mTypeButton.ButtonPressed;
             var matchDesc = mDescButton.ButtonPressed;
             var matchDefault = mDefaultButton.ButtonPressed;
+            var matchInvalid = mInvalidButton.ButtonPressed;
 
             str = '*' + str + '*';
             var matchingEntries = DBRFile.Entries.Where(entry =>
+                (matchInvalid || entry.IsValid()) &&
+                (
                 (matchValue && entry.Value.MatchN(str)) ||
                 (matchName && entry.Name.MatchN(str)) ||
                 (matchType && entry.Template.Type.ToString().MatchN(str)) ||
                 (matchClass && entry.Template.Class.ToString().MatchN(str)) ||
                 (matchDesc && entry.Template.Description.ToString().MatchN(str)) ||
                 (matchDefault && entry.Template.GetDefaultValue().MatchN(str))
+                )
             );
 
             if (!matchingEntries.Any())
+            {
+                searchFailedDialog.Position = findDialog.Position + findDialog.Size / 2;
+                searchFailedDialog.Popup();
                 return;
-
-            GD.Print(string.Join(", ", matchingEntries));
+            }
 
             foreach (var matchingEntry in matchingEntries)
                 searchResults.AddItem(matchingEntry.Name);
 
             searchResults.Select(0);
+            selectedResult = DBRFile[searchResults.GetItemText(0)];
+            EmitSignal(nameof(FocusOnEntry));
         }
 
         private DBREntry selectedResult;
@@ -188,25 +215,39 @@ namespace TQDBEditor.EditorScripts
 
         private void FindPrevious()
         {
+            if (searchResults.ItemCount == 0)
+                return;
+            if (!searchResults.IsAnythingSelected())
+                return;
             var curr = searchResults.GetSelectedItems()[0];
             if (curr < 1)
                 return;
+            searchResults.Select(curr - 1);
+            SearchResults_ItemSelected(curr - 1);
         }
 
         private void FindNext()
         {
+            if (searchResults.ItemCount == 0)
+                return;
+            if (!searchResults.IsAnythingSelected())
+            {
+                searchResults.Select(0);
+                return;
+            }
             var curr = searchResults.GetSelectedItems()[0];
             if (curr > searchResults.ItemCount - 2)
                 return;
+            searchResults.Select(curr + 1);
+            SearchResults_ItemSelected(curr + 1);
         }
 
         public void ShowFind()
         {
             findDialog.GuiEmbedSubwindows = false;
-            findDialog.Popup(new Rect2i(
-                new Vector2i(Math.Max(0, Position.x - 500), Position.y),
-                new Vector2i(500, Size.y))
-                );
+            findDialog.Position = new Vector2i(Math.Max(0, Position.x - 500), Position.y);
+            findDialog.Size = new Vector2i(500, Size.y);
+            findDialog.Show();
         }
 
         private void CheckVersion()
