@@ -13,6 +13,8 @@ namespace TQDBEditor.EditorScripts
     {
         [Export]
         private Label footBarPathLabel;
+        [Export]
+        private EditorMenuBarManager menuBar;
 
         [Signal]
         public delegate void ReinitEventHandler();
@@ -85,6 +87,11 @@ namespace TQDBEditor.EditorScripts
         {
             lastVersion = undoRedo.GetVersion();
             CheckVersion();
+        }
+
+        public void FindString()
+        {
+            var str = menuBar.GetFindString();
         }
 
         private void CheckVersion()
