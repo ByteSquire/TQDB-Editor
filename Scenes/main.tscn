@@ -1,7 +1,7 @@
-[gd_scene load_steps=30 format=3 uid="uid://bjn30sqvxj4ih"]
+[gd_scene load_steps=30 format=3 uid="uid://c5psysfsju3ki"]
 
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModMenu.gd" id="1_35yvy"]
-[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarMananger.cs" id="1_hfkuf"]
+[ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarManager.cs" id="1_hfkuf"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/FileMenu.gd" id="1_x47lb"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/EditMenu.gd" id="2_bnssu"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/BuildMenu.gd" id="2_bwdgy"]
