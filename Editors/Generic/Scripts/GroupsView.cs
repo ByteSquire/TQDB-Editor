@@ -3,8 +3,9 @@ using System;
 using System.Collections.Generic;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
+using TQDBEditor.EditorScripts;
 
-namespace TQDBEditor.EditorScripts
+namespace TQDBEditor.GenericEditor
 {
     public partial class GroupsView : Tree
     {

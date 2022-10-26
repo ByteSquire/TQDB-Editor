@@ -2,7 +2,7 @@ using Godot;
 using System;
 using TQDB_Parser.DBR;
 
-namespace TQDBEditor
+namespace TQDBEditor.GenericEditor
 {
     public partial class GenericVariable : EditorDialog
     {

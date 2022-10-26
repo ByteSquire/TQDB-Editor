@@ -7,8 +7,9 @@ using System.Reflection;
 using TQDB_Parser;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
+using TQDBEditor.EditorScripts;
 
-namespace TQDBEditor.EditorScripts
+namespace TQDBEditor.GenericEditor
 {
     struct TableColumn
     {
