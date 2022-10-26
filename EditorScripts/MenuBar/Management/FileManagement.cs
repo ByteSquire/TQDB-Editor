@@ -6,7 +6,7 @@ using TQDB_Parser.DBR;
 
 namespace TQDBEditor.EditorScripts
 {
-    public partial class MenuBarManager : MenuBar
+    public partial class EditorMenuBarManager : MenuBar
     {
         [Export]
         private FileDialog saveAsPopup;

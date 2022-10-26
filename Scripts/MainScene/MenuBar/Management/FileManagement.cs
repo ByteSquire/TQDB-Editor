@@ -3,7 +3,7 @@ using System;
 
 namespace TQDBEditor
 {
-    public partial class MenuBarMananger : MenuBar
+    public partial class MenuBarManager : MenuBar
     {
         [Export]
         private FileDialog workingDirDialog;

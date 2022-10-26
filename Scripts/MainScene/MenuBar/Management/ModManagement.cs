@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace TQDBEditor
 {
-    public partial class MenuBarMananger : MenuBar
+    public partial class MenuBarManager : MenuBar
     {
         [Export]
         private ConfirmationDialog createModDialog;

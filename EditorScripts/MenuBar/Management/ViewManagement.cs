@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TQDBEditor.EditorScripts
 {
-    public partial class MenuBarManager : MenuBar
+    public partial class EditorMenuBarManager : MenuBar
     {
         [Export]
         private AcceptDialog showTemplate;
