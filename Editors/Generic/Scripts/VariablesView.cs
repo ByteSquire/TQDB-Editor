@@ -96,6 +96,7 @@ namespace TQDBEditor.GenericEditor
         }
 
         private IReadOnlyList<VariableBlock> currentVariables;
+        private Dictionary<string, int> variableRowMap;
         private GroupBlock currentGroup;
 
         private void OnGroupSelected()
@@ -104,6 +105,7 @@ namespace TQDBEditor.GenericEditor
             var group = currentGroup = groupsView.GetSelectedGroup();
             var variables = currentVariables = editorWindow.DBRFile[group].Select(x => x.Template).ToList();
             var file = editorWindow.DBRFile;
+            variableRowMap = new();
 
             foreach (var variable in variables)
             {
@@ -143,7 +145,7 @@ namespace TQDBEditor.GenericEditor
 
                 row[4] = valueElement;
 
-                table.AddRow(new Godot.Collections.Array<Control>(row));
+                variableRowMap.Add(variable.Name, table.AddRow(new Godot.Collections.Array<Control>(row)));
             }
         }
 
@@ -230,6 +232,15 @@ namespace TQDBEditor.GenericEditor
                     return null;
             }
             return valueElement;
+        }
+
+        public void SelectEntry()
+        {
+            var entry = editorWindow.GetFocussedEntry();
+            var row = table.GetRow(variableRowMap[entry.Name]);
+
+            row[0].FocusMode = FocusModeEnum.All;
+            row[0].GrabFocus();
         }
 
         private void OnLabelDoubleClicked(RichTextLabel obj)

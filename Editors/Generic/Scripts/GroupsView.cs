@@ -19,12 +19,12 @@ namespace TQDBEditor.GenericEditor
 
         private TreeItem root;
 
-        private List<GroupBlock> groups;
+        private Dictionary<TreeItem, GroupBlock> groups;
 
         public override void _Ready()
         {
             dbrTemplate = editorWindow.DBRFile.TemplateRoot;
-            groups = new List<GroupBlock>(dbrTemplate.GetGroups(true).Count);
+            groups = new(dbrTemplate.GetGroups(true).Count);
 
             ItemSelected += OnItemSelected;
 
@@ -38,7 +38,23 @@ namespace TQDBEditor.GenericEditor
 
         public GroupBlock GetSelectedGroup()
         {
-            return groups[GetSelected().GetMeta("group_index").AsInt32()];
+            return groups[GetSelected()];
+        }
+
+        public void SelectEntry()
+        {
+            var entry = editorWindow.GetFocussedEntry();
+            foreach (var pair in groups)
+            {
+                if (pair.Value.IsChild(entry.Template, true))
+                    pair.Key.UncollapseTree();
+                if (pair.Value.IsChild(entry.Template))
+                {
+                    pair.Key.Select(0);
+                    ScrollToItem(pair.Key, true);
+                    EnsureCursorIsVisible();
+                }
+            }
         }
 
         private void Init()
@@ -47,8 +63,7 @@ namespace TQDBEditor.GenericEditor
 
             root = CreateItem();
             root.SetText(0, "All Groups");
-            groups.Add(dbrTemplate);
-            root.SetMeta("group_index", Variant.CreateFrom(groups.Count - 1));
+            groups.Add(root, dbrTemplate);
 
             foreach (var group in dbrTemplate.GetGroups())
             {
@@ -62,8 +77,7 @@ namespace TQDBEditor.GenericEditor
             var newGroup = CreateItem(parentGroup);
             newGroup.Collapsed = true;
             newGroup.SetText(0, group.Name);
-            groups.Add(group);
-            newGroup.SetMeta("group_index", Variant.CreateFrom(groups.Count - 1));
+            groups.Add(newGroup, group);
 
             foreach (var subGroup in group.GetGroups())
             {
