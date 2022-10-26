@@ -5,9 +5,6 @@ namespace TQDBEditor.EditorScripts
 {
     public partial class EditorMenuBarManager : MenuBar
     {
-        [Export]
-        private ConfirmationDialog findDialog;
-
         [Signal]
         public delegate void EditEntryEventHandler();
         [Signal]
@@ -19,7 +16,6 @@ namespace TQDBEditor.EditorScripts
 
         private void InitEditManagement()
         {
-            findDialog.Confirmed += OnFindConfirmed;
         }
 
         public void _on_edit_edit_entry()
@@ -33,20 +29,8 @@ namespace TQDBEditor.EditorScripts
         {
             GD.Print("Edit -> Find");
 
-            findDialog.PopupCentered(new Vector2i(300, 100));
-        }
-
-        private string searchString;
-
-        private void OnFindConfirmed()
-        {
-            searchString = findDialog.GetNode<TextEdit>("SearchText").Text;
-            findDialog.GetNode<TextEdit>("SearchText").Text = string.Empty;
-
             EmitSignal(nameof(Find));
         }
-
-        public string GetFindString() => searchString;
 
         public void _on_edit_undo()
         {

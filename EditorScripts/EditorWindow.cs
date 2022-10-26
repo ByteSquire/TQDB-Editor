@@ -15,9 +15,13 @@ namespace TQDBEditor.EditorScripts
         private Label footBarPathLabel;
         [Export]
         private EditorMenuBarManager menuBar;
+        [Export]
+        private AcceptDialog findDialog;
 
         [Signal]
         public delegate void ReinitEventHandler();
+        [Signal]
+        public delegate void FocusOnEntryEventHandler();
 
         public DBRFile DBRFile { get; set; }
 
@@ -26,6 +30,15 @@ namespace TQDBEditor.EditorScripts
         private ConfirmationDialog dialog;
 
         private ulong lastVersion;
+
+        private TextEdit searchText;
+        private ItemList searchResults;
+        private CheckButton mValueButton;
+        private CheckButton mNameButton;
+        private CheckButton mTypeButton;
+        private CheckButton mClassButton;
+        private CheckButton mDescButton;
+        private CheckButton mDefaultButton;
         public override void _Ready()
         {
             undoRedo = new();
@@ -46,6 +59,27 @@ namespace TQDBEditor.EditorScripts
             CloseRequested += OnCloseEditor;
             Title = Path.GetFileName(DBRFile.FileName);
             footBarPathLabel.Text += Title;
+
+            findDialog.Confirmed += OnFindCancelled;
+
+            findDialog.AddButton("Previous", action: "FindPrevious");
+            findDialog.AddButton("Next", action: "FindNext");
+            findDialog.CustomAction += FindAction;
+
+            searchText = findDialog.GetNode<TextEdit>("Content/Split/SearchText");
+            searchText.CustomMinimumSize = new Vector2i(300, 0);
+            searchText.TextChanged += SearchTextChanged;
+
+            searchResults = findDialog.GetNode<ItemList>("Content/Split/ItemList");
+            searchResults.CustomMinimumSize = new Vector2i(300, 0);
+            searchResults.ItemSelected += SearchResults_ItemSelected;
+
+            mValueButton = findDialog.GetNode<CheckButton>("Content/Options/MatchValue");
+            mNameButton = findDialog.GetNode<CheckButton>("Content/Options/MatchName");
+            mClassButton = findDialog.GetNode<CheckButton>("Content/Options/MatchClass");
+            mTypeButton = findDialog.GetNode<CheckButton>("Content/Options/MatchType");
+            mDescButton = findDialog.GetNode<CheckButton>("Content/Options/MatchDescription");
+            mDefaultButton = findDialog.GetNode<CheckButton>("Content/Options/MatchDefaultValue");
         }
 
         public Variant UndoRedoProp
@@ -89,9 +123,90 @@ namespace TQDBEditor.EditorScripts
             CheckVersion();
         }
 
-        public void FindString()
+        private void OnFindCancelled()
         {
-            var str = menuBar.GetFindString();
+            searchText.Text = string.Empty;
+        }
+
+        private void FindAction(StringName action)
+        {
+            switch (action)
+            {
+                case "FindPrevious":
+                    FindPrevious();
+                    break;
+                case "FindNext":
+                    FindNext();
+                    break;
+                default:
+                    GD.Print("Triggered unknown custom action " + action);
+                    break;
+            }
+        }
+
+        private void SearchTextChanged()
+        {
+            var str = searchText.Text;
+            searchResults.Clear();
+
+            var matchValue = mValueButton.ButtonPressed;
+            var matchName = mNameButton.ButtonPressed;
+            var matchClass = mClassButton.ButtonPressed;
+            var matchType = mTypeButton.ButtonPressed;
+            var matchDesc = mDescButton.ButtonPressed;
+            var matchDefault = mDefaultButton.ButtonPressed;
+
+            str = '*' + str + '*';
+            var matchingEntries = DBRFile.Entries.Where(entry =>
+                (matchValue && entry.Value.MatchN(str)) ||
+                (matchName && entry.Name.MatchN(str)) ||
+                (matchType && entry.Template.Type.ToString().MatchN(str)) ||
+                (matchClass && entry.Template.Class.ToString().MatchN(str)) ||
+                (matchDesc && entry.Template.Description.ToString().MatchN(str)) ||
+                (matchDefault && entry.Template.GetDefaultValue().MatchN(str))
+            );
+
+            if (!matchingEntries.Any())
+                return;
+
+            GD.Print(string.Join(", ", matchingEntries));
+
+            foreach (var matchingEntry in matchingEntries)
+                searchResults.AddItem(matchingEntry.Name);
+
+            searchResults.Select(0);
+        }
+
+        private DBREntry selectedResult;
+        public DBREntry GetFocussedEntry() => selectedResult;
+
+        private void SearchResults_ItemSelected(long index)
+        {
+            selectedResult = DBRFile[searchResults.GetItemText((int)index)];
+            EmitSignal(nameof(FocusOnEntry));
+        }
+
+        private void FindPrevious()
+        {
+            var curr = searchResults.GetSelectedItems()[0];
+            if (curr < 1)
+                return;
+        }
+
+        private void FindNext()
+        {
+            var curr = searchResults.GetSelectedItems()[0];
+            if (curr > searchResults.ItemCount - 2)
+                return;
+        }
+
+        public void ShowFind()
+        {
+            findDialog.GuiEmbedSubwindows = false;
+            findDialog.Popup(new Rect2i(
+                new Vector2i(Math.Max(0, Position.x - 500), Position.y),
+                new Vector2i(500, Size.y))
+                );
         }
 
         private void CheckVersion()

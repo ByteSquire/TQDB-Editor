@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://l7pt5adr3cww"]
+[gd_scene load_steps=15 format=3 uid="uid://b4l3bnx42yqlg"]
 
 [ext_resource type="Script" path="res://EditorScripts/EditorWindow.cs" id="1_r0gj7"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/Management/EditorMenuBarManager.cs" id="2_hle1i"]
@@ -6,9 +6,10 @@
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/EditMenu.gd" id="4_k5qgg"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ViewMenu.gd" id="5_rusfw"]
 [ext_resource type="Script" path="res://EditorScripts/MenuBar/SubMenus/ToolsMenu.gd" id="6_8mekh"]
-[ext_resource type="Script" path="res://EditorScripts/Generic/GroupsView.cs" id="7_35nl6"]
-[ext_resource type="Script" path="res://EditorScripts/Generic/VariablesView.cs" id="8_01sgg"]
-[ext_resource type="PackedScene" uid="uid://cx3xyydqf58e1" path="res://Editors/Generic/VariableCell.tscn" id="9_4qcl0"]
+[ext_resource type="Script" path="res://Editors/Generic/Scripts/GroupsVariables.cs" id="7_5rfsj"]
+[ext_resource type="Script" path="res://Editors/Generic/Scripts/GroupsView.cs" id="7_35nl6"]
+[ext_resource type="Script" path="res://Editors/Generic/Scripts/VariablesView.cs" id="8_01sgg"]
+[ext_resource type="PackedScene" uid="uid://duvwkirpr48vw" path="res://Editors/Generic/VariableCell.tscn" id="9_4qcl0"]
 [ext_resource type="PackedScene" uid="uid://cvkus34exumtj" path="res://Scenes/Table/Table.tscn" id="10_n1bfr"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="11_rhh7q"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/Path.gd" id="12_147mc"]
@@ -16,10 +17,12 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f37s"]
 bg_color = Color(0, 0.686275, 0, 1)
 
-[node name="Generic" type="Window" node_paths=PackedStringArray("footBarPathLabel")]
+[node name="Generic" type="Window" node_paths=PackedStringArray("footBarPathLabel", "menuBar", "findDialog")]
 size = Vector2i(1152, 648)
 script = ExtResource("1_r0gj7")
 footBarPathLabel = NodePath("VBoxContainer/FootBar/ProgressPath/PathContainer/Path")
+menuBar = NodePath("VBoxContainer/MenuBar")
+findDialog = NodePath("Popups/Find")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -30,12 +33,11 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MenuBar" type="MenuBar" parent="VBoxContainer" node_paths=PackedStringArray("findDialog", "saveAsPopup", "changeTemplatePopup", "showTemplate")]
+[node name="MenuBar" type="MenuBar" parent="VBoxContainer" node_paths=PackedStringArray("saveAsPopup", "changeTemplatePopup", "showTemplate")]
 layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 31.0
 script = ExtResource("2_hle1i")
-findDialog = NodePath("../../Popups/Find")
 saveAsPopup = NodePath("../../Popups/SaveAs")
 changeTemplatePopup = NodePath("../../Popups/ChangeTemplate")
 showTemplate = NodePath("../../Popups/Template")
@@ -115,12 +117,14 @@ script = ExtResource("5_rusfw")
 [node name="Tools" type="PopupMenu" parent="VBoxContainer/MenuBar"]
 script = ExtResource("6_8mekh")
 
-[node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer"]
+[node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer" node_paths=PackedStringArray("editorWindow")]
 layout_mode = 2
 offset_top = 35.0
 offset_right = 1152.0
 offset_bottom = 617.0
 size_flags_vertical = 3
+script = ExtResource("7_5rfsj")
+editorWindow = NodePath("../..")
 
 [node name="Groups" type="Tree" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("editorWindow")]
 custom_minimum_size = Vector2i(100, 0)
@@ -215,21 +219,82 @@ size = Vector2i(784, 324)
 access = 2
 filters = PackedStringArray("*.dbr")
 
-[node name="Find" type="ConfirmationDialog" parent="Popups"]
+[node name="Find" type="AcceptDialog" parent="Popups"]
 title = "Search in file"
-ok_button_text = "Search"
+ok_button_text = "Cancel"
 
-[node name="SearchText" type="TextEdit" parent="Popups/Find"]
-anchors_preset = 14
-anchor_top = 0.5
+[node name="Content" type="HBoxContainer" parent="Popups/Find"]
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_top = -4.0
-offset_bottom = 4.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Options" type="VBoxContainer" parent="Popups/Find/Content"]
+layout_mode = 2
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+
+[node name="MatchValue" type="CheckButton" parent="Popups/Find/Content/Options"]
+layout_mode = 2
+offset_right = 44.0
+offset_bottom = 24.0
+button_pressed = true
+text = "Match Value"
+
+[node name="MatchName" type="CheckButton" parent="Popups/Find/Content/Options"]
+layout_mode = 2
+offset_right = 44.0
+offset_bottom = 24.0
+text = "Match Name"
+
+[node name="MatchType" type="CheckButton" parent="Popups/Find/Content/Options"]
+layout_mode = 2
+offset_right = 44.0
+offset_bottom = 24.0
+text = "Match Type"
+
+[node name="MatchClass" type="CheckButton" parent="Popups/Find/Content/Options"]
+layout_mode = 2
+offset_right = 44.0
+offset_bottom = 24.0
+text = "Match Class"
+
+[node name="MatchDescription" type="CheckButton" parent="Popups/Find/Content/Options"]
+layout_mode = 2
+offset_right = 44.0
+offset_bottom = 24.0
+text = "Match Description"
+
+[node name="MatchDefaultValue" type="CheckButton" parent="Popups/Find/Content/Options"]
+layout_mode = 2
+offset_right = 44.0
+offset_bottom = 24.0
+text = "Match Default Value"
+
+[node name="Split" type="HSplitContainer" parent="Popups/Find/Content"]
+layout_mode = 2
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SearchText" type="TextEdit" parent="Popups/Find/Content/Split"]
+layout_mode = 2
+offset_right = 14.0
+offset_bottom = 40.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 placeholder_text = "Search..."
+
+[node name="ItemList" type="ItemList" parent="Popups/Find/Content/Split"]
+layout_mode = 2
+offset_left = 26.0
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
 
 [node name="Template" type="AcceptDialog" parent="Popups"]
 title = "Template file"
@@ -245,7 +310,10 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 
-[connection signal="Find" from="VBoxContainer/MenuBar" to="." method="FindString"]
+[node name="AcceptDialog" type="AcceptDialog" parent="Popups"]
+
+[connection signal="FocusOnEntry" from="." to="VBoxContainer/GroupsVariables" method="OnFocusOnEntry"]
+[connection signal="Find" from="VBoxContainer/MenuBar" to="." method="ShowFind"]
 [connection signal="Redo" from="VBoxContainer/MenuBar" to="." method="Redo"]
 [connection signal="Saved" from="VBoxContainer/MenuBar" to="." method="OnFileSaved"]
 [connection signal="Undo" from="VBoxContainer/MenuBar" to="." method="Undo"]

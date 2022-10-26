@@ -1,10 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cx3xyydqf58e1"]
+[gd_scene load_steps=2 format=3 uid="uid://duvwkirpr48vw"]
 
-[ext_resource type="Script" path="res://EditorScripts/Generic/RichTextDoubleClick.gd" id="1_ms2x0"]
+[ext_resource type="Script" path="res://Editors/Generic/Scripts/RichTextDoubleClick.gd" id="1_o0sf4"]
 
 [node name="VariableCell" type="RichTextLabel"]
 focus_mode = 2
 bbcode_enabled = true
 autowrap_mode = 0
 selection_enabled = true
-script = ExtResource("1_ms2x0")
+script = ExtResource("1_o0sf4")
