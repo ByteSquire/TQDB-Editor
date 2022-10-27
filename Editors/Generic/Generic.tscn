@@ -153,6 +153,7 @@ layout_mode = 1
 follow_focus = true
 columns = ["Name", "Type", "Class", "Description", "Value"]
 CellHeight = 25
+SeparatorHeight = 4
 
 [node name="FootBar" type="HSplitContainer" parent="VBoxContainer"]
 layout_mode = 2
