@@ -25,6 +25,20 @@ public partial class Table : Control
         }
     }
     private int cellHeight;
+    [Export]
+    private int SeparatorHeight
+    {
+        get => separatorHeight;
+        set
+        {
+            if (separatorHeight != value)
+            {
+                separatorHeight = value;
+                OnChangedSeparatorHeight();
+            }
+        }
+    }
+    private int separatorHeight;
 
     private Godot.Collections.Array<Container> _columns;
 
@@ -52,6 +66,7 @@ public partial class Table : Control
                 var _column = column.Instantiate();
 
                 _column.GetChild(0).Set("cell_height", cellHeight);
+                _column.GetChild(0).Set("separator_height", separatorHeight);
                 _column.GetChild(0).Name = "Column" + (i + 1);
 
                 header.Set("other", _column);
@@ -153,6 +168,16 @@ public partial class Table : Control
         foreach (var column in _columns)
         {
             column.Set("cell_height", cellHeight);
+        }
+    }
+
+    private void OnChangedSeparatorHeight()
+    {
+        if (_columns is null)
+            return;
+        foreach (var column in _columns)
+        {
+            column.Set("separator_height", separatorHeight);
         }
     }
 }
