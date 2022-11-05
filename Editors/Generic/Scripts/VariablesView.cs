@@ -7,6 +7,8 @@ using System.Reflection;
 using TQDB_Parser;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
+using TQDBEditor;
+using TQDBEditor.Common;
 using TQDBEditor.EditorScripts;
 
 namespace TQDBEditor.GenericEditor
@@ -112,16 +114,16 @@ namespace TQDBEditor.GenericEditor
                 var row = new Control[5];
                 var nameLabel = variableCell.Instantiate<RichTextLabel>();
                 nameLabel.Text = variable.Name;
-                nameLabel.Connect("activated", new Callable(OnLabelDoubleClicked));
+                nameLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
                 var classLabel = variableCell.Instantiate<RichTextLabel>();
                 classLabel.Text = variable.Class.ToString();
-                classLabel.Connect("activated", new Callable(OnLabelDoubleClicked));
+                classLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
                 var typeLabel = variableCell.Instantiate<RichTextLabel>();
                 typeLabel.Text = variable.Type.ToString();
-                typeLabel.Connect("activated", new Callable(OnLabelDoubleClicked));
+                typeLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
                 var descriptionLabel = variableCell.Instantiate<RichTextLabel>();
                 descriptionLabel.Text = variable.Description;
-                descriptionLabel.Connect("activated", new Callable(OnLabelDoubleClicked));
+                descriptionLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
 
                 row[0] = nameLabel;
                 row[1] = classLabel;
@@ -182,7 +184,7 @@ namespace TQDBEditor.GenericEditor
             else
                 valueLabel.Text = value;
 
-            valueLabel.Connect("activated", new Callable(OnLabelDoubleClicked));
+            valueLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
             return valueLabel;
 
             Control valueElement;

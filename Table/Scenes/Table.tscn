@@ -1,9 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cvkus34exumtj"]
+[gd_scene load_steps=5 format=3 uid="uid://dta8ul6r0kv44"]
 
-[ext_resource type="Script" path="res://Scripts/Table/Table.cs" id="1_0x2c8"]
-[ext_resource type="PackedScene" uid="uid://p75q0ver1w4m" path="res://Scenes/Table/TableHeader.tscn" id="2_4cm3t"]
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="3_pnhq3"]
-[ext_resource type="PackedScene" uid="uid://dmyeih7dad08l" path="res://Scenes/Table/TableColumn.tscn" id="4_fjvrm"]
+[ext_resource type="Script" path="res://Table/Scripts/Table.cs" id="1_0x2c8"]
+[ext_resource type="PackedScene" uid="uid://p75q0ver1w4m" path="res://Table/Scenes/TableHeader.tscn" id="2_4cm3t"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Table/Scenes/ColumnButton.tscn" id="3_pnhq3"]
+[ext_resource type="PackedScene" uid="uid://dmyeih7dad08l" path="res://Table/Scenes/TableColumn.tscn" id="4_fjvrm"]
 
 [node name="Table" type="ScrollContainer"]
 anchors_preset = 15
@@ -19,7 +19,6 @@ column_button = ExtResource("3_pnhq3")
 column = ExtResource("4_fjvrm")
 
 [node name="Heading-Entries" type="VBoxContainer" parent="."]
-layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 648.0
 grow_horizontal = 2
@@ -28,7 +27,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Entries" type="PanelContainer" parent="Heading-Entries"]
-layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_vertical = 3

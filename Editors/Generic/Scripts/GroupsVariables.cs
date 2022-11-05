@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using TQDBEditor;
 using TQDBEditor.EditorScripts;
 
 namespace TQDBEditor.GenericEditor

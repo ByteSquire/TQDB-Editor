@@ -1,5 +1,7 @@
 using Godot;
 using System;
+using TQDBEditor;
+using TQDBEditor.EditorScripts;
 using TQDB_Parser.DBR;
 
 namespace TQDBEditor.GenericEditor

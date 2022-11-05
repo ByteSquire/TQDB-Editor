@@ -5,8 +5,8 @@ using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
 using TQDBEditor.EditorScripts;
 
-namespace TQDBEditor.GenericEditor
-{
+//namespace TQDBEditor.GenericEditor
+//{
     public partial class GroupsView : Tree
     {
         [Export]
@@ -85,4 +85,4 @@ namespace TQDBEditor.GenericEditor
             }
         }
     }
-}
+//}

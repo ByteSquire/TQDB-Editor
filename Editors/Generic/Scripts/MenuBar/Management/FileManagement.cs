@@ -2,6 +2,7 @@ using Godot;
 using System;
 using System.IO;
 using TQDB_Parser;
+using TQDBEditor.Common;
 using TQDB_Parser.DBR;
 
 namespace TQDBEditor.EditorScripts
@@ -9,10 +10,10 @@ namespace TQDBEditor.EditorScripts
     public partial class EditorMenuBarManager : MenuBar
     {
         [Export]
-        private FileDialog saveAsPopup;
+        public FileDialog saveAsPopup;
 
         [Export]
-        private FileDialog changeTemplatePopup;
+        public FileDialog changeTemplatePopup;
 
         [Signal]
         public delegate void SavedEventHandler();

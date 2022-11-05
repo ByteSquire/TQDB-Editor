@@ -1,13 +1,14 @@
 using Godot;
 using System;
 using System.IO;
+using TQDBEditor.Common;
 
 namespace TQDBEditor.EditorScripts
 {
     public partial class EditorMenuBarManager : MenuBar
     {
         [Export]
-        private AcceptDialog showTemplate;
+        public AcceptDialog showTemplate;
 
         [Signal]
         public delegate void ToggleStatusbarEventHandler();

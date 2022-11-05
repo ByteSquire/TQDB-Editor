@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://chkkn76aim27v"
-path="res://.godot/imported/UpDown.svg-25f96f4abb78af4644b5456fa0369e35.ctex"
+path="res://.godot/imported/UpDown.svg-1041d6e5235563ff3f0febd84593b581.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Icons/UpDown.svg"
-dest_files=["res://.godot/imported/UpDown.svg-25f96f4abb78af4644b5456fa0369e35.ctex"]
+source_file="res://Table/Icons/UpDown.svg"
+dest_files=["res://.godot/imported/UpDown.svg-1041d6e5235563ff3f0febd84593b581.ctex"]
 
 [params]
 
