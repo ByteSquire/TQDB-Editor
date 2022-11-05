@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using System.IO;
-using TQDBEditor.Scripts;
 
 namespace TQDBEditor
 {

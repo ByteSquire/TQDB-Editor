@@ -14,6 +14,7 @@
     <EmbeddedResource Remove="script_templates\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ByteSquire.tq.TQDB-Editor.Common" Version="0.9.1-beta.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
 	<PackageReference Include="ByteSquire.tq.TQArchive-Wrapper" Version="1.1.0" />
 	<PackageReference Include="ByteSquire.tq.TQDB-Parser" Version="1.2.3" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TQDBEditor.Scripts
+namespace TQDBEditor
 {
     internal static class PathValidity
     {

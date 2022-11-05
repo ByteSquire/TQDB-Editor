@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TQDBEditor.Common;
 using TQArchive_Wrapper;
 using TQDB_Parser;
 using TQDB_Parser.DBR;

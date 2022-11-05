@@ -1,28 +1,37 @@
 [gd_scene load_steps=5 format=3 uid="uid://bjrhgcr8n0v4e"]
 
-[ext_resource type="PackedScene" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
+[ext_resource type="PackedScene" uid="uid://dep437w8jdmqr" path="res://Scenes/Files/FilesViewBase.tscn" id="1_88eub"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewAssets.cs" id="2_jwlqo"]
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="3_2qfng"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Table/Scenes/ColumnButton.tscn" id="3_2qfng"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="4_tvj55"]
 
 [node name="FilesViewAssets" node_paths=PackedStringArray("column2") instance=ExtResource("1_88eub")]
 script = ExtResource("2_jwlqo")
 column2 = NodePath("Columns/Column2")
 
+[node name="Header" parent="." index="0"]
+layout_mode = 3
+
 [node name="FileName" parent="Header" index="0"]
+layout_mode = 3
 offset_right = 100.0
 
 [node name="FileStatus" parent="Header" index="1" instance=ExtResource("3_2qfng")]
-layout_mode = 2
 offset_left = 112.0
 text = "Status"
 
+[node name="HSeparator" parent="." index="1"]
+layout_mode = 3
+
+[node name="Columns" parent="." index="2"]
+layout_mode = 3
+
 [node name="Column1" parent="Columns" index="0"]
+layout_mode = 3
 offset_right = 100.0
 
 [node name="Column2" type="ItemList" parent="Columns" index="1" node_paths=PackedStringArray("sortButton")]
 custom_minimum_size = Vector2i(100, 0)
-layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0

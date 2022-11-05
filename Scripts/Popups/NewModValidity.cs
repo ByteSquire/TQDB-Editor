@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Linq;
-using TQDBEditor.Scripts;
+using TQDBEditor.Common;
 
 namespace TQDBEditor
 {

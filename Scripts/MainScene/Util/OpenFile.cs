@@ -5,6 +5,7 @@ using TQDBEditor.Files;
 using TQDB_Parser;
 using TQDB_Parser.DBR;
 using Microsoft.Extensions.Logging;
+using TQDBEditor.Common;
 using TQDBEditor.EditorScripts;
 using System.IO;
 

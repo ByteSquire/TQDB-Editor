@@ -2,8 +2,8 @@
 
 [ext_resource type="PackedScene" uid="uid://dep437w8jdmqr" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewDatabase.cs" id="2_oktei"]
-[ext_resource type="Script" path="res://Scripts/Table/SplitContainerSync.gd" id="3_26ow5"]
-[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Scenes/Table/ColumnButton.tscn" id="4_0d73h"]
+[ext_resource type="Script" path="res://Table/Scripts/SplitContainerSync.gd" id="3_k1y0o"]
+[ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Table/Scenes/ColumnButton.tscn" id="4_0d73h"]
 [ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="5_16apx"]
 
 [node name="FileViewDatabase" node_paths=PackedStringArray("column2", "column3") instance=ExtResource("1_6p5jd")]
@@ -19,7 +19,7 @@ layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 31.0
-script = ExtResource("3_26ow5")
+script = ExtResource("3_k1y0o")
 other = NodePath("../../Columns/Columns23")
 
 [node name="FileDescription" parent="Header/Header2" index="0" instance=ExtResource("4_0d73h")]
@@ -41,7 +41,7 @@ layout_mode = 2
 offset_left = 112.0
 offset_right = 1152.0
 offset_bottom = 605.0
-script = ExtResource("3_26ow5")
+script = ExtResource("3_k1y0o")
 other = NodePath("../../Header/Header2")
 
 [node name="Column2" type="ItemList" parent="Columns/Columns23" index="0" node_paths=PackedStringArray("sortButton")]
