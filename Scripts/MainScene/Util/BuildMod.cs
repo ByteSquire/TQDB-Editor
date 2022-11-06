@@ -101,10 +101,10 @@ namespace TQDBEditor
         {
             foreach (var file in filesToCopy)
             {
-                GD.Print(file);
+                GD.Print("Copy from " + file);
                 using FileStream sourceStream = File.Open(file, FileMode.Open);
                 var relativePath = Path.GetRelativePath(inputDatabase, file);
-                GD.Print(Path.Combine(outputDatabase, relativePath));
+                GD.Print("Copy to " + Path.Combine(outputDatabase, relativePath));
                 using FileStream destinationStream = File.Create(Path.Combine(outputDatabase, relativePath));
                 await sourceStream.CopyToAsync(destinationStream, cancelSource.Token);
                 FileCopy_FileDone(file);
