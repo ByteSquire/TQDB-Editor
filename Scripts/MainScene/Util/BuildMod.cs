@@ -35,8 +35,11 @@ namespace TQDBEditor
 
         private DateTime startTime;
 
+        private ILogger logger;
+
         public override void _Ready()
         {
+            logger = this.GetConsoleLogger();
         }
 
         public void Build()
@@ -60,7 +63,7 @@ namespace TQDBEditor
 
             var old = arzWriter;
             arzWriter = new ArzWriter(Path.Combine(outputDatabase, config.ModName + ".arz"),
-                this.GetConsoleLogger());
+                logger);
 
             if (old is null)
                 arzWriter.FileDone += ArzWriter_FileDone;
@@ -79,14 +82,14 @@ namespace TQDBEditor
 
         private void ArzWriter_FileDone(string obj)
         {
-            this.GetConsoleLogger().LogInformation("Added {filename} to archive", obj);
+            logger?.LogInformation("Added {filename} to archive", obj);
             lock (progressLock)
                 progress.Value += 1;
         }
 
         private void FileCopy_FileDone(string obj)
         {
-            this.GetConsoleLogger().LogInformation("Copied {filename} to CustomMaps", obj);
+            logger?.LogInformation("Copied {filename} to CustomMaps", obj);
             lock (progressLock)
                 progress.Value += 1;
         }
@@ -94,7 +97,7 @@ namespace TQDBEditor
         public void CancelBuild()
         {
             cancelSource.Cancel();
-            this.GetConsoleLogger().LogInformation("Build cancelled");
+            logger?.LogInformation("Build cancelled");
         }
 
         private async Task CopyFiles(IEnumerable<string> filesToCopy, string inputDatabase, string outputDatabase)
@@ -114,7 +117,7 @@ namespace TQDBEditor
         private void OnDone()
         {
             var duration = (DateTime.Now - startTime).ToString("mm':'ss");
-            this.GetConsoleLogger().LogInformation("Build done in {duration}", args: duration);
+            logger?.LogInformation("Build done in {duration}", args: duration);
             ResetBuildInfo();
         }
 
@@ -138,7 +141,6 @@ namespace TQDBEditor
             var manager = this.GetTemplateManager();
             manager.ParseAllTemplates();
             manager.ResolveAllIncludes();
-            var logger = this.GetConsoleLogger();
             if (filesToCopy is IEnumerable<string> files)
             {
                 var dbrFiles = new ConcurrentQueue<DBRFile>();

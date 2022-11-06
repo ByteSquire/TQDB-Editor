@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://by7eysngp2jh5"]
+
+[ext_resource type="PackedScene" uid="uid://cu8gtdofpky2o" path="res://Scenes/Popups/Options.tscn" id="1_kvmn5"]
+
+[node name="ConfigSetup" instance=ExtResource("1_kvmn5")]
+
+[node name="GridContainer" parent="VBoxContainer" index="0"]
+layout_mode = 2
+
+[node name="WorkingDirLabel" parent="VBoxContainer/GridContainer" index="0"]
+layout_mode = 2
+
+[node name="WorkingDirText" parent="VBoxContainer/GridContainer" index="1"]
+layout_mode = 2
+
+[node name="WorkingDirChoose" parent="VBoxContainer/GridContainer" index="2"]
+layout_mode = 2
+
+[node name="BuildDirLabel" parent="VBoxContainer/GridContainer" index="3"]
+layout_mode = 2
+
+[node name="BuildDirText" parent="VBoxContainer/GridContainer" index="4"]
+layout_mode = 2
+
+[node name="BuildDirChoose" parent="VBoxContainer/GridContainer" index="5"]
+layout_mode = 2
+
+[node name="ToolsDirLabel" parent="VBoxContainer/GridContainer" index="6"]
+layout_mode = 2
+
+[node name="ToolsDirText" parent="VBoxContainer/GridContainer" index="7"]
+layout_mode = 2
+
+[node name="ToolsDirChoose" parent="VBoxContainer/GridContainer" index="8"]
+layout_mode = 2
+
+[node name="AddiDirLabel" parent="VBoxContainer/GridContainer" index="9"]
+layout_mode = 2
+
+[node name="AddiDirText" parent="VBoxContainer/GridContainer" index="10"]
+layout_mode = 2
+
+[node name="AddiDirChoose" parent="VBoxContainer/GridContainer" index="11"]
+layout_mode = 2
+
+[node name="RichTextLabel" parent="VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="ExportStatistics" parent="VBoxContainer" index="2"]
+layout_mode = 2
