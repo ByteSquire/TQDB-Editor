@@ -41,13 +41,13 @@ namespace TQDBEditor.Files
 
             ItemSelected += OnDirSelected;
             configNode.ModNameChanged += OnModChanged;
-            Init();
+            //Init();
         }
 
         private void OnModChanged()
         {
             Clear();
-            sourceWatcher.Dispose();
+            sourceWatcher?.Dispose();
             Init();
         }
 
@@ -227,7 +227,7 @@ namespace TQDBEditor.Files
 
         public override void _ExitTree()
         {
-            sourceWatcher.Dispose();
+            sourceWatcher?.Dispose();
             base._ExitTree();
         }
     }

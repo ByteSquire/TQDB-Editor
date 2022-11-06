@@ -52,7 +52,7 @@ namespace TQDBEditor.Files
             column1.ItemActivated += OnItemActivated;
 
             configNode.ModNameChanged += OnModChanged;
-            Init();
+            //Init();
         }
 
         protected string activeFile;
@@ -72,7 +72,7 @@ namespace TQDBEditor.Files
         private void OnModChanged()
         {
             ClearTable();
-            fileDirWatcher.Dispose();
+            fileDirWatcher?.Dispose();
             Init();
         }
 

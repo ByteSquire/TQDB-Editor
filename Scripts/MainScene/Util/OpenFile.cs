@@ -26,17 +26,15 @@ namespace TQDBEditor
 
         public override void _Ready()
         {
+            this.GetEditorConfig().TrulyReady += Init;
             logger = this.GetConsoleLogger();
             if (files is null)
                 return;
-            tplManager = this.GetTemplateManager();
-            if (tplManager is null)
+            if (logger is null)
                 return;
             pckHandler = this.GetPCKHandler();
             if (pckHandler is null)
                 return;
-
-            GetTree().Root.GuiEmbedSubwindows = false;
 
             sourceView = files.GetNode<FilesViewSource>("FilesViewSource");
             assetsView = files.GetNode<FilesViewAssets>("FilesViewAssets");
@@ -45,6 +43,11 @@ namespace TQDBEditor
             sourceView.FileActivated += OnFileActivated;
             assetsView.FileActivated += OnAssetActivated;
             databaseView.FileActivated += OnDBRActivated;
+        }
+
+        private void Init()
+        {
+            tplManager = this.GetTemplateManager();
         }
 
         private void OnFileActivated()
