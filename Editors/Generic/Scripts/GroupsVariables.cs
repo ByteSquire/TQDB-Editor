@@ -21,7 +21,6 @@ namespace TQDBEditor.GenericEditor
 
         public void OnFocusOnEntry()
         {
-            GD.Print("Focussing entry");
             groupsView.SelectEntry();
             variablesView.CallDeferred(nameof(variablesView.SelectEntry));
         }
