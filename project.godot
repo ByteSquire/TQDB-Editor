@@ -28,10 +28,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Logging="*res://Scripts/Init/ConsoleLogHandler.cs"
-Config="*res://Scripts/Init/Config.cs"
-Templates="*res://Scripts/Init/Templates.cs"
-PckHandler="*res://Scripts/Init/PCKHandler.cs"
+Logging="*res://Scripts/Init/LoggerScript.cs"
+Config="*res://Scripts/Init/ConfigScript.cs"
+Templates="*res://Scripts/Init/TemplateScript.cs"
+PckHandler="*res://Scripts/Init/PCKHandlerScript.cs"
 
 [dotnet]
 
