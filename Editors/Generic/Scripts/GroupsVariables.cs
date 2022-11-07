@@ -17,6 +17,8 @@ namespace TQDBEditor.GenericEditor
         {
             groupsView = GetNode<GroupsView>("Groups");
             variablesView = GetNode<VariablesView>("Variables");
+
+            editorWindow.FocusOnEntry += OnFocusOnEntry;
         }
 
         public void OnFocusOnEntry()
