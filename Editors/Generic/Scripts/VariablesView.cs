@@ -28,6 +28,8 @@ namespace TQDBEditor.GenericEditor
         [Export]
         private PackedScene variableCell;
         [Export]
+        private PackedScene variableInfoCell;
+        [Export]
         private EditorWindow editorWindow;
 
         private TableColumn nameColumn;
@@ -112,18 +114,20 @@ namespace TQDBEditor.GenericEditor
             foreach (var variable in variables)
             {
                 var row = new Control[5];
-                var nameLabel = variableCell.Instantiate<RichTextLabel>();
+                var nameLabel = variableInfoCell.Instantiate<Label>();
                 nameLabel.Text = variable.Name;
-                nameLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
-                var classLabel = variableCell.Instantiate<RichTextLabel>();
+                nameLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                var classLabel = variableInfoCell.Instantiate<Label>();
                 classLabel.Text = variable.Class.ToString();
-                classLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
-                var typeLabel = variableCell.Instantiate<RichTextLabel>();
+                classLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                var typeLabel = variableInfoCell.Instantiate<Label>();
                 typeLabel.Text = variable.Type.ToString();
-                typeLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
-                var descriptionLabel = variableCell.Instantiate<RichTextLabel>();
+                if (variable.Type == VariableType.file)
+                    typeLabel.Text += '(' + string.Join(",", variable.FileExtensions) + ')';
+                typeLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                var descriptionLabel = variableInfoCell.Instantiate<Label>();
                 descriptionLabel.Text = variable.Description;
-                descriptionLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
+                descriptionLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
 
                 row[0] = nameLabel;
                 row[1] = classLabel;
@@ -245,13 +249,13 @@ namespace TQDBEditor.GenericEditor
             row[0].GrabFocus();
         }
 
-        private void OnLabelDoubleClicked(RichTextLabel obj)
+        private void OnLabelDoubleClicked(Control obj)
         {
             var index = table.GetCellPosition(obj).y;
             var row = table.GetRow(index);
-            var vName = (row[0] as RichTextLabel).Text;
-            var vClass = (row[1] as RichTextLabel).Text;
-            var vType = (row[2] as RichTextLabel).Text;
+            var vName = (row[0] as Label).Text;
+            var vClass = (row[1] as Label).Text;
+            var vType = (row[2] as Label).Text.Split('(')[0];
 
             var handler = this.GetPCKHandler();
             var availableEditors = handler.GetEntryEditors(vName, vClass, vType);

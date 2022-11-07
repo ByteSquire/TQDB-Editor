@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://tcicbr1e3na2"]
+[gd_scene load_steps=8 format=3 uid="uid://tcicbr1e3na2"]
 
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/GenericEditorWindow.cs" id="1_3sx08"]
+[ext_resource type="PackedScene" path="res://Editors/Generic/VariableInfoCell.tscn" id="6_ew078"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/GroupsVariables.cs" id="7_5rfsj"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/GroupsView.cs" id="7_35nl6"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/VariablesView.cs" id="8_01sgg"]
@@ -21,7 +22,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="GroupsVariables" type="HSplitContainer" parent="VBoxContainer" node_paths=PackedStringArray("editorWindow")]
-layout_mode = 2
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_vertical = 3
@@ -30,14 +30,13 @@ editorWindow = NodePath("../..")
 
 [node name="Groups" type="Tree" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("editorWindow")]
 custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
 offset_right = 100.0
 offset_bottom = 648.0
 script = ExtResource("7_35nl6")
 editorWindow = NodePath("../../..")
 
 [node name="Variables" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table", "editorWindow")]
-layout_mode = 2
+layout_mode = 3
 anchors_preset = 0
 offset_left = 112.0
 offset_right = 1152.0
@@ -47,11 +46,11 @@ script = ExtResource("8_01sgg")
 groupsView = NodePath("../Groups")
 table = NodePath("Table")
 variableCell = ExtResource("9_4qcl0")
+variableInfoCell = ExtResource("6_ew078")
 editorWindow = NodePath("../../..")
 
 [node name="Table" parent="VBoxContainer/GroupsVariables/Variables" instance=ExtResource("12_pjux1")]
-layout_mode = 1
-columns = ["Name", "Type", "Class", "Description", "Value"]
+columns = ["Name", "Class", "Type", "Description", "Value"]
 CellHeight = 30
 SeparatorHeight = 2
 

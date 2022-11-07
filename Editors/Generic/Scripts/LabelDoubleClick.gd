@@ -1,6 +1,6 @@
-extends RichTextLabel
+extends Label
 
-signal activated(label : RichTextLabel)
+signal activated(label : Label)
 
 
 func _gui_input(event):
@@ -12,3 +12,11 @@ func _gui_input(event):
 
 func activate():
 	activated.emit(self)
+
+
+func _on_focus_entered():
+	theme_type_variation = "SelectedLabel"
+
+
+func _on_focus_exited():
+	theme_type_variation = "LabelWithBorder"
