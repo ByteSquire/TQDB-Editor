@@ -27,6 +27,8 @@ namespace TQDBEditor
         public override void _Ready()
         {
             this.GetEditorConfig().TrulyReady += Init;
+            if (this.GetEditorConfig().ValidateConfig())
+                Init();
             logger = this.GetConsoleLogger();
             if (files is null)
                 return;

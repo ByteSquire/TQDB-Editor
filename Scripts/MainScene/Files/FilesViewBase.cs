@@ -52,7 +52,8 @@ namespace TQDBEditor.Files
             column1.ItemActivated += OnItemActivated;
 
             configNode.ModNameChanged += OnModChanged;
-            //Init();
+            if (configNode.ValidateConfig())
+                Init();
         }
 
         protected string activeFile;

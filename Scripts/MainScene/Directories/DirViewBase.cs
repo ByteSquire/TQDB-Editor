@@ -41,7 +41,8 @@ namespace TQDBEditor.Files
 
             ItemSelected += OnDirSelected;
             configNode.ModNameChanged += OnModChanged;
-            //Init();
+            if (configNode.ValidateConfig())
+                Init();
         }
 
         private void OnModChanged()
