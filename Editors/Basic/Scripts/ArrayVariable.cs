@@ -61,9 +61,6 @@ namespace TQDBEditor.BasicEditor
         {
             base._Ready();
 
-            if (this.TryGetEntryControlScene(out var cScene, tpl.Name, VariableClass.variable.ToString(), tpl.Type.ToString()))
-                variableControlScene = cScene;
-
             switch (entry.Template.Type)
             {
                 case VariableType.real:
@@ -135,22 +132,70 @@ namespace TQDBEditor.BasicEditor
 
         private void OnDelRow()
         {
-            var index = table.GetCellPosition(GuiGetFocusOwner()).y;
-            if (index < 0)
-                return;
+            var indices = table.GetFocussedRows();
+            foreach (var index in indices)
+            {
+                if (index < 0)
+                    return;
 
-            values.RemoveAt(index);
-            table.RemoveRow(index);
+                values.RemoveAt(index);
+                table.RemoveRow(index);
+            }
         }
 
         private void OnMoveRowUp()
         {
+            var indices = table.GetFocussedRows();
+            for (int i = 0; i < indices.Count; i++)
+            {
+                var index = indices[i];
+                if (index < 1)
+                    continue;
+                if (indices[0] < 1 && i > 0 && index - indices[i - 1] <= 2)
+                    continue;
 
+                var indexB = index - 2;
+                SwapValues(index, indexB);
+            }
         }
 
         private void OnMoveRowDown()
         {
+            var indices = table.GetFocussedRows();
+            for (int i = indices.Count - 1; i >= 0; i--)
+            {
+                var index = indices[i];
+                if (index / 2 >= values.Count - 1)
+                    continue;
+                if (indices[^1] / 2 >= values.Count - 1 && i < values.Count - 1 && indices[i + 1] - index <= 2)
+                    continue;
 
+                var indexB = index + 2;
+                SwapValues(index, indexB);
+            }
+        }
+
+        private void SwapValues(int indexA, int indexB)
+        {
+            var myIndexA = indexA / 2;
+            var myIndexB = indexB / 2;
+            GD.Print(myIndexA);
+            GD.Print(myIndexB);
+            var valueA = values[myIndexA];
+            var valueB = values[myIndexB];
+
+            values[myIndexA] = valueB;
+            values[myIndexB] = valueA;
+
+            table.SwapRows(indexA, indexB);
+
+            if (fValues.Count > 0)
+            {
+                var fValueA = fValues[myIndexA];
+                var fValueB = fValues[myIndexB];
+                fValues[myIndexA] = fValueB;
+                fValues[myIndexB] = fValueA;
+            }
         }
 
         protected override string GetChangedValue()
@@ -161,6 +206,9 @@ namespace TQDBEditor.BasicEditor
         protected override void InitVariable(DBREntry entry)
         {
             tpl = entry.Template;
+            if (this.TryGetEntryControlScene(out var cScene, tpl.Name, VariableClass.variable.ToString(), tpl.Type.ToString()))
+                variableControlScene = cScene;
+
             values = entry.Value.Split(';').ToList();
             fValues = new(values.Count);
 
@@ -208,6 +256,8 @@ namespace TQDBEditor.BasicEditor
             row[0] = new Label()
             {
                 Text = index.ToString(),
+                FocusMode = Control.FocusModeEnum.All,
+                MouseFilter = Control.MouseFilterEnum.Stop
             };
             Control second = new();
             try
