@@ -88,31 +88,13 @@ namespace TQDBEditor.GenericEditor
             pckHandler = this.GetPCKHandler();
         }
 
-        private void Clear()
-        {
-            ClearContainer(nameColumn.Column);
-            ClearContainer(classColumn.Column);
-            ClearContainer(typeColumn.Column);
-            ClearContainer(descriptionColumn.Column);
-            ClearContainer(valueColumn.Column);
-        }
-
-        private void ClearContainer(Container container)
-        {
-            foreach (var child in container.GetChildren())
-            {
-                container.RemoveChild(child);
-                child.QueueFree();
-            }
-        }
-
         private IReadOnlyList<VariableBlock> currentVariables;
         private Dictionary<string, int> variableRowMap;
         private GroupBlock currentGroup;
 
         private void OnGroupSelected()
         {
-            Clear();
+            table.Clear();
             var group = currentGroup = groupsView.GetSelectedGroup();
             try
             {
@@ -183,9 +165,8 @@ namespace TQDBEditor.GenericEditor
                 try
                 {
                     var variableControl = controlScene.Instantiate<VariableControl>();
-                    variableControl.EditorWindow = editorWindow;
-                    variableControl.VarName = variable.Name;
-                    variableControl.DBRFile = file;
+                    variableControl.Entry = file[variable.Name];
+                    variableControl.Submitted += () => editorWindow.Do(variable.Name, variableControl.GetChangedValue());
 
                     valueElement = variableControl;
                 }
