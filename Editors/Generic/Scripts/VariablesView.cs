@@ -26,8 +26,6 @@ namespace TQDBEditor.GenericEditor
         [Export]
         private Table table;
         [Export]
-        private PackedScene variableCell;
-        [Export]
         private PackedScene variableInfoCell;
         [Export]
         private EditorWindow editorWindow;
@@ -39,6 +37,7 @@ namespace TQDBEditor.GenericEditor
         private TableColumn valueColumn;
 
         private Config config;
+        private PCKHandler pckHandler;
 
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
@@ -47,6 +46,9 @@ namespace TQDBEditor.GenericEditor
             editorWindow.Reinit += OnGroupSelected;
 
             config = this.GetEditorConfig();
+            if (config.ValidateConfig())
+                Init();
+            config.TrulyReady += Init;
 
             var nameHeading = table.GetChild(0).GetChild<SplitContainer>(0);
             var classHeading = nameHeading.GetChild<SplitContainer>(1);
@@ -79,6 +81,11 @@ namespace TQDBEditor.GenericEditor
             };
             valueColumn = new TableColumn
             { Heading = valueHeading, Column = valueColumnSplit.GetChild<Container>(0) };
+        }
+
+        private void Init()
+        {
+            pckHandler = this.GetPCKHandler();
         }
 
         private void Clear()
@@ -118,18 +125,18 @@ namespace TQDBEditor.GenericEditor
                     var row = new Control[5];
                     var nameLabel = variableInfoCell.Instantiate<Label>();
                     nameLabel.Text = variable.Name;
-                    nameLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    nameLabel.Connect("activated", Callable.From<Label>(OnEditEntry));
                     var classLabel = variableInfoCell.Instantiate<Label>();
                     classLabel.Text = variable.Class.ToString();
-                    classLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    classLabel.Connect("activated", Callable.From<Label>(OnEditEntry));
                     var typeLabel = variableInfoCell.Instantiate<Label>();
                     typeLabel.Text = variable.Type.ToString();
                     if (variable.Type == VariableType.file)
                         typeLabel.Text += '(' + string.Join(",", variable.FileExtensions) + ')';
-                    typeLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    typeLabel.Connect("activated", Callable.From<Label>(OnEditEntry));
                     var descriptionLabel = variableInfoCell.Instantiate<Label>();
                     descriptionLabel.Text = variable.Description;
-                    descriptionLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    descriptionLabel.Connect("activated", Callable.From<Label>(OnEditEntry));
 
                     row[0] = nameLabel;
                     row[1] = classLabel;
@@ -166,87 +173,57 @@ namespace TQDBEditor.GenericEditor
 
         private Control CreateValueControl(VariableBlock variable, string value, DBRFile file)
         {
-            var valueLabel = variableCell.Instantiate<RichTextLabel>();
-            var entry = file[variable.Name];
-            if (!entry.IsValid())
+            Control valueElement;
+
+            var variableControls = pckHandler.GetEntryControls(variable.Name, variable.Class.ToString(), variable.Type.ToString());
+            var variableEditors = pckHandler.GetEntryEditors(variable.Name, variable.Class.ToString(), variable.Type.ToString());
+            if (variableControls != null && variableControls.Count > 0)
             {
-                if (entry.InvalidIndex > -1)
+                var controlScene = variableControls[0];
+                try
                 {
-                    var split = value.Split(';');
-                    for (int i = 0; i < split.Length; i++)
-                    {
-                        if (i > 0)
-                            valueLabel.AppendText(";");
+                    var variableControl = controlScene.Instantiate<VariableControl>();
+                    variableControl.EditorWindow = editorWindow;
+                    variableControl.VarName = variable.Name;
+                    variableControl.DBRFile = file;
 
-                        if (i == entry.InvalidIndex)
-                            valueLabel.PushColor(Colors.Red);
-
-                        valueLabel.AppendText(split[i]);
-
-                        if (i == entry.InvalidIndex)
-                            valueLabel.Pop();
-                    }
+                    valueElement = variableControl;
                 }
-                else
+                catch (InvalidCastException)
                 {
-                    valueLabel.PushColor(Colors.Red);
-                    valueLabel.AddText(value);
-                    valueLabel.Pop();
+                    this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", controlScene, typeof(VariableControl));
+                    valueElement = new();
                 }
             }
             else
-                valueLabel.Text = value;
-
-            valueLabel.Connect("activated", Callable.From<RichTextLabel>(OnLabelDoubleClicked));
-            return valueLabel;
-
-            Control valueElement;
-            switch (variable.Class)
             {
-                case VariableClass.variable:
-                case VariableClass.@static:
-                    valueElement = new LineEdit
-                    {
-                        Editable = variable.Class == VariableClass.variable,
-                        Text = value,
-                        PlaceholderText = variable.GetDefaultValue(),
-                    };
-                    (valueElement as LineEdit).TextSubmitted += x => file.UpdateEntry(variable.Name, x);
-                    break;
-                case VariableClass.picklist:
-                    valueElement = new OptionButton { ClipText = true };
-                    var defaultValues = variable.DefaultValue.Split(';');
-                    var valueId = -1;
-                    for (int i = 0; i < defaultValues.Length; i++)
-                    {
-                        (valueElement as OptionButton).AddItem(defaultValues[i], i);
-                        if (defaultValues[i].Equals(value))
-                            valueId = i;
-                    }
-
-                    (valueElement as OptionButton).Select((valueElement as OptionButton).GetItemIndex(valueId));
-                    (valueElement as OptionButton).ItemSelected += x => file.UpdateEntry(variable.Name, (valueElement as OptionButton).GetItemText((int)x));
-                    break;
-                case VariableClass.array:
-                    valueElement = new HBoxContainer();
-                    valueElement.AddChild(new Button
-                    {
-                        Text = "...",
-                    });
-
-                    var lineEdit = new LineEdit
-                    {
-                        Text = value,
-                        PlaceholderText = variable.GetDefaultValue(),
-                    };
-                    lineEdit.TextSubmitted += x => file.UpdateEntry(variable.Name, x);
-
-                    valueElement.AddChild(lineEdit);
-                    break;
-                default:
-                    return null;
+                this.GetConsoleLogger().LogError("No control found for variable {var}", variable.Name);
+                valueElement = new();
             }
+
+            if (variableEditors != null && variableControls.Count > 0)
+            {
+                var extendedElement = new HBoxContainer();
+                var editButton = new Button()
+                {
+                    AnchorsPreset = (int)LayoutPreset.LeftWide,
+                    Text = "..."
+                };
+                editButton.Pressed += () => OnEditEntry(extendedElement);
+
+                extendedElement.AddChild(editButton);
+                extendedElement.AddChild(valueElement);
+
+                valueElement = extendedElement;
+            }
+
             return valueElement;
+        }
+
+        private void OnEditEntry(Control controlInTable)
+        {
+            var index = table.GetCellPosition(controlInTable).y;
+            EditEntry(index);
         }
 
         public void SelectEntry()
@@ -258,16 +235,14 @@ namespace TQDBEditor.GenericEditor
             row[0].GrabFocus();
         }
 
-        private void OnLabelDoubleClicked(Control obj)
+        private void EditEntry(int index)
         {
-            var index = table.GetCellPosition(obj).y;
             var row = table.GetRow(index);
             var vName = (row[0] as Label).Text;
             var vClass = (row[1] as Label).Text;
             var vType = (row[2] as Label).Text.Split('(')[0];
 
-            var handler = this.GetPCKHandler();
-            var availableEditors = handler.GetEntryEditors(vName, vClass, vType);
+            var availableEditors = pckHandler.GetEntryEditors(vName, vClass, vType);
 
             EditorDialog editor;
             if (availableEditors is null || availableEditors.Count < 1)
@@ -276,14 +251,23 @@ namespace TQDBEditor.GenericEditor
                 return;
             }
             else
-                editor = availableEditors[0].Instantiate<EditorDialog>();
+            {
+                var editorScene = availableEditors[0];
+                try
+                {
+                    editor = editorScene.Instantiate<EditorDialog>();
+                    editor.DBRFile = editorWindow.DBRFile;
+                    editor.VarName = vName;
 
-            editor.DBRFile = editorWindow.DBRFile;
-            editor.VarName = vName;
+                    editor.Confirmed += () => CallDeferred(nameof(OnGroupSelected));
 
-            editor.Confirmed += () => CallDeferred(nameof(OnGroupSelected));
-
-            editorWindow.CallDeferred("add_child", editor);
+                    editorWindow.CallDeferred("add_child", editor);
+                }
+                catch (InvalidCastException)
+                {
+                    this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", editorScene, typeof(EditorDialog));
+                }
+            }
         }
 
         public override void _ExitTree()
