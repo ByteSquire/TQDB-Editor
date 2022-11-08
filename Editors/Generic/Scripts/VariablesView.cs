@@ -107,51 +107,60 @@ namespace TQDBEditor.GenericEditor
         {
             Clear();
             var group = currentGroup = groupsView.GetSelectedGroup();
-            var variables = currentVariables = editorWindow.DBRFile[group].Select(x => x.Template).ToList();
-            var file = editorWindow.DBRFile;
-            variableRowMap = new();
-
-            foreach (var variable in variables)
+            try
             {
-                var row = new Control[5];
-                var nameLabel = variableInfoCell.Instantiate<Label>();
-                nameLabel.Text = variable.Name;
-                nameLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
-                var classLabel = variableInfoCell.Instantiate<Label>();
-                classLabel.Text = variable.Class.ToString();
-                classLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
-                var typeLabel = variableInfoCell.Instantiate<Label>();
-                typeLabel.Text = variable.Type.ToString();
-                if (variable.Type == VariableType.file)
-                    typeLabel.Text += '(' + string.Join(",", variable.FileExtensions) + ')';
-                typeLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
-                var descriptionLabel = variableInfoCell.Instantiate<Label>();
-                descriptionLabel.Text = variable.Description;
-                descriptionLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                var variables = currentVariables = editorWindow.DBRFile[group].Select(x => x.Template).ToList();
+                var file = editorWindow.DBRFile;
+                variableRowMap = new();
 
-                row[0] = nameLabel;
-                row[1] = classLabel;
-                row[2] = typeLabel;
-                row[3] = descriptionLabel;
-
-                string value;
-                try
+                foreach (var variable in variables)
                 {
-                    value = file[variable.Name].Value;
+                    var row = new Control[5];
+                    var nameLabel = variableInfoCell.Instantiate<Label>();
+                    nameLabel.Text = variable.Name;
+                    nameLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    var classLabel = variableInfoCell.Instantiate<Label>();
+                    classLabel.Text = variable.Class.ToString();
+                    classLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    var typeLabel = variableInfoCell.Instantiate<Label>();
+                    typeLabel.Text = variable.Type.ToString();
+                    if (variable.Type == VariableType.file)
+                        typeLabel.Text += '(' + string.Join(",", variable.FileExtensions) + ')';
+                    typeLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+                    var descriptionLabel = variableInfoCell.Instantiate<Label>();
+                    descriptionLabel.Text = variable.Description;
+                    descriptionLabel.Connect("activated", Callable.From<Label>(OnLabelDoubleClicked));
+
+                    row[0] = nameLabel;
+                    row[1] = classLabel;
+                    row[2] = typeLabel;
+                    row[3] = descriptionLabel;
+
+                    string value;
+                    try
+                    {
+                        value = file[variable.Name].Value;
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        value = variable.GetDefaultValue();
+                    }
+
+                    var valueElement = CreateValueControl(variable, value, file);
+                    if (valueElement is null)
+                        continue;
+                    valueElement.TooltipText = variable.DefaultValue;
+
+                    row[4] = valueElement;
+
+                    variableRowMap.Add(variable.Name, table.AddRow(new Godot.Collections.Array<Control>(row)));
                 }
-                catch (KeyNotFoundException)
-                {
-                    value = variable.GetDefaultValue();
-                }
 
-                var valueElement = CreateValueControl(variable, value, file);
-                if (valueElement is null)
-                    continue;
-                valueElement.TooltipText = variable.DefaultValue;
-
-                row[4] = valueElement;
-
-                variableRowMap.Add(variable.Name, table.AddRow(new Godot.Collections.Array<Control>(row)));
+            }
+            catch (ArgumentException e)
+            {
+                GD.PushError("oopsie, passed a group that's not inside the file, origin: GroupsView");
+                GD.PushError(e.Message);
             }
         }
 
