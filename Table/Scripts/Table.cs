@@ -1,5 +1,8 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+
 public partial class Table : Control
 {
     [Export]
@@ -50,6 +53,8 @@ public partial class Table : Control
         _content = GetChild<Control>(0);
         _columns = new();
 
+        GetViewport().GuiFocusChanged += OnGuiFocusChanged;
+
         if (columns is not null && columns.Count > 0)
         {
             var node = _content;
@@ -94,6 +99,29 @@ public partial class Table : Control
         }
     }
 
+    private void OnGuiFocusChanged(Control node)
+    {
+        var index = GetCellPosition(node).y;
+        if (index < 0)
+            return;
+        if (!Input.IsKeyPressed(Key.Shift))
+            foreach (var selectedRowIndex in GetFocussedRows())
+                UnFocusRow(selectedRowIndex);
+        FocusRow(index);
+    }
+
+    public IReadOnlyList<int> GetFocussedRows()
+    {
+        if (_columns is null || _columns.Count < 1)
+            return new List<int>();
+
+        return _columns[0].GetChildren()
+            .Where(x => x.HasMeta("is_focussed"))
+            //.Where(x => (bool)x.GetMeta("is_focussed"))
+            .Select(x => GetCellPosition(x as Control).y)
+            .ToList();
+    }
+
     int lastDrag = 0;
 
     public int AddRow(Godot.Collections.Array<Control> values)
@@ -120,6 +148,7 @@ public partial class Table : Control
     {
         if (_columns is null)
             return;
+
         foreach (var column in _columns)
         {
             if (column.GetChildCount() < index)
@@ -128,6 +157,23 @@ public partial class Table : Control
                 column.RemoveChild(child);
                 child.QueueFree();
             }
+        }
+    }
+
+    public void SwapRows(int indexA, int indexB)
+    {
+        if (_columns is null)
+            return;
+
+        var rowA = GetRow(indexA);
+        var rowB = GetRow(indexB);
+        for (int i = 0; i < _columns.Count; i++)
+        {
+            var column = _columns[i];
+            column.MoveChild(rowA[i], indexB);
+            column.MoveChild(rowB[i], indexA);
+            rowA[i].SetMeta("table_cell_position", new Vector2i(i, indexB));
+            rowB[i].SetMeta("table_cell_position", new Vector2i(i, indexA));
         }
     }
 
@@ -174,6 +220,26 @@ public partial class Table : Control
         if (_columns is null)
             return;
         _columns[0].GetChild<Control>(index).GrabFocus();
+
+        foreach (var column in _columns)
+        {
+            var cChild = column.GetChild<Control>(index);
+            cChild.AddThemeStyleboxOverride("normal", new StyleBoxFlat() { BgColor = Colors.Blue });
+            cChild.SetMeta("is_focussed", true);
+        }
+    }
+
+    public void UnFocusRow(int index)
+    {
+        if (_columns is null)
+            return;
+
+        foreach (var column in _columns)
+        {
+            var cChild = column.GetChild<Control>(index);
+            cChild.RemoveThemeStyleboxOverride("normal");
+            cChild.RemoveMeta("is_focussed");
+        }
     }
 
     public void Clear()
