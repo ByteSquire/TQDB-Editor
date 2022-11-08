@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://uppiq41gs4tr"]
+
+[ext_resource type="Script" path="res://Editors/Basic/Scripts/StringVariable.cs" id="1_2exor"]
+
+[node name="StringVariable" type="Control" node_paths=PackedStringArray("textEdit")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_2exor")
+textEdit = NodePath("CheckBox")
+
+[node name="CheckBox" type="LineEdit" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+select_all_on_focus = true
