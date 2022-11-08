@@ -72,7 +72,7 @@ namespace TQDBEditor
         {
             var filePath = databaseView.GetActiveFile();
             var template = databaseView.GetActiveTemplate();
-            GD.Print(filePath, template);
+            GD.Print(string.Format("Opening file: {0} with template: {1}", filePath, template));
             try
             {
                 var dbrParser = new DBRParser(tplManager, logger);
