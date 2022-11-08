@@ -191,7 +191,7 @@ namespace TQDBEditor.GenericEditor
                 }
                 catch (InvalidCastException)
                 {
-                    this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", controlScene, typeof(VariableControl));
+                    this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", controlScene.ResourcePath, typeof(VariableControl));
                     valueElement = new();
                 }
             }
@@ -265,7 +265,7 @@ namespace TQDBEditor.GenericEditor
                 }
                 catch (InvalidCastException)
                 {
-                    this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", editorScene, typeof(EditorDialog));
+                    this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", editorScene.ResourcePath, typeof(EditorDialog));
                 }
             }
         }

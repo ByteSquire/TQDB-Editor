@@ -102,7 +102,7 @@ namespace TQDBEditor
                     }
                     catch (InvalidCastException)
                     {
-                        logger?.LogError("Error instantiating {scene}, does not extend {type}", editorScene, typeof(EditorWindow));
+                        logger?.LogError("Error instantiating {scene}, does not extend {type}", editorScene.ResourcePath, typeof(EditorWindow));
                     }
                 }
             }
