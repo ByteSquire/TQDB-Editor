@@ -4,11 +4,6 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>TQDBEditor</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartAction>Program</StartAction>
-    <StartProgram>C:\Program Files\Godot 4.0 mono\Godot_v4.0-beta2_mono_win64.exe</StartProgram>
-    <StartArguments>--path C:\Users\green\OneDrive\Documents\Own Games\TQDB-Editor\</StartArguments>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="script_templates\**" />
     <EmbeddedResource Remove="script_templates\**" />
@@ -16,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="ByteSquire.tq.TQDB-Editor.Common" Version="0.9.1-beta.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-	<PackageReference Include="ByteSquire.tq.TQArchive-Wrapper" Version="1.1.0" />
-	<PackageReference Include="ByteSquire.tq.TQDB-Parser" Version="1.2.3" />
+    <PackageReference Include="ByteSquire.tq.TQArchive-Wrapper" Version="1.1.0" />
+    <PackageReference Include="ByteSquire.tq.TQDB-Parser" Version="1.2.3" />
   </ItemGroup>
 </Project>
