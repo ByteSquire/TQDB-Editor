@@ -85,20 +85,30 @@ namespace TQDBEditor
                 EditorWindow editor;
                 if (availableEditors is null || availableEditors.Count < 1)
                 {
-                    logger.LogError("No editors found for file {file}", filePath);
+                    logger?.LogError("No editors found for file {file}", filePath);
                     return;
                 }
                 else
-                    editor = availableEditors[0].Instantiate<EditorWindow>();
-                editor.DBRFile = dbrFile;
+                {
+                    var editorScene = availableEditors[0];
+                    try
+                    {
+                        editor = editorScene.Instantiate<EditorWindow>();
+                        editor.DBRFile = dbrFile;
 
-                editor.Position = GetTree().Root.Position + new Vector2i(40, 40);
+                        editor.Position = GetTree().Root.Position + new Vector2i(40, 40);
 
-                GetTree().Root.CallDeferred("add_child", editor);
+                        GetTree().Root.CallDeferred("add_child", editor);
+                    }
+                    catch (InvalidCastException)
+                    {
+                        logger?.LogError("Error instantiating {scene}, does not extend {type}", editorScene, typeof(EditorWindow));
+                    }
+                }
             }
             catch (Exception e)
             {
-                logger.LogError(e, "Failed to parse file {file}", filePath);
+                logger?.LogError(e, "Failed to parse file {file}", filePath);
             }
         }
     }
