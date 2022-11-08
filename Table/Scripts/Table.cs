@@ -116,6 +116,21 @@ public partial class Table : Control
         return _columns[0].GetChildCount() - 1;
     }
 
+    public void RemoveRow(int index)
+    {
+        if (_columns is null)
+            return;
+        foreach (var column in _columns)
+        {
+            if (column.GetChildCount() < index)
+            {
+                var child = column.GetChild(index);
+                column.RemoveChild(child);
+                child.QueueFree();
+            }
+        }
+    }
+
     public Control GetCellAt(Vector2i cellPosition)
     {
         return _columns[cellPosition.x].GetChild<Control>(cellPosition.y);
@@ -159,6 +174,23 @@ public partial class Table : Control
         if (_columns is null)
             return;
         _columns[0].GetChild<Control>(index).GrabFocus();
+    }
+
+    public void Clear()
+    {
+        if (_columns is null)
+            return;
+        foreach (var column in _columns)
+            ClearContainer(column);
+    }
+
+    private static void ClearContainer(Container container)
+    {
+        foreach (var child in container.GetChildren())
+        {
+            container.RemoveChild(child);
+            child.QueueFree();
+        }
     }
 
     private void OnChangedCellSize()
