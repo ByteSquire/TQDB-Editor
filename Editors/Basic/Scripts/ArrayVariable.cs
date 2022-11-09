@@ -64,12 +64,29 @@ namespace TQDBEditor.BasicEditor
             switch (entry.Template.Type)
             {
                 case VariableType.real:
+                    incrByValue.MaxValue = float.MaxValue;
+                    incrByValue.MinValue = float.MinValue;
+                    incrByValue.CustomArrowStep = 1;
+                    incrByValue.Step = 0.000001f;
+
+                    multByValue.MaxValue = float.MaxValue;
+                    multByValue.MinValue = float.MinValue;
+                    multByValue.CustomArrowStep = 1;
+                    multByValue.Step = 0.000001f;
+                    break;
                 case VariableType.@int:
+                    incrByValue.MaxValue = int.MaxValue;
+                    incrByValue.MinValue = int.MinValue;
+                    multByValue.MaxValue = int.MaxValue;
+                    multByValue.MinValue = int.MinValue;
                     break;
                 default:
                     DisableTools();
                     break;
             }
+            incrByValue.GetLineEdit().TextSubmitted += (str) => SetInputAsHandled();
+            multByValue.GetLineEdit().TextSubmitted += (str) => SetInputAsHandled();
+            incrSeriesValue.TextSubmitted += (str) => SetInputAsHandled();
 
             setAllButton.Pressed += OnSetAll;
             incrByButton.Pressed += OnIncrBy;
@@ -94,14 +111,19 @@ namespace TQDBEditor.BasicEditor
 
         private void OnSetAll()
         {
+            SetInputAsHandled();
             for (int i = 0; i < values.Count; i++)
+            {
+                if (fValues.Count > i && float.TryParse(setAllValue.GetChangedValue(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var fVal))
+                    fValues[i] = fVal;
                 values[i] = setAllValue.GetChangedValue();
-
+            }
             Init();
         }
 
         private void OnIncrBy()
         {
+            SetInputAsHandled();
             for (int i = 0; i < values.Count; i++)
                 fValues[i] = fValues[i] + incrByValue.Value;
 
@@ -110,6 +132,7 @@ namespace TQDBEditor.BasicEditor
 
         private void OnMultBy()
         {
+            SetInputAsHandled();
             for (int i = 0; i < values.Count; i++)
                 fValues[i] = fValues[i] * multByValue.Value;
 
@@ -118,6 +141,7 @@ namespace TQDBEditor.BasicEditor
 
         private void OnIncrSeries()
         {
+            SetInputAsHandled();
 
 
             Init();
@@ -125,6 +149,7 @@ namespace TQDBEditor.BasicEditor
 
         private void OnNewRow()
         {
+            SetInputAsHandled();
             var focussed = table.GetFocussedRows();
             int myIndex;
             if (focussed.Count > 0)
@@ -151,6 +176,7 @@ namespace TQDBEditor.BasicEditor
 
         private void OnDelRow()
         {
+            SetInputAsHandled();
             var indices = table.GetFocussedRows();
             foreach (var index in indices.Reverse())
             {
@@ -171,6 +197,7 @@ namespace TQDBEditor.BasicEditor
 
         private void OnMoveRowUp()
         {
+            SetInputAsHandled();
             var indices = table.GetFocussedRows();
             for (int i = 0; i < indices.Count; i++)
             {
@@ -189,6 +216,7 @@ namespace TQDBEditor.BasicEditor
 
         private void OnMoveRowDown()
         {
+            SetInputAsHandled();
             var indices = table.GetFocussedRows();
             for (int i = indices.Count - 1; i >= 0; i--)
             {
@@ -207,6 +235,7 @@ namespace TQDBEditor.BasicEditor
 
         private void SwapValues(int indexA, int indexB)
         {
+            SetInputAsHandled();
             var valueA = values[indexA];
             var valueB = values[indexB];
 
@@ -283,7 +312,12 @@ namespace TQDBEditor.BasicEditor
             {
                 case VariableType.real:
                 case VariableType.@int:
-                    if (float.TryParse(value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var fValue))
+                    if (fValues.Count > index)
+                    {
+                        value = fValues[index].ToString("F6", CultureInfo.InvariantCulture);
+                        break;
+                    }
+                    if (float.TryParse(value, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var fValue))
                         fValues.Add(fValue);
                     else
                         fValues.Add(0);
