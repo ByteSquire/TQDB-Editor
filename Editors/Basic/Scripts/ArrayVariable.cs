@@ -47,6 +47,9 @@ namespace TQDBEditor.BasicEditor
         private GridContainer toolGrid;
 
         [Export]
+        private CheckBox seriesOverwrite;
+
+        [Export]
         private Table table;
 
 
@@ -84,6 +87,7 @@ namespace TQDBEditor.BasicEditor
             incrByValue.GetLineEdit().TextSubmitted += (str) => SetInputAsHandled();
             multByValue.GetLineEdit().TextSubmitted += (str) => SetInputAsHandled();
             incrSeriesValue.TextSubmitted += (str) => SetInputAsHandled();
+            incrSeriesValue.TextChanged += OnIncrSeriesChanged;
 
             setAllButton.Pressed += OnSetAll;
             incrByButton.Pressed += OnIncrBy;
@@ -136,10 +140,92 @@ namespace TQDBEditor.BasicEditor
             Init();
         }
 
+        private static IReadOnlyList<string> GetIncrSeriesElements(string value)
+        {
+            List<string> split = new();
+            var semiSplit = value.Split(';');
+            foreach (var semiS in semiSplit)
+            {
+                var commaSplit = semiS.Split(',');
+                foreach (var commaS in commaSplit)
+                    split.Add(commaS);
+            }
+            return split;
+        }
+
+        private void OnIncrSeriesChanged(string value)
+        {
+            var error = false;
+            var split = GetIncrSeriesElements(value);
+            foreach (var s in split)
+            {
+                if (entry.Template.Type == VariableType.real)
+                {
+                    if (!float.TryParse(s, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var _))
+                    {
+                        error = true;
+                        break;
+                    }
+                }
+                else if (!int.TryParse(s, out var _))
+                {
+                    error = true;
+                    break;
+                }
+            }
+
+            if (error)
+            {
+                incrSeriesValue.AddThemeColorOverride("font_color", Colors.Red);
+                incrSeriesButton.Disabled = true;
+            }
+            else
+            {
+                incrSeriesValue.RemoveThemeColorOverride("font_color");
+                incrSeriesButton.Disabled = false;
+            }
+        }
+
         private void OnIncrSeries()
         {
             SetInputAsHandled();
 
+            var split = GetIncrSeriesElements(incrSeriesValue.Text);
+            var series = new List<double>();
+
+            foreach (var s in split)
+            {
+                if (float.TryParse(s, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var fVal))
+                    series.Add(fVal);
+                else
+                {
+                    series.Clear();
+                    break;
+                }
+            }
+
+            var shouldOverwrite = seriesOverwrite?.ButtonPressed ?? false;
+            if (series.Count > 0)
+            {
+                int seriesIndex = 0;
+                double lastValue = fValues[0];
+                for (int i = 0; i < fValues.Count; i++)
+                {
+                    if (shouldOverwrite)
+                    {
+                        fValues[i] = lastValue + series[seriesIndex];
+                        lastValue = fValues[i];
+                    }
+                    else
+                    {
+                        lastValue = fValues[i];
+                        fValues[i] = lastValue + series[seriesIndex];
+                    }
+
+                    if (++seriesIndex >= series.Count)
+                        seriesIndex = 0;
+                }
+            }
 
             Init();
         }
