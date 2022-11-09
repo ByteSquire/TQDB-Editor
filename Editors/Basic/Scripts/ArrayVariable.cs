@@ -61,6 +61,10 @@ namespace TQDBEditor.BasicEditor
         {
             base._Ready();
 
+            multByValue.MaxValue = float.MaxValue;
+            multByValue.MinValue = float.MinValue;
+            multByValue.CustomArrowStep = 1;
+            multByValue.Step = 0.000001f;
             switch (entry.Template.Type)
             {
                 case VariableType.real:
@@ -68,17 +72,10 @@ namespace TQDBEditor.BasicEditor
                     incrByValue.MinValue = float.MinValue;
                     incrByValue.CustomArrowStep = 1;
                     incrByValue.Step = 0.000001f;
-
-                    multByValue.MaxValue = float.MaxValue;
-                    multByValue.MinValue = float.MinValue;
-                    multByValue.CustomArrowStep = 1;
-                    multByValue.Step = 0.000001f;
                     break;
                 case VariableType.@int:
                     incrByValue.MaxValue = int.MaxValue;
                     incrByValue.MinValue = int.MinValue;
-                    multByValue.MaxValue = int.MaxValue;
-                    multByValue.MinValue = int.MinValue;
                     break;
                 default:
                     DisableTools();
