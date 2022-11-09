@@ -178,6 +178,8 @@ namespace TQDBEditor.BasicEditor
         {
             SetInputAsHandled();
             var indices = table.GetFocussedRows();
+            if (indices.Count == 0)
+                return;
             foreach (var index in indices.Reverse())
             {
                 if (index < 0)
@@ -192,13 +194,20 @@ namespace TQDBEditor.BasicEditor
 
             UpdateIndices();
 
-            table.FocusRow(indices[0]);
+            var nextIndex = indices[0];
+            if (nextIndex == 0)
+                return;
+            if (nextIndex > values.Count - 1)
+                nextIndex--;
+            table.FocusRow(nextIndex);
         }
 
         private void OnMoveRowUp()
         {
             SetInputAsHandled();
             var indices = table.GetFocussedRows();
+            if (indices.Count == 0)
+                return;
             for (int i = 0; i < indices.Count; i++)
             {
                 var index = indices[i];
@@ -218,6 +227,8 @@ namespace TQDBEditor.BasicEditor
         {
             SetInputAsHandled();
             var indices = table.GetFocussedRows();
+            if (indices.Count == 0)
+                return;
             for (int i = indices.Count - 1; i >= 0; i--)
             {
                 var index = indices[i];
