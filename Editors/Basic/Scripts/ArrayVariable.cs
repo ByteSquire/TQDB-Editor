@@ -125,22 +125,48 @@ namespace TQDBEditor.BasicEditor
 
         private void OnNewRow()
         {
-            values.Add(string.Empty);
+            var focussed = table.GetFocussedRows();
+            int myIndex;
+            if (focussed.Count > 0)
+            {
+                myIndex = focussed[^1];
+                myIndex++;
+                values.Insert(myIndex, string.Empty);
+                if (entry.Template.Type == VariableType.@int || entry.Template.Type == VariableType.real)
+                    fValues.Insert(myIndex, 0);
 
-            AddRow(string.Empty, values.Count);
+                table.InsertRow(myIndex, CreateRow(myIndex, string.Empty));
+            }
+            else
+            {
+                values.Add(string.Empty);
+                myIndex = values.Count - 1;
+                AddRow(string.Empty, myIndex);
+            }
+
+            UpdateIndices();
+
+            table.FocusRow(myIndex);
         }
 
         private void OnDelRow()
         {
             var indices = table.GetFocussedRows();
-            foreach (var index in indices)
+            foreach (var index in indices.Reverse())
             {
                 if (index < 0)
                     return;
 
                 values.RemoveAt(index);
+                if (fValues.Count > 0)
+                    fValues.RemoveAt(index);
+
                 table.RemoveRow(index);
             }
+
+            UpdateIndices();
+
+            table.FocusRow(indices[0]);
         }
 
         private void OnMoveRowUp()
@@ -151,12 +177,14 @@ namespace TQDBEditor.BasicEditor
                 var index = indices[i];
                 if (index < 1)
                     continue;
-                if (indices[0] < 1 && i > 0 && index - indices[i - 1] <= 2)
+                if (indices[0] < 1 && i > 0 && index - indices[i - 1] <= 1)
                     continue;
 
-                var indexB = index - 2;
+                var indexB = index - 1;
                 SwapValues(index, indexB);
             }
+
+            UpdateIndices();
         }
 
         private void OnMoveRowDown()
@@ -165,36 +193,45 @@ namespace TQDBEditor.BasicEditor
             for (int i = indices.Count - 1; i >= 0; i--)
             {
                 var index = indices[i];
-                if (index / 2 >= values.Count - 1)
+                if (index >= values.Count - 1)
                     continue;
-                if (indices[^1] / 2 >= values.Count - 1 && i < values.Count - 1 && indices[i + 1] - index <= 2)
+                if (indices[^1] >= values.Count - 1 && i < values.Count - 1 && indices[i + 1] - index <= 1)
                     continue;
 
-                var indexB = index + 2;
+                var indexB = index + 1;
                 SwapValues(index, indexB);
             }
+
+            UpdateIndices();
         }
 
         private void SwapValues(int indexA, int indexB)
         {
-            var myIndexA = indexA / 2;
-            var myIndexB = indexB / 2;
-            GD.Print(myIndexA);
-            GD.Print(myIndexB);
-            var valueA = values[myIndexA];
-            var valueB = values[myIndexB];
+            var valueA = values[indexA];
+            var valueB = values[indexB];
 
-            values[myIndexA] = valueB;
-            values[myIndexB] = valueA;
+            values[indexA] = valueB;
+            values[indexB] = valueA;
 
             table.SwapRows(indexA, indexB);
 
             if (fValues.Count > 0)
             {
-                var fValueA = fValues[myIndexA];
-                var fValueB = fValues[myIndexB];
-                fValues[myIndexA] = fValueB;
-                fValues[myIndexB] = fValueA;
+                var fValueA = fValues[indexA];
+                var fValueB = fValues[indexB];
+                fValues[indexA] = fValueB;
+                fValues[indexB] = fValueA;
+            }
+        }
+
+        private void UpdateIndices()
+        {
+            var indicesLabels = table.EnumerateColumn(0).Select(x => x as Label).Where(x => x != null);
+
+            int i = 0;
+            foreach (var indexLabel in indicesLabels)
+            {
+                indexLabel.Text = i++.ToString();
             }
         }
 
@@ -252,12 +289,20 @@ namespace TQDBEditor.BasicEditor
                         fValues.Add(0);
                     break;
             }
-            var row = new Control[2];
-            row[0] = new Label()
+
+            table.AddRow(CreateRow(index, value));
+        }
+
+        private Godot.Collections.Array<Control> CreateRow(int index, string value)
+        {
+            var row = new Godot.Collections.Array<Control>
             {
-                Text = index.ToString(),
-                FocusMode = Control.FocusModeEnum.All,
-                MouseFilter = Control.MouseFilterEnum.Stop
+                new Label()
+                {
+                    Text = index.ToString(),
+                    FocusMode = Control.FocusModeEnum.All,
+                    MouseFilter = Control.MouseFilterEnum.Stop
+                }
             };
             Control second = new();
             try
@@ -271,8 +316,8 @@ namespace TQDBEditor.BasicEditor
             {
                 this.GetConsoleLogger()?.LogError("Error instantiating {scene}, does not extend {type}", variableControlScene.ResourcePath, typeof(VariableControl));
             }
-            row[1] = second;
-            table.AddRow(new Godot.Collections.Array<Control>(row));
+            row.Add(second);
+            return row;
         }
     }
 
