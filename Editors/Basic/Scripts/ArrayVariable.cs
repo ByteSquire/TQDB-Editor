@@ -310,8 +310,18 @@ namespace TQDBEditor.BasicEditor
         {
             switch (entry.Template.Type)
             {
-                case VariableType.real:
                 case VariableType.@int:
+                    if (fValues.Count > index)
+                    {
+                        value = ((int)fValues[index]).ToString("D", CultureInfo.InvariantCulture);
+                        break;
+                    }
+                    if (int.TryParse(value, out var iValue))
+                        fValues.Add(iValue);
+                    else
+                        fValues.Add(0);
+                    break;
+                case VariableType.real:
                     if (fValues.Count > index)
                     {
                         value = fValues[index].ToString("F6", CultureInfo.InvariantCulture);
