@@ -167,7 +167,7 @@ public partial class Table : Control
             _columns[i].AddChild(values[i]);
         }
 
-        return _columns[0].GetChildCount() - 1;
+        return ConvertToRowIndex(_columns[0].GetChildCount() - 1);
     }
 
     public int InsertRow(int index, Godot.Collections.Array<Control> values)
@@ -178,7 +178,8 @@ public partial class Table : Control
             return -1;
         }
         var myIndex = ConvertToChildIndex(index);
-        if (index < 0 || myIndex > _columns[0].GetChildCount())
+        // +1 because the separators count as children too, so we can insert up to count - 2
+        if (index < 0 || myIndex > _columns[0].GetChildCount() + 1)
         {
             GD.PrintErr("You must pass a non-negative index that's in range");
             return -1;
@@ -256,12 +257,12 @@ public partial class Table : Control
     public Godot.Collections.Array<Control> GetRow(int index)
     {
         var myIndex = ConvertToChildIndex(index);
+        var ret = new Godot.Collections.Array<Control>();
         if (_columns[0].GetChildCount() <= myIndex)
         {
             GD.PrintErr("The passed index " + index + " is out of range for this table");
-            return null;
+            return ret;
         }
-        var ret = new Godot.Collections.Array<Control>();
 
         foreach (var column in _columns)
             ret.Add(column.GetChild<Control>(myIndex));
@@ -343,6 +344,7 @@ public partial class Table : Control
     }
 
     private static int ConvertToChildIndex(int index) => index * 2;
+    private static int ConvertToRowIndex(int childIndex) => childIndex / 2;
 
     private static void ClearContainer(Container container)
     {
