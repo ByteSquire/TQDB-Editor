@@ -38,7 +38,7 @@ namespace TQDBEditor.BasicEditor
                 variableBox.MinValue = float.MinValue;
                 variableBox.MaxValue = float.MaxValue;
                 variableBox.Step = 0.000001;
-                if (float.TryParse(entry.Value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var floatValue))
+                if (float.TryParse(entry.Value, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var floatValue))
                     variableBox.Value = floatValue;
             }
             else
