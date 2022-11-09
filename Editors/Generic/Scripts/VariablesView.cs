@@ -212,8 +212,13 @@ namespace TQDBEditor.GenericEditor
             var entry = editorWindow.GetFocussedEntry();
             var row = table.GetRow(variableRowMap[entry.Name]);
 
-            row[0].FocusMode = FocusModeEnum.All;
-            row[0].GrabFocus();
+            if (row.Count > 0)
+            {
+                row[0].FocusMode = FocusModeEnum.All;
+                row[0].GrabFocus();
+            }
+            else
+                GD.PrintErr("oopsie, couldn't get selected row from table");
         }
 
         private void EditEntry(int index)
