@@ -7,6 +7,7 @@ using System.Linq;
 using TQDB_Parser;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
+using TQDB_Parser.Extensions;
 using TQDBEditor.Common;
 using TQDBEditor.EditorScripts;
 
@@ -55,7 +56,7 @@ namespace TQDBEditor.BasicEditor
 
         private VariableControl setAllValue;
         private List<string> values;
-        private List<double> fValues;
+        private List<float> fValues;
         private VariableBlock tpl;
 
         private PackedScene variableControlScene;
@@ -115,7 +116,7 @@ namespace TQDBEditor.BasicEditor
             SetInputAsHandled();
             for (int i = 0; i < values.Count; i++)
             {
-                if (fValues.Count > i && float.TryParse(setAllValue.GetChangedValue(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var fVal))
+                if (fValues.Count > i && TQNumberString.TryParseTQString(setAllValue.GetChangedValue(), out float fVal))
                     fValues[i] = fVal;
                 values[i] = setAllValue.GetChangedValue();
             }
@@ -126,7 +127,7 @@ namespace TQDBEditor.BasicEditor
         {
             SetInputAsHandled();
             for (int i = 0; i < values.Count; i++)
-                fValues[i] = fValues[i] + incrByValue.Value;
+                fValues[i] = fValues[i] + (float)incrByValue.Value;
 
             Init();
         }
@@ -135,7 +136,7 @@ namespace TQDBEditor.BasicEditor
         {
             SetInputAsHandled();
             for (int i = 0; i < values.Count; i++)
-                fValues[i] = fValues[i] * multByValue.Value;
+                fValues[i] = fValues[i] * (float)multByValue.Value;
 
             Init();
         }
@@ -161,13 +162,13 @@ namespace TQDBEditor.BasicEditor
             {
                 if (entry.Template.Type == VariableType.real)
                 {
-                    if (!float.TryParse(s, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var _))
+                    if (!TQNumberString.TryParseTQString(s, out float _))
                     {
                         error = true;
                         break;
                     }
                 }
-                else if (!int.TryParse(s, out var _))
+                else if (!TQNumberString.TryParseTQString(s, out int _))
                 {
                     error = true;
                     break;
@@ -191,11 +192,11 @@ namespace TQDBEditor.BasicEditor
             SetInputAsHandled();
 
             var split = GetIncrSeriesElements(incrSeriesValue.Text);
-            var series = new List<double>();
+            var series = new List<float>();
 
             foreach (var s in split)
             {
-                if (float.TryParse(s, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var fVal))
+                if (TQNumberString.TryParseTQString(s, out float fVal))
                     series.Add(fVal);
                 else
                 {
@@ -208,7 +209,7 @@ namespace TQDBEditor.BasicEditor
             if (series.Count > 0)
             {
                 int seriesIndex = 0;
-                double lastValue = fValues[0];
+                var lastValue = fValues[0];
                 for (int i = 0; i < fValues.Count; i++)
                 {
                     if (shouldOverwrite)
@@ -407,10 +408,10 @@ namespace TQDBEditor.BasicEditor
                 case VariableType.@int:
                     if (fValues.Count > index)
                     {
-                        value = ((int)fValues[index]).ToString("D", CultureInfo.InvariantCulture);
+                        value = ((int)fValues[index]).ToTQString();
                         break;
                     }
-                    if (int.TryParse(value, out var iValue))
+                    if (TQNumberString.TryParseTQString(value, out int iValue))
                         fValues.Add(iValue);
                     else
                         fValues.Add(0);
@@ -418,10 +419,10 @@ namespace TQDBEditor.BasicEditor
                 case VariableType.real:
                     if (fValues.Count > index)
                     {
-                        value = fValues[index].ToString("F6", CultureInfo.InvariantCulture);
+                        value = fValues[index].ToTQString();
                         break;
                     }
-                    if (float.TryParse(value, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var fValue))
+                    if (TQNumberString.TryParseTQString(value, out float fValue))
                         fValues.Add(fValue);
                     else
                         fValues.Add(0);

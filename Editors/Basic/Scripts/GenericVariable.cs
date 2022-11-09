@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 using TQDB_Parser.DBR;
 using TQDBEditor.Common;
 using TQDBEditor.EditorScripts;
@@ -21,20 +22,21 @@ namespace TQDBEditor.BasicEditor
             var value = entry.Value;
             if (!entry.IsValid())
             {
-                if (entry.InvalidIndex > -1)
+                if (entry.InvalidIndices.Count > 0)
                 {
+                    var invalidIndices = entry.InvalidIndices;
                     var split = value.Split(';');
                     for (int i = 0; i < split.Length; i++)
                     {
                         if (i > 0)
                             valueLabel.AppendText(";");
 
-                        if (i == entry.InvalidIndex)
+                        if (invalidIndices.Contains(i))
                             valueLabel.PushColor(Colors.Red);
 
                         valueLabel.AppendText(split[i]);
 
-                        if (i == entry.InvalidIndex)
+                        if (invalidIndices.Contains(i))
                             valueLabel.Pop();
                     }
                 }

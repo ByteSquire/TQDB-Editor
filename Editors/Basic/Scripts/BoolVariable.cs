@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using TQDB_Parser.DBR;
+using TQDB_Parser.Extensions;
 using TQDBEditor.Common;
 using TQDBEditor.EditorScripts;
 
@@ -18,10 +19,10 @@ namespace TQDBEditor.BasicEditor
 
         protected override void InitVariable(DBREntry entry)
         {
-            if (int.TryParse(entry.Value, out var intValue))
+            if (TQNumberString.TryParseTQString(entry.Value, out bool boolValue))
             {
-                button.ButtonPressed = intValue != 0;
-                button.Text = intValue != 0 ? "1 (true)" : "0 (false)";
+                button.ButtonPressed = boolValue;
+                button.Text = boolValue ? "1 (true)" : "0 (false)";
             }
 
             button.Toggled += (toggled) => OnConfirmed();
