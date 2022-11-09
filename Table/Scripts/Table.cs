@@ -211,13 +211,13 @@ public partial class Table : Control
         var myIndex = ConvertToChildIndex(index);
         foreach (var column in _columns)
         {
-            var numChildren = column.GetChildCount();
-            if (numChildren > index)
+            var maxChildIndex = column.GetChildCount() - 1;
+            if (maxChildIndex > index)
             {
                 var child = column.GetChild(myIndex);
                 GD.Print(child.GetIndex());
                 GD.Print(index);
-                if (numChildren > index + 1)
+                if (maxChildIndex > index + 1)
                 {
                     var childSep = column.GetChild(myIndex + 1);
                     column.RemoveChild(childSep);
@@ -311,6 +311,8 @@ public partial class Table : Control
         if (_columns is null)
             return;
         var myIndex = ConvertToChildIndex(index);
+        if (myIndex > _columns[0].GetChildCount() - 1)
+            return;
         _columns[0].GetChild<Control>(myIndex).GrabFocus();
 
         foreach (var column in _columns)
