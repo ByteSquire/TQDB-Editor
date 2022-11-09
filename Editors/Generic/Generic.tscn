@@ -29,9 +29,9 @@ script = ExtResource("7_5rfsj")
 editorWindow = NodePath("../..")
 
 [node name="Groups" type="Tree" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("editorWindow")]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-offset_right = 100.0
+offset_right = 200.0
 offset_bottom = 648.0
 script = ExtResource("7_35nl6")
 editorWindow = NodePath("../../..")
@@ -39,7 +39,7 @@ editorWindow = NodePath("../../..")
 [node name="Variables" type="Control" parent="VBoxContainer/GroupsVariables" node_paths=PackedStringArray("groupsView", "table", "editorWindow")]
 layout_mode = 2
 anchors_preset = 0
-offset_left = 112.0
+offset_left = 212.0
 offset_right = 1152.0
 offset_bottom = 648.0
 size_flags_horizontal = 3
