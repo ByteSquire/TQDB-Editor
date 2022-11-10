@@ -13,7 +13,11 @@ namespace TQDBEditor.Files
 
         protected override Func<string, bool> IsSupportedFileExtension => x => true;
 
-        protected override void ActivateItem(long index, string path) { }
+        protected override void ActivateItem(long index, string path)
+        {
+            // TODO: use known file extensions like msh and so on to start the right tool
+            OS.ShellOpen(path);
+        }
 
         protected override ItemList[] GetAdditionalColumns()
         {
