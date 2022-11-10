@@ -2,7 +2,6 @@ using Godot;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using TQDB_Parser;
 using TQDB_Parser.Blocks;
@@ -377,6 +376,7 @@ namespace TQDBEditor.BasicEditor
             {
                 var cVar = variableControlScene.Instantiate<VariableControl>();
                 cVar.Entry = new DBREntry(tpl, string.Empty);
+                cVar.DBRFile = DBRFile;
                 cVar.Submitted += () => setAllButton._Pressed();
                 setAllValue = cVar;
                 toolGrid.AddChild(setAllValue);
@@ -448,6 +448,7 @@ namespace TQDBEditor.BasicEditor
             {
                 var cVar = variableControlScene.Instantiate<VariableControl>();
                 cVar.Entry = new DBREntry(tpl, value);
+                cVar.DBRFile = DBRFile;
                 cVar.Submitted += () => values[index] = cVar.GetChangedValue();
                 second = cVar;
             }

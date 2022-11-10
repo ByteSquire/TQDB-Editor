@@ -180,6 +180,7 @@ namespace TQDBEditor.GenericEditor
                 {
                     var variableControl = controlScene.Instantiate<VariableControl>();
                     variableControl.Entry = new DBREntry(variable, value);
+                    variableControl.DBRFile = editorWindow.DBRFile;
                     variableControl.Submitted += () => editorWindow.Do(variable.Name, variableControl.GetChangedValue());
 
                     valueElement = variableControl;
