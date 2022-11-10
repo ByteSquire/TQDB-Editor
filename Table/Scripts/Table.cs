@@ -141,7 +141,7 @@ namespace TQDBEditor
                     UnFocusRow(selectedRowIndex);
 
             FocusRow(index);
-            GetViewport().GuiReleaseFocus();
+            //GetViewport().GuiReleaseFocus();
         }
 
         public IReadOnlyList<int> GetFocussedRows()
@@ -321,7 +321,7 @@ namespace TQDBEditor
             var myIndex = ConvertToChildIndex(index);
             if (myIndex > _columns[0].GetChildCount() - 1)
                 return;
-            _columns[0].GetChild<Control>(myIndex).GrabFocus();
+            _columns[0].GetChild<Control>(myIndex).CallDeferred("grab_focus");
 
             foreach (var column in _columns)
             {
