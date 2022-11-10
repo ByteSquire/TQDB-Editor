@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c5psysfsju3ki"]
+[gd_scene load_steps=31 format=3 uid="uid://c5psysfsju3ki"]
 
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ModMenu.gd" id="1_35yvy"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/Management/MenuBarManager.cs" id="1_hfkuf"]
@@ -21,6 +21,7 @@
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ToolsMenu.gd" id="9_h0s88"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/ViewMenu.gd" id="10_rod4w"]
 [ext_resource type="Script" path="res://Scripts/MainScene/MenuBar/SubMenus/HelpMenu.gd" id="11_va2v8"]
+[ext_resource type="Script" path="res://Scripts/MainScene/ViewTabs.cs" id="13_utfmt"]
 [ext_resource type="Script" path="res://Scripts/MainScene/FootBar/FootBar.gd" id="20_owo0q"]
 [ext_resource type="PackedScene" uid="uid://ca2r2ddfu6v4u" path="res://Scenes/Popups/CreateNewMod.tscn" id="22_5kqp3"]
 [ext_resource type="PackedScene" uid="uid://b8x5wcaw2o2hl" path="res://Scenes/Popups/SelectNewMod.tscn" id="23_kccxs"]
@@ -224,23 +225,37 @@ offset_right = 1150.0
 offset_bottom = 615.0
 size_flags_vertical = 3
 
-[node name="DirectoriesFiles" type="HSplitContainer" parent="MainView/FilesConsole"]
-custom_minimum_size = Vector2(0, 100)
+[node name="TabContainer" type="TabContainer" parent="MainView/FilesConsole"]
 layout_mode = 2
 offset_right = 1150.0
 offset_bottom = 284.0
 size_flags_vertical = 3
+tab_alignment = 1
+drag_to_rearrange_enabled = true
+script = ExtResource("13_utfmt")
 
-[node name="Directories" type="TabContainer" parent="MainView/FilesConsole/DirectoriesFiles"]
+[node name="Classic (ArtManager)" type="HSplitContainer" parent="MainView/FilesConsole/TabContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 31.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+tooltip_text = "Built-in"
+
+[node name="Directories" type="TabContainer" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 offset_right = 569.0
-offset_bottom = 284.0
+offset_bottom = 253.0
 size_flags_horizontal = 3
 drag_to_rearrange_enabled = true
 use_hidden_tabs_for_min_size = true
 
-[node name="Sources" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
+[node name="Sources" type="Tree" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Directories"]
 layout_mode = 2
 anchors_preset = 15
 anchor_right = 1.0
@@ -250,7 +265,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("5_x5gho")
 
-[node name="Assets" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
+[node name="Assets" type="Tree" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Directories"]
 visible = false
 layout_mode = 2
 anchors_preset = 15
@@ -261,7 +276,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("6_4mdme")
 
-[node name="Database" type="Tree" parent="MainView/FilesConsole/DirectoriesFiles/Directories"]
+[node name="Database" type="Tree" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Directories"]
 visible = false
 layout_mode = 2
 anchors_preset = 15
@@ -272,29 +287,29 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("7_8khkc")
 
-[node name="Files" type="Control" parent="MainView/FilesConsole/DirectoriesFiles"]
+[node name="Files" type="Control" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)"]
 layout_mode = 2
 anchors_preset = 0
 offset_left = 581.0
 offset_right = 1150.0
-offset_bottom = 284.0
+offset_bottom = 253.0
 size_flags_horizontal = 3
 script = ExtResource("6_fcgqe")
 
-[node name="FilesViewSource" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("6_y1vhp")]
+[node name="FilesViewSource" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("6_y1vhp")]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 1
 dirView = NodePath("../../Directories/Sources")
 column1 = NodePath("Columns/Column1")
 
-[node name="FilesViewAssets" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("7_njte4")]
+[node name="FilesViewAssets" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("7_njte4")]
 visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 1
 dirView = NodePath("../../Directories/Assets")
 column1 = NodePath("Columns/Column1")
 
-[node name="FilesViewDatabase" parent="MainView/FilesConsole/DirectoriesFiles/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("8_jodwh")]
+[node name="FilesViewDatabase" parent="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Files" node_paths=PackedStringArray("dirView", "column1") instance=ExtResource("8_jodwh")]
 visible = false
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 1
@@ -386,7 +401,7 @@ visible = false
 
 [node name="OpenFile" type="Node" parent="Util" node_paths=PackedStringArray("files")]
 script = ExtResource("27_gqlxj")
-files = NodePath("../../MainView/FilesConsole/DirectoriesFiles/Files")
+files = NodePath("../../MainView/FilesConsole/TabContainer/Classic (ArtManager)/Files")
 
 [node name="BuildMod" type="Node" parent="Util" node_paths=PackedStringArray("statusLabel", "progress")]
 script = ExtResource("28_jkuo5")
@@ -439,5 +454,5 @@ progress = NodePath("../../MainView/FootBar/ProgressPath/Progress")
 [connection signal="id_pressed" from="MainView/MenuBar/Help" to="MainView/MenuBar/Help" method="_on_id_pressed"]
 [connection signal="install_templates" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_templates"]
 [connection signal="install_tutorials" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_tutorials"]
-[connection signal="tab_changed" from="MainView/FilesConsole/DirectoriesFiles/Directories" to="MainView/FilesConsole/DirectoriesFiles/Files" method="_on_directories_tab_changed"]
+[connection signal="tab_changed" from="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Directories" to="MainView/FilesConsole/TabContainer/Classic (ArtManager)/Files" method="_on_directories_tab_changed"]
 [connection signal="ToggleBuild" from="Util/BuildMod" to="MainView/MenuBar/Build" method="_on_build_mod_toggle_build"]
