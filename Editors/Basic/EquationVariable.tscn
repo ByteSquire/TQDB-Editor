@@ -1,11 +1,64 @@
-[gd_scene format=3 uid="uid://b0grat0pymp55"]
+[gd_scene load_steps=2 format=3 uid="uid://b0grat0pymp55"]
 
-[node name="EquationVariable" type="ConfirmationDialog"]
+[ext_resource type="Script" path="res://Editors/Basic/Scripts/EquationVariable.cs" id="1_6ja23"]
+
+[node name="EquationVariable" type="ConfirmationDialog" node_paths=PackedStringArray("variableList", "equationEdit", "equationPreview", "addVariableButton")]
+size = Vector2i(200, 175)
+min_size = Vector2i(200, 175)
+script = ExtResource("1_6ja23")
+variableList = NodePath("VBoxContainer/VariableList")
+equationEdit = NodePath("VBoxContainer/EquationEdit")
+equationPreview = NodePath("VBoxContainer/EquationPreview")
+addVariableButton = NodePath("VBoxContainer/CenterContainer/AddVariableButton")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Available variables:"
+
+[node name="VariableList" type="ItemList" parent="VBoxContainer"]
+layout_mode = 2
+offset_right = 1152.0
+offset_bottom = 210.0
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="AddVariableButton" type="Button" parent="VBoxContainer/CenterContainer"]
+layout_mode = 2
+offset_top = 4.0
+offset_right = 105.0
+offset_bottom = 35.0
+text = "Add variable"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+offset_top = 214.0
+offset_right = 1152.0
+offset_bottom = 218.0
+
+[node name="EquationEdit" type="LineEdit" parent="VBoxContainer"]
+layout_mode = 2
+offset_top = 222.0
+offset_right = 1152.0
+offset_bottom = 433.0
+
+[node name="EquationPreview" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+offset_top = 437.0
+offset_right = 1152.0
+offset_bottom = 648.0
+bbcode_enabled = true
+fit_content_height = true
