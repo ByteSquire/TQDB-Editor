@@ -47,6 +47,13 @@
       }
     },
     {
+      "name": "EquationVariableControl",
+      "variable": {
+        "class": "variable",
+        "type": "equation"
+      }
+    },
+    {
       "name": "FileVariable",
       "variable": {
         "class": "variable",

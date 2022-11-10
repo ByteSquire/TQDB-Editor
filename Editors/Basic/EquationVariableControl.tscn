@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://bx5o84aqf6mgf"]
+
+[ext_resource type="Script" path="res://Editors/Basic/Scripts/EquationVariableControl.cs" id="1_baowb"]
+[ext_resource type="PackedScene" uid="uid://duvwkirpr48vw" path="res://Editors/Basic/VariableCell.tscn" id="2_jvch1"]
+
+[node name="EquationVariable" type="Control" node_paths=PackedStringArray("valueLabel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_baowb")
+valueLabel = NodePath("VariableCell")
+
+[node name="VariableCell" parent="." instance=ExtResource("2_jvch1")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
