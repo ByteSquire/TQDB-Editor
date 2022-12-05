@@ -18,7 +18,7 @@ namespace TQDBEditor.BasicEditor
 
         public override string GetChangedValue()
         {
-            return ((float)variableBox.Value).ToTQString();
+            return ((float)variableBox.Value).ToTQString(!isReal);
         }
 
         protected override void InitVariable(DBREntry entry)
