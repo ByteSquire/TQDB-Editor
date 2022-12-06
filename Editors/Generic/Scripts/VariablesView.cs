@@ -236,6 +236,26 @@ namespace TQDBEditor.GenericEditor
                 GD.PrintErr("oopsie, couldn't get selected row from table");
         }
 
+        public List<string> GetSelectedVariables()
+        {
+            return table.GetFocussedRows().Select(x => table.GetRow(x)[0].Get(Label.PropertyName.Text).AsString()).ToList();
+        }
+
+        public bool TryGetNextVariable(string currentVariable, out string name)
+        {
+            name = null;
+            if (variableRowMap.TryGetValue(currentVariable, out var rowIndex))
+            {
+                var nextRow = table.GetRow(rowIndex + 1);
+                if (nextRow.Count > 0)
+                {
+                    name = nextRow[0].Get(Label.PropertyName.Text).AsString();
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void EditEntry(int index)
         {
             var row = table.GetRow(index);
