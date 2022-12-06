@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 using TQDBEditor.Common;
 
 namespace TQDBEditor
@@ -24,13 +25,26 @@ namespace TQDBEditor
             pckHandler = this.GetPCKHandler();
 
             var views = pckHandler.GetViews();
-
-            foreach (var viewTooltip in views)
+            var orderedKeys = views.Keys.ToList();
+            orderedKeys.Sort((a, b) =>
             {
-                foreach (var view in viewTooltip.Value)
+                var ret = a.CompareTo(b);
+                if (ret == 0)
+                    return ret;
+
+                if (a == "ArtManager")
+                    return -1;
+                if (b == "ArtManager")
+                    return 1;
+
+                return ret;
+            });
+            foreach (var key in orderedKeys)
+            {
+                foreach (var view in views[key])
                 {
                     var child = view.Instantiate();
-                    var nameExtension = string.Format(" ({0})", viewTooltip.Key);
+                    var nameExtension = string.Format(" ({0})", key);
                     child.Name += nameExtension;
                     AddChild(child);
                 }
