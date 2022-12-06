@@ -1,15 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://b0etq518jd7pn"]
+[gd_scene load_steps=6 format=3]
 
-[ext_resource type="PackedScene" uid="uid://dep437w8jdmqr" path="res://Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
-[ext_resource type="Script" path="res://Scripts/MainScene/Files/FilesViewDatabase.cs" id="2_oktei"]
+[ext_resource type="PackedScene" path="res://Views/ArtManager/Scenes/Files/FilesViewBase.tscn" id="1_6p5jd"]
+[ext_resource type="Script" path="res://Views/ArtManager/Scripts/Files/FilesViewDatabase.cs" id="2_oktei"]
 [ext_resource type="Script" path="res://Table/Scripts/SplitContainerSync.gd" id="3_k1y0o"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Table/Scenes/ColumnButton.tscn" id="4_0d73h"]
-[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="5_16apx"]
+[ext_resource type="Script" path="res://Views/ArtManager/Scripts/Files/FileList.cs" id="5_16apx"]
 
-[node name="FileViewDatabase" node_paths=PackedStringArray("column2", "column3") instance=ExtResource("1_6p5jd")]
+[node name="FileViewDatabase" node_paths=PackedStringArray("column2", "column3", "column1") instance=ExtResource("1_6p5jd")]
+custom_minimum_size = Vector2(100, 0)
 script = ExtResource("2_oktei")
 column2 = NodePath("Columns/Columns23/Column2")
 column3 = NodePath("Columns/Columns23/Column3")
+column1 = NodePath("Columns/Column1")
 
 [node name="FileName" parent="Header" index="0"]
 offset_right = 100.0
@@ -34,6 +36,7 @@ offset_right = 1040.0
 text = "Template"
 
 [node name="Column1" parent="Columns" index="0"]
+custom_minimum_size = Vector2(100, 0)
 offset_right = 100.0
 
 [node name="Columns23" type="HSplitContainer" parent="Columns" index="1" node_paths=PackedStringArray("other")]
@@ -45,7 +48,7 @@ script = ExtResource("3_k1y0o")
 other = NodePath("../../Header/Header2")
 
 [node name="Column2" type="ItemList" parent="Columns/Columns23" index="0" node_paths=PackedStringArray("sortButton")]
-custom_minimum_size = Vector2i(100, 0)
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 offset_right = 100.0
 offset_bottom = 605.0
@@ -53,7 +56,7 @@ script = ExtResource("5_16apx")
 sortButton = NodePath("../../../Header/Header2/FileDescription")
 
 [node name="Column3" type="ItemList" parent="Columns/Columns23" index="1" node_paths=PackedStringArray("sortButton")]
-custom_minimum_size = Vector2i(100, 0)
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 offset_left = 112.0
 offset_right = 1040.0

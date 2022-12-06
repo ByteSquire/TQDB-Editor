@@ -21,9 +21,6 @@ namespace TQDBEditor.Files
         //[Export]
         //protected PackedScene fileNameLabelTemplate;
 
-        [Signal]
-        public delegate void FileActivatedEventHandler();
-
         protected ILogger logger;
         protected Config configNode;
 
@@ -60,10 +57,9 @@ namespace TQDBEditor.Files
 
         protected void OnItemActivated(long index)
         {
-            activeFile = Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index));
-            ActivateItem(index, Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index)));
-
-            EmitSignal(nameof(FileActivated));
+            var path = Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index));
+            if (IsSupportedFileExtension.Invoke(Path.GetExtension(path)))
+                ActivateItem(index, path);
         }
 
         public string GetActiveFile() => activeFile;

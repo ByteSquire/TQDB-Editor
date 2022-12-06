@@ -13,9 +13,21 @@ _global_script_classes=[{
 "class": &"AutoPopupMenu",
 "language": &"GDScript",
 "path": "res://Scripts/GDbase/AutoPopupMenu.gd"
+}, {
+"base": "AutoPopupMenu",
+"class": &"PopupMenuShortcuts",
+"language": &"GDScript",
+"path": "res://Scripts/GDbase/PopupMenuShortcuts.gd"
+}, {
+"base": "Resource",
+"class": &"ShortcutWithID",
+"language": &"GDScript",
+"path": "res://Scripts/GDbase/ShortcutWithID.gd"
 }]
 _global_script_class_icons={
-"AutoPopupMenu": ""
+"AutoPopupMenu": "",
+"PopupMenuShortcuts": "",
+"ShortcutWithID": ""
 }
 
 [application]

@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://dep437w8jdmqr"]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://Table/Scripts/SplitContainerSync.gd" id="1_rkn2l"]
 [ext_resource type="PackedScene" uid="uid://5utvbcxropvi" path="res://Table/Scenes/ColumnButton.tscn" id="2_67okm"]
-[ext_resource type="Script" path="res://Scripts/MainScene/Files/FileList.cs" id="3_anm70"]
+[ext_resource type="Script" path="res://Views/ArtManager/Scripts/Files/FileList.cs" id="3_anm70"]
 
 [node name="FilesViewBase" type="VBoxContainer"]
 custom_minimum_size = Vector2i(100, 0)

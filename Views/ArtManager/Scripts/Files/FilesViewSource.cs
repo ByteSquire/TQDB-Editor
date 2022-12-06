@@ -13,6 +13,8 @@ namespace TQDBEditor.Files
 
         protected override void ActivateItem(long index, string path)
         {
+            // TODO: use known file extensions like msh and so on to start the right tool
+            OS.ShellOpen(path);
         }
 
         protected override ItemList[] GetAdditionalColumns()

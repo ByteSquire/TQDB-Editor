@@ -1,10 +1,39 @@
-[gd_scene load_steps=6 format=3 uid="uid://2w8iglkkclti"]
+[gd_scene load_steps=15 format=3 uid="uid://2w8iglkkclti"]
 
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/MenuBar/Management/EditorMenuBarManager.cs" id="1_jralm"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/MenuBar/SubMenus/FileMenu.gd" id="2_sa2nq"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/MenuBar/SubMenus/EditMenu.gd" id="3_g71ob"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/MenuBar/SubMenus/ViewMenu.gd" id="4_gj3qr"]
+[ext_resource type="Script" path="res://Scripts/GDbase/ShortcutWithID.gd" id="4_hl2bc"]
+[ext_resource type="Shortcut" uid="uid://c61amnjacu30l" path="res://Shortcuts/copy.tres" id="5_1r57a"]
 [ext_resource type="Script" path="res://Editors/Generic/Scripts/MenuBar/SubMenus/ToolsMenu.gd" id="5_w746d"]
+[ext_resource type="Shortcut" uid="uid://3pxdltijwkmm" path="res://Shortcuts/paste.tres" id="6_wncer"]
+[ext_resource type="Shortcut" uid="uid://dlc1ty67vhc60" path="res://Shortcuts/undo.tres" id="7_myxg6"]
+[ext_resource type="Shortcut" uid="uid://dkojkkhbjr8d" path="res://Shortcuts/redo.tres" id="8_m1ha1"]
+
+[sub_resource type="Resource" id="Resource_b7vvh"]
+resource_name = "Copy"
+script = ExtResource("4_hl2bc")
+id = 3
+value = ExtResource("5_1r57a")
+
+[sub_resource type="Resource" id="Resource_0httq"]
+resource_name = "Paste"
+script = ExtResource("4_hl2bc")
+id = 4
+value = ExtResource("6_wncer")
+
+[sub_resource type="Resource" id="Resource_wbhx1"]
+resource_name = "Undo"
+script = ExtResource("4_hl2bc")
+id = null
+value = ExtResource("7_myxg6")
+
+[sub_resource type="Resource" id="Resource_afyyd"]
+resource_name = "Redo"
+script = ExtResource("4_hl2bc")
+id = 1
+value = ExtResource("8_m1ha1")
 
 [node name="MenuBar" type="MenuBar" node_paths=PackedStringArray("saveAsPopup", "changeTemplatePopup", "showTemplate")]
 offset_right = 1152.0
@@ -42,7 +71,7 @@ item_8/id = 8
 script = ExtResource("2_sa2nq")
 
 [node name="Edit" type="PopupMenu" parent="."]
-item_count = 8
+item_count = 11
 item_0/text = "Undo"
 item_0/id = 0
 item_1/text = "Redo"
@@ -50,20 +79,28 @@ item_1/id = 1
 item_2/text = ""
 item_2/id = 2
 item_2/separator = true
-item_3/text = "Edit Entry"
+item_3/text = "Copy"
 item_3/id = 3
-item_4/text = ""
-item_4/id = 6
-item_4/separator = true
-item_5/text = "Find..."
+item_4/text = "Paste"
+item_4/id = 4
+item_5/text = ""
 item_5/id = 5
-item_6/text = ""
+item_5/separator = true
+item_6/text = "Edit Entry"
 item_6/id = 6
-item_6/separator = true
-item_7/text = "Set default column widths"
+item_7/text = ""
 item_7/id = 7
-item_7/disabled = true
+item_7/separator = true
+item_8/text = "Find..."
+item_8/id = 8
+item_9/text = ""
+item_9/id = 9
+item_9/separator = true
+item_10/text = "Set default column widths"
+item_10/id = 10
+item_10/disabled = true
 script = ExtResource("3_g71ob")
+shortcuts = [SubResource("Resource_b7vvh"), SubResource("Resource_0httq"), SubResource("Resource_wbhx1"), SubResource("Resource_afyyd")]
 
 [node name="View" type="PopupMenu" parent="."]
 item_count = 5
@@ -124,9 +161,11 @@ size_flags_horizontal = 3
 [connection signal="save" from="File" to="." method="_on_file_save"]
 [connection signal="save_as" from="File" to="." method="_on_file_save_as"]
 [connection signal="set_template" from="File" to="." method="_on_file_set_template"]
+[connection signal="copy" from="Edit" to="." method="_on_edit_copy"]
 [connection signal="edit_entry" from="Edit" to="." method="_on_edit_edit_entry"]
 [connection signal="find" from="Edit" to="." method="_on_edit_find"]
 [connection signal="id_pressed" from="Edit" to="Edit" method="_on_id_pressed"]
+[connection signal="paste" from="Edit" to="." method="_on_edit_paste"]
 [connection signal="redo" from="Edit" to="." method="_on_edit_redo"]
 [connection signal="set_default_width" from="Edit" to="." method="_on_edit_set_default_width"]
 [connection signal="undo" from="Edit" to="." method="_on_edit_undo"]

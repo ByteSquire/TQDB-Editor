@@ -1,0 +1,9 @@
+[gd_resource type="Shortcut" load_steps=2 format=3 uid="uid://3pxdltijwkmm"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_n2ltj"]
+resource_name = "Ctrl+V"
+ctrl_pressed = true
+keycode = 86
+
+[resource]
+events = [SubResource("InputEventKey_n2ltj")]

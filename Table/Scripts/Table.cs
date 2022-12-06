@@ -103,22 +103,25 @@ namespace TQDBEditor
 
         private void OnGuiFocusChanged(Control node)
         {
+            var focussedRows = GetFocussedRows();
             if (!node.HasMeta("is_table_cell"))
             {
-                foreach (var selectedRowIndex in GetFocussedRows())
+                foreach (var selectedRowIndex in focussedRows)
                     UnFocusRow(selectedRowIndex);
                 return;
             }
             var index = GetCellPosition(node).y;
             if (index < 0)
                 return;
+            if (focussedRows.Contains(index))
+                return;
 
             if (Input.IsKeyPressed(Key.Ctrl) || Input.IsKeyPressed(Key.Shift))
             {
                 if (Input.IsKeyPressed(Key.Shift))
                 {
-                    var firstFocussed = GetFocussedRows()[0];
-                    var lastFocussed = GetFocussedRows()[^1];
+                    var firstFocussed = focussedRows[0];
+                    var lastFocussed = focussedRows[^1];
                     if (index < firstFocussed || index > lastFocussed)
                     {
                         bool up = index < firstFocussed;
@@ -137,7 +140,7 @@ namespace TQDBEditor
                 }
             }
             else
-                foreach (var selectedRowIndex in GetFocussedRows())
+                foreach (var selectedRowIndex in focussedRows)
                     UnFocusRow(selectedRowIndex);
 
             FocusRow(index);
@@ -326,7 +329,18 @@ namespace TQDBEditor
             foreach (var column in _columns)
             {
                 var cChild = column.GetChild<Control>(myIndex);
-                cChild.AddThemeStyleboxOverride("normal", new StyleBoxFlat() { BgColor = Colors.Blue });
+                if (cChild.HasThemeStylebox("normal"))
+                {
+                    if (cChild.GetThemeStylebox("normal", cChild.ThemeTypeVariation) is StyleBoxFlat sb)
+                    {
+                        sb.BgColor = Colors.Blue;
+                        cChild.AddThemeStyleboxOverride("normal", sb);
+                    }
+                    else
+                        cChild.AddThemeStyleboxOverride("normal", new StyleBoxFlat() { BgColor = Colors.Blue });
+                }
+                else
+                    cChild.AddThemeStyleboxOverride("normal", new StyleBoxFlat() { BgColor = Colors.Blue });
                 cChild.SetMeta("is_focussed", true);
             }
         }

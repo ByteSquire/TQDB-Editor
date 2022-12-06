@@ -13,6 +13,10 @@ namespace TQDBEditor.EditorScripts
         public delegate void UndoEventHandler();
         [Signal]
         public delegate void RedoEventHandler();
+        [Signal]
+        public delegate void CopyEventHandler();
+        [Signal]
+        public delegate void PasteEventHandler();
 
         private void InitEditManagement()
         {
@@ -44,6 +48,20 @@ namespace TQDBEditor.EditorScripts
             GD.Print("Edit -> Redo");
 
             EmitSignal(nameof(Redo));
+        }
+
+        public void _on_edit_copy()
+        {
+            GD.Print("Edit -> Copy");
+
+            EmitSignal(nameof(Copy));
+        }
+
+        public void _on_edit_paste()
+        {
+            GD.Print("Edit -> Paste");
+
+            EmitSignal(nameof(Paste));
         }
 
         public void _on_edit_set_default_width()

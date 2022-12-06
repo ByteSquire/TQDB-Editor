@@ -24,8 +24,6 @@ namespace TQDBEditor
         [Signal]
         public delegate void ToggleBuildEventHandler();
 
-        private ArzWriter arzWriter;
-
         private static readonly CancellationTokenSource cancelSource = new(5 * 60 * 1000);
 
         private Task work;
@@ -59,16 +57,14 @@ namespace TQDBEditor
                 "CustomMaps", config.ModName);
             var outputDatabase = Path.Combine(outputDir, "database");
 
+
             var filesToCopy = Directory.EnumerateFiles(database, "*.dbr", SearchOption.AllDirectories);
 
-            var old = arzWriter;
-            arzWriter = new ArzWriter(Path.Combine(outputDatabase, config.ModName + ".arz"),
-                logger);
+            var manager = new ArzManager(Path.Combine(outputDatabase, config.ModName + ".arz"), database, logger);
+            GD.Print("Using archive " + Path.Combine(outputDatabase, config.ModName + ".arz"));
+            manager.FileDone += ArzWriter_FileDone;
 
-            if (old is null)
-                arzWriter.FileDone += ArzWriter_FileDone;
-
-            progress.MaxValue = filesToCopy.Count() * 2;
+            progress.MaxValue = filesToCopy.Count() /** 2*/;
             progress.Value = 0;
             statusLabel.Clear();
             statusLabel.PushColor(Colors.Orange);
@@ -77,12 +73,11 @@ namespace TQDBEditor
             cancelSource.TryReset();
             EmitSignal(nameof(ToggleBuild));
             //copy = CopyFiles(filesToCopy, database, outputDatabase);
-            work = Work(filesToCopy);
+            work = Work(filesToCopy, manager);
         }
 
-        private void ArzWriter_FileDone(string obj)
+        private void ArzWriter_FileDone()
         {
-            logger?.LogInformation("Added {filename} to archive", obj);
             lock (progressLock)
                 progress.Value += 1;
         }
@@ -129,42 +124,42 @@ namespace TQDBEditor
             EmitSignal(nameof(ToggleBuild));
         }
 
-        private async Task Work(IEnumerable<string> filesToCopy)
+        private Task Work(IEnumerable<string> filesToCopy, ArzManager manager)
         {
-            var ret = new Task(DoWrite, state: filesToCopy, cancelSource.Token);
+            var ret = new Task(() => DoWrite(filesToCopy, manager), cancelSource.Token);
             ret.Start();
-            await ret;
+            return ret;
         }
 
-        private void DoWrite(object filesToCopy)
+        private void DoWrite(IEnumerable<string> filesToCopy, ArzManager manager)
         {
-            var manager = this.GetTemplateManager();
-            manager.ParseAllTemplates();
-            manager.ResolveAllIncludes();
-            if (filesToCopy is IEnumerable<string> files)
-            {
-                var dbrFiles = new ConcurrentQueue<DBRFile>();
-                var po = new ParallelOptions
-                {
-                    CancellationToken = cancelSource.Token,
-                    MaxDegreeOfParallelism = System.Environment.ProcessorCount,
-                };
-                try
-                {
-                    Parallel.ForEach(files, po, x =>
-                        {
-                            try
-                            {
-                                dbrFiles.Enqueue(new DBRParser(manager, logger).ParseFile(x));
-                                lock (progressLock)
-                                    progress.Value += 1;
-                            }
-                            catch (ParseException) { }
-                        });
-                }
-                catch (OperationCanceledException) { }
-                arzWriter.Write(dbrFiles);
-            }
+            var tplManager = this.GetTemplateManager();
+            tplManager.ParseAllTemplates();
+            tplManager.ResolveAllIncludes();
+
+            //var dbrFiles = new ConcurrentQueue<DBRFile>();
+            //var po = new ParallelOptions
+            //{
+            //    CancellationToken = cancelSource.Token,
+            //    MaxDegreeOfParallelism = System.Environment.ProcessorCount,
+            //};
+            //try
+            //{
+            //    Parallel.ForEach(filesToCopy, po, x =>
+            //        {
+            //            try
+            //            {
+            //                dbrFiles.Enqueue(new DBRParser(tplManager, logger).ParseFile(x));
+            //                lock (progressLock)
+            //                    progress.Value += 1;
+            //            }
+            //            catch (ParseException) { }
+            //        });
+            //}
+            //catch (OperationCanceledException) { }
+            manager.SyncFiles(new DBRParser(tplManager, logger));
+
+            manager.WriteToDisk();
             OnDone();
         }
 
