@@ -1,0 +1,9 @@
+[gd_resource type="Shortcut" load_steps=2 format=3 uid="uid://dkojkkhbjr8d"]
+
+[sub_resource type="InputEventKey" id="InputEventKey_h8w55"]
+resource_name = "Ctrl+Y"
+ctrl_pressed = true
+keycode = 89
+
+[resource]
+events = [SubResource("InputEventKey_h8w55")]
