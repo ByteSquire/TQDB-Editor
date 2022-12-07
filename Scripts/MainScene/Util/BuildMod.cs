@@ -24,7 +24,7 @@ namespace TQDBEditor
         [Signal]
         public delegate void ToggleBuildEventHandler();
 
-        private static readonly CancellationTokenSource cancelSource = new(5 * 60 * 1000);
+        private static CancellationTokenSource cancelSource = new(5 * 60 * 1000);
 
         private Task work;
         private Task copy;
@@ -70,7 +70,11 @@ namespace TQDBEditor
             statusLabel.PushColor(Colors.Orange);
             statusLabel.AddText("Building...");
 
-            cancelSource.TryReset();
+            if (!cancelSource.TryReset())
+            {
+                cancelSource.Dispose();
+                cancelSource = new(5 * 60 * 1000);
+            }
             EmitSignal(nameof(ToggleBuild));
             //copy = CopyFiles(filesToCopy, database, outputDatabase);
             work = Work(filesToCopy, manager);
@@ -92,7 +96,21 @@ namespace TQDBEditor
         public void CancelBuild()
         {
             cancelSource.Cancel();
-            logger?.LogInformation("Build cancelled");
+            try
+            {
+                work.Wait(500);
+                logger?.LogWarning("Failed to cancel build");
+            }
+            catch (AggregateException e)
+            {
+                if (work.IsCanceled)
+                {
+                    GD.Print($"{nameof(TaskCanceledException)} thrown with message: {e.Message}");
+                    logger?.LogInformation("Build cancelled");
+                }
+            }
+
+            ResetBuildInfo();
         }
 
         private async Task CopyFiles(IEnumerable<string> filesToCopy, string inputDatabase, string outputDatabase)
@@ -133,9 +151,11 @@ namespace TQDBEditor
 
         private void DoWrite(IEnumerable<string> filesToCopy, ArzManager manager)
         {
+            cancelSource.Token.ThrowIfCancellationRequested();
             var tplManager = this.GetTemplateManager();
             tplManager.ParseAllTemplates();
             tplManager.ResolveAllIncludes();
+            cancelSource.Token.ThrowIfCancellationRequested();
 
             //var dbrFiles = new ConcurrentQueue<DBRFile>();
             //var po = new ParallelOptions
@@ -157,10 +177,21 @@ namespace TQDBEditor
             //        });
             //}
             //catch (OperationCanceledException) { }
-            manager.SyncFiles(new DBRParser(tplManager, logger));
+            manager.SyncFiles(EnumerateFilesWithCancellation(), new DBRParser(tplManager, logger));
+            cancelSource.Token.ThrowIfCancellationRequested();
 
             manager.WriteToDisk();
             OnDone();
+
+
+            IEnumerable<string> EnumerateFilesWithCancellation()
+            {
+                foreach (var file in filesToCopy)
+                {
+                    cancelSource.Token.ThrowIfCancellationRequested();
+                    yield return file;
+                }
+            }
         }
 
         public override void _ExitTree()
