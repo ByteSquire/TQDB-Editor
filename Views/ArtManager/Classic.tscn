@@ -4,9 +4,9 @@
 [ext_resource type="Script" path="res://Views/ArtManager/Scripts/Directories/DirViewAssets.cs" id="2_6ncor"]
 [ext_resource type="Script" path="res://Views/ArtManager/Scripts/Directories/DirViewDatabase.cs" id="3_0nqd6"]
 [ext_resource type="Script" path="res://Views/ArtManager/Scripts/Files/FileViewSwitcher.gd" id="4_v00kw"]
-[ext_resource type="PackedScene" path="res://Views/ArtManager/Scenes/Files/FilesViewSource.tscn" id="5_1fidh"]
-[ext_resource type="PackedScene" path="res://Views/ArtManager/Scenes/Files/FilesViewAssets.tscn" id="6_ccb60"]
-[ext_resource type="PackedScene" path="res://Views/ArtManager/Scenes/Files/FilesViewDatabase.tscn" id="7_aipj6"]
+[ext_resource type="PackedScene" uid="uid://dc8lo0wu7t2ui" path="res://Views/ArtManager/Scenes/Files/FilesViewSource.tscn" id="5_1fidh"]
+[ext_resource type="PackedScene" uid="uid://dn862melaenkc" path="res://Views/ArtManager/Scenes/Files/FilesViewAssets.tscn" id="6_ccb60"]
+[ext_resource type="PackedScene" uid="uid://bn676hffwphuo" path="res://Views/ArtManager/Scenes/Files/FilesViewDatabase.tscn" id="7_aipj6"]
 
 [node name="Classic" type="HSplitContainer"]
 anchors_preset = 15
@@ -16,52 +16,28 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Directories" type="TabContainer" parent="."]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
-offset_right = 570.0
-offset_bottom = 648.0
 size_flags_horizontal = 3
 drag_to_rearrange_enabled = true
 use_hidden_tabs_for_min_size = true
 
 [node name="Sources" type="Tree" parent="Directories"]
 layout_mode = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 31.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("1_t2i3q")
 
 [node name="Assets" type="Tree" parent="Directories"]
 visible = false
 layout_mode = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 31.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("2_6ncor")
 
 [node name="Database" type="Tree" parent="Directories"]
 visible = false
 layout_mode = 2
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 31.0
-grow_horizontal = 2
-grow_vertical = 2
 script = ExtResource("3_0nqd6")
 
 [node name="Files" type="Control" parent="."]
 layout_mode = 2
-anchors_preset = 0
-offset_left = 582.0
-offset_right = 1152.0
-offset_bottom = 648.0
 size_flags_horizontal = 3
 script = ExtResource("4_v00kw")
 
