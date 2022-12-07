@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TQDBEditor
 {
@@ -8,7 +9,8 @@ namespace TQDBEditor
     {
         [Export]
         private Button sortButton;
-        public ItemList[] otherLists;
+        private ItemList[] _otherLists;
+        public ItemList[] otherLists { get => _otherLists; set { _otherLists = value; syncedScrollBars = value.Select(x => x.GetVScrollBar()).ToArray(); } }
         public VScrollBar[] syncedScrollBars;
 
         private bool sorted = false;
