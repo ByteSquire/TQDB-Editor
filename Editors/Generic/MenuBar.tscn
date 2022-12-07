@@ -117,10 +117,12 @@ item_2/disabled = true
 item_3/text = "Toolbar"
 item_3/checkable = 1
 item_3/id = 3
+item_3/disabled = true
 item_4/text = "Status Bar"
 item_4/checkable = 1
 item_4/checked = true
 item_4/id = 4
+item_4/disabled = true
 script = ExtResource("4_gj3qr")
 
 [node name="Tools" type="PopupMenu" parent="."]
