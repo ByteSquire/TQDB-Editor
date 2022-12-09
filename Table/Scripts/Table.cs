@@ -104,17 +104,23 @@ namespace TQDBEditor
         private void OnGuiFocusChanged(Control node)
         {
             var focussedRows = GetFocussedRows();
-            if (!node.HasMeta("is_table_cell"))
-            {
-                foreach (var selectedRowIndex in focussedRows)
-                    UnFocusRow(selectedRowIndex);
-                return;
-            }
+            //if (!node.HasMeta("is_table_cell"))
+            //{
+            //    foreach (var selectedRowIndex in focussedRows)
+            //        UnFocusRow(selectedRowIndex);
+            //    return;
+            //}
             var index = GetCellPosition(node).y;
             if (index < 0)
                 return;
             if (focussedRows.Contains(index))
+            {
+                if (Input.IsKeyPressed(Key.Ctrl) || Input.IsKeyPressed(Key.Shift))
+                    UnFocusRow(index);
+                else
+                    FocusRow(index);
                 return;
+            }
 
             if (Input.IsKeyPressed(Key.Ctrl) || Input.IsKeyPressed(Key.Shift))
             {
@@ -130,7 +136,7 @@ namespace TQDBEditor
                         var next = up ? focussed - 1 : focussed + 1;
                         for (int i = next; i != index && i != focussed;)
                         {
-                            FocusRow(i);
+                            FocusRow(i, false);
                             if (up)
                                 i--;
                             else
@@ -138,12 +144,10 @@ namespace TQDBEditor
                         }
                     }
                 }
+                FocusRow(index, false);
             }
             else
-                foreach (var selectedRowIndex in focussedRows)
-                    UnFocusRow(selectedRowIndex);
-
-            FocusRow(index);
+                FocusRow(index);
             //GetViewport().GuiReleaseFocus();
         }
 
@@ -223,14 +227,20 @@ namespace TQDBEditor
             foreach (var column in _columns)
             {
                 var maxChildIndex = column.GetChildCount() - 1;
-                if (maxChildIndex > index)
+                if (maxChildIndex >= myIndex)
                 {
                     var child = column.GetChild(myIndex);
                     GD.Print(child.GetIndex());
                     GD.Print(index);
-                    if (maxChildIndex > index + 1)
+                    if (maxChildIndex > myIndex)
                     {
                         var childSep = column.GetChild(myIndex + 1);
+                        column.RemoveChild(childSep);
+                        childSep.QueueFree();
+                    }
+                    else if (myIndex > 0)
+                    {
+                        var childSep = column.GetChild(myIndex - 1);
                         column.RemoveChild(childSep);
                         childSep.QueueFree();
                     }
@@ -317,14 +327,20 @@ namespace TQDBEditor
             }
         }
 
-        public void FocusRow(int index)
+        public void FocusRow(int index, bool clearPrevious = true)
         {
             if (_columns is null)
                 return;
             var myIndex = ConvertToChildIndex(index);
+            if (myIndex == -1)
+                return;
             if (myIndex > _columns[0].GetChildCount() - 1)
                 return;
-            _columns[0].GetChild<Control>(myIndex).CallDeferred("grab_focus");
+            if (clearPrevious)
+                foreach (var selectedRowIndex in GetFocussedRows())
+                    UnFocusRow(selectedRowIndex);
+
+            //_columns[0].GetChild<Control>(myIndex).CallDeferred("grab_focus");
 
             foreach (var column in _columns)
             {
@@ -367,8 +383,8 @@ namespace TQDBEditor
                 ClearContainer(column);
         }
 
-        private static int ConvertToChildIndex(int index) => index * 2;
-        private static int ConvertToRowIndex(int childIndex) => childIndex / 2;
+        private static int ConvertToChildIndex(int index) => index < 0 ? -1 : index * 2;
+        private static int ConvertToRowIndex(int childIndex) => childIndex < 0 ? -1 : childIndex / 2;
 
         private static void ClearContainer(Container container)
         {
