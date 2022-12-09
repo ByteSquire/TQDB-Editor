@@ -55,11 +55,14 @@ namespace TQDBEditor.Files
 
         protected string activeFile;
 
-        protected void OnItemActivated(long index)
+        protected void OnItemActivated(long _)
         {
-            var path = Path.Combine(dirView.SelectedDir, column1.GetItemText((int)index));
-            if (IsSupportedFileExtension.Invoke(Path.GetExtension(path)))
-                ActivateItem(index, path);
+            foreach (var selected in column1.GetSelectedItems())
+            {
+                var path = Path.Combine(dirView.SelectedDir, column1.GetItemText(selected));
+                if (IsSupportedFileExtension.Invoke(Path.GetExtension(path)))
+                    ActivateItem(selected, path);
+            }
         }
 
         public string GetActiveFile() => activeFile;
