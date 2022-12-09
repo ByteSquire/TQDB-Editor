@@ -1,5 +1,10 @@
 using Godot;
+using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
+using System.Linq;
+using TQArchive_Wrapper;
+using TQDBEditor.Common;
 
 namespace TQDBEditor
 {
@@ -36,6 +41,20 @@ namespace TQDBEditor
         {
             GD.Print("Database -> Show archive stats");
             EmitSignal(nameof(ShowArchiveStatsClicked));
+
+            var config = this.GetEditorConfig();
+            var logger = this.GetConsoleLogger();
+            var archivePath = config.GetCurrentOutputArchivePath();
+            try
+            {
+                var arzReader = new ArzReader(archivePath, logger);
+
+                logger.LogInformation("{archive}:\nNumber of Files in archive: {numFiles}\nNumber of Strings in archive: {numStrings}",
+                    archivePath,
+                    arzReader.GetDBRFileInfos().Count(),
+                    arzReader.GetStringList().Count());
+            }
+            catch (Exception) { }
         }
 
         public void _on_database_stop()
