@@ -1,4 +1,6 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://by3gpw466gxq"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://by3gpw466gxq"]
+
+[ext_resource type="FontFile" uid="uid://crmfa8o57255y" path="res://Themes/Ubuntu-R.ttf" id="1_e3ugm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcbh1"]
 content_margin_left = 4.0
@@ -36,6 +38,8 @@ corner_radius_bottom_left = 3
 corner_detail = 5
 
 [resource]
+default_font = ExtResource("1_e3ugm")
+default_font_size = 16
 LabelWithBorder/base_type = &"Label"
 LabelWithBorder/styles/normal = SubResource("StyleBoxFlat_hcbh1")
 RedTextLabel/base_type = &"Label"

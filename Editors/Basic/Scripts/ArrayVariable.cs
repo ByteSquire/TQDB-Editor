@@ -278,7 +278,7 @@ namespace TQDBEditor.BasicEditor
             UpdateIndices();
 
             var nextIndex = indices[0];
-            if (nextIndex == 0)
+            if (nextIndex == -1)
                 return;
             if (nextIndex > values.Count - 1)
                 nextIndex--;

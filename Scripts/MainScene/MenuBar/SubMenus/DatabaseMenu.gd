@@ -22,3 +22,8 @@ func _on_id_pressed(id):
 		6:
 			stop.emit()
 	
+
+func _on_build_mod_toggle_build():
+	var index = get_item_index(6)
+	set_item_disabled(index, not is_item_disabled(index))
+	

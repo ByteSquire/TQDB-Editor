@@ -1,7 +1,6 @@
 using Godot;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,11 +8,56 @@ using System.Threading;
 using System.Threading.Tasks;
 using TQDBEditor.Common;
 using TQArchive_Wrapper;
-using TQDB_Parser;
-using TQDB_Parser.DBR;
 
 namespace TQDBEditor
 {
+    public static class TQSpecialPaths
+    {
+        public static string GetCurrentDatabasePath(this Config me)
+        {
+            return Path.Combine(me.ModDir, "database");
+        }
+
+        public static string GetCurrentOutputPath(this Config me)
+        {
+            var docs = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
+            var outputDir = Path.Combine(docs, "My Games", "Titan Quest - Immortal Throne", "CustomMaps", me.ModName);
+            return outputDir;
+        }
+
+        public static string GetCurrentOutputDatabasePath(this Config me)
+        {
+            return Path.Combine(me.GetCurrentOutputPath(), "database");
+        }
+
+        public static string GetCurrentOutputArchivePath(this Config me)
+        {
+            return Path.Combine(me.GetCurrentOutputDatabasePath(), me.ModName + ".arz");
+        }
+    }
+
+    class DebugLogger : ILogger
+    {
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return null;
+        }
+
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            GD.Print(formatter(state, exception));
+            if (exception != null)
+            {
+                GD.Print(exception.ToString());
+            }
+        }
+    }
+
     public partial class BuildMod : Node
     {
         [Export]
@@ -24,7 +68,7 @@ namespace TQDBEditor
         [Signal]
         public delegate void ToggleBuildEventHandler();
 
-        private static readonly CancellationTokenSource cancelSource = new(5 * 60 * 1000);
+        private static CancellationTokenSource cancelSource = new(5 * 60 * 1000);
 
         private Task work;
         private Task copy;
@@ -40,6 +84,21 @@ namespace TQDBEditor
             logger = this.GetConsoleLogger();
         }
 
+        public override void _Process(double delta)
+        {
+            if (work is null)
+                return;
+
+            if (work.IsCompletedSuccessfully)
+            {
+                work = null;
+                return;
+            }
+
+            if (work.IsFaulted)
+                CancelBuild();
+        }
+
         public void Build()
         {
             if (work is not null)
@@ -51,29 +110,30 @@ namespace TQDBEditor
             }
             startTime = DateTime.Now;
             var config = this.GetEditorConfig();
-            var database = Path.Combine(config.ModDir, "database");
-            var docs = System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyDocuments);
-            var outputDir = Path.Combine(docs, "My Games", "Titan Quest - Immortal Throne",
-                "CustomMaps", config.ModName);
-            var outputDatabase = Path.Combine(outputDir, "database");
-
+            var database = config.GetCurrentDatabasePath();
+            var outputDatabase = config.GetCurrentOutputDatabasePath();
+            Directory.CreateDirectory(outputDatabase);
 
             var filesToCopy = Directory.EnumerateFiles(database, "*.dbr", SearchOption.AllDirectories);
 
-            var manager = new ArzManager(Path.Combine(outputDatabase, config.ModName + ".arz"), database, logger);
-            GD.Print("Using archive " + Path.Combine(outputDatabase, config.ModName + ".arz"));
-            manager.FileDone += ArzWriter_FileDone;
-
             progress.MaxValue = filesToCopy.Count() /** 2*/;
             progress.Value = 0;
-            statusLabel.Clear();
-            statusLabel.PushColor(Colors.Orange);
-            statusLabel.AddText("Building...");
 
-            cancelSource.TryReset();
+            if (!cancelSource.TryReset())
+            {
+                cancelSource.Dispose();
+                cancelSource = new(5 * 60 * 1000);
+            }
             EmitSignal(nameof(ToggleBuild));
             //copy = CopyFiles(filesToCopy, database, outputDatabase);
-            work = Work(filesToCopy, manager);
+            work = Work(filesToCopy, config.GetCurrentOutputArchivePath(), database);
+        }
+
+        private void SetStatus(Color color, string text)
+        {
+            statusLabel.Clear();
+            statusLabel.PushColor(color);
+            statusLabel.AddText(text);
         }
 
         private void ArzWriter_FileDone()
@@ -92,7 +152,25 @@ namespace TQDBEditor
         public void CancelBuild()
         {
             cancelSource.Cancel();
-            logger?.LogInformation("Build cancelled");
+            try
+            {
+                work.Wait(500);
+                logger?.LogWarning("Failed to cancel build");
+            }
+            catch (AggregateException e)
+            {
+                if (work.IsCanceled)
+                {
+                    GD.Print($"{nameof(TaskCanceledException)} thrown with message: {e.Message}");
+                    logger?.LogInformation("Build cancelled");
+                }
+                else
+                {
+                    logger?.LogError(e, "Failed to build archive");
+                }
+            }
+            work = null;
+            ResetBuildInfo();
         }
 
         private async Task CopyFiles(IEnumerable<string> filesToCopy, string inputDatabase, string outputDatabase)
@@ -118,24 +196,32 @@ namespace TQDBEditor
 
         private void ResetBuildInfo()
         {
-            statusLabel.Clear();
-            statusLabel.PushColor(Colors.Green);
-            statusLabel.AddText("Ready");
+            SetStatus(Colors.Green, "Ready");
+            progress.Value = 0;
             EmitSignal(nameof(ToggleBuild));
         }
 
-        private Task Work(IEnumerable<string> filesToCopy, ArzManager manager)
+        private Task Work(IEnumerable<string> filesToCopy, string archivePath, string databasePath)
         {
-            var ret = new Task(() => DoWrite(filesToCopy, manager), cancelSource.Token);
+            var ret = new Task(() => DoWrite(filesToCopy, archivePath, databasePath), cancelSource.Token);
             ret.Start();
             return ret;
         }
 
-        private void DoWrite(IEnumerable<string> filesToCopy, ArzManager manager)
+        private void DoWrite(IEnumerable<string> filesToCopy, string archivePath, string database)
         {
+            cancelSource.Token.ThrowIfCancellationRequested();
+            GD.Print("Using archive " + archivePath);
+            SetStatus(Colors.Orange, "Checking archive...");
+            var manager = new ArzManager(archivePath, database, new DebugLogger());
+            manager.FileDone += ArzWriter_FileDone;
+
+            cancelSource.Token.ThrowIfCancellationRequested();
             var tplManager = this.GetTemplateManager();
             tplManager.ParseAllTemplates();
             tplManager.ResolveAllIncludes();
+            cancelSource.Token.ThrowIfCancellationRequested();
+            SetStatus(Colors.Orange, "Building...");
 
             //var dbrFiles = new ConcurrentQueue<DBRFile>();
             //var po = new ParallelOptions
@@ -157,10 +243,21 @@ namespace TQDBEditor
             //        });
             //}
             //catch (OperationCanceledException) { }
-            manager.SyncFiles(new DBRParser(tplManager, logger));
+            manager.SyncFiles(EnumerateFilesWithCancellation(), tplManager, true);
+            cancelSource.Token.ThrowIfCancellationRequested();
 
             manager.WriteToDisk();
             OnDone();
+
+
+            IEnumerable<string> EnumerateFilesWithCancellation()
+            {
+                foreach (var file in filesToCopy)
+                {
+                    cancelSource.Token.ThrowIfCancellationRequested();
+                    yield return file;
+                }
+            }
         }
 
         public override void _ExitTree()

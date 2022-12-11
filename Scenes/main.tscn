@@ -41,7 +41,6 @@ size_flags_vertical = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="MainView" type="VBoxContainer" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -50,7 +49,8 @@ grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="MenuBar" type="MenuBar" parent="MainView" node_paths=PackedStringArray("workingDirDialog", "aboutPopup", "createModDialog", "selectNewModDialog", "optionsDialog")]
-layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 31.0
 script = ExtResource("1_hfkuf")
 workingDirDialog = NodePath("../../Popups/SelectWorkingFolder")
 aboutPopup = NodePath("../../Popups/About")
@@ -101,6 +101,7 @@ item_0/text = "New"
 item_0/id = 0
 item_1/text = "Delete"
 item_1/id = 1
+item_1/disabled = true
 item_2/text = ""
 item_2/id = 2
 item_2/separator = true
@@ -121,6 +122,7 @@ item_2/id = 2
 item_2/separator = true
 item_3/text = "Verify Build"
 item_3/id = 3
+item_3/disabled = true
 script = ExtResource("2_bwdgy")
 
 [node name="Verify Options" type="PopupMenu" parent="MainView/MenuBar/Build"]
@@ -129,23 +131,28 @@ item_0/text = "Normal"
 item_0/checkable = 2
 item_0/checked = true
 item_0/id = 0
+item_0/disabled = true
 item_1/text = "Detailed"
 item_1/checkable = 2
 item_1/id = 1
+item_1/disabled = true
 item_2/text = "Excessive"
 item_2/checkable = 2
 item_2/id = 2
+item_2/disabled = true
 script = ExtResource("6_fceit")
 
 [node name="Database" type="PopupMenu" parent="MainView/MenuBar"]
 item_count = 7
 item_0/text = "Import Record..."
 item_0/id = 0
+item_0/disabled = true
 item_1/text = ""
 item_1/id = 1
 item_1/separator = true
 item_2/text = "Check Records"
 item_2/id = 2
+item_2/disabled = true
 item_3/text = "Move Records"
 item_3/id = 3
 item_3/disabled = true
@@ -163,8 +170,10 @@ script = ExtResource("7_ux155")
 item_count = 4
 item_0/text = "Build..."
 item_0/id = 0
+item_0/disabled = true
 item_1/text = "Compact..."
 item_1/id = 1
+item_1/disabled = true
 item_2/text = ""
 item_2/id = 2
 item_2/separator = true
@@ -176,6 +185,7 @@ script = ExtResource("8_bxck6")
 item_count = 3
 item_0/text = "Extract game files..."
 item_0/id = 0
+item_0/disabled = true
 item_1/text = ""
 item_1/id = 1
 item_1/separator = true
@@ -191,6 +201,7 @@ item_0/checked = true
 item_0/id = 0
 item_1/text = "Refresh"
 item_1/id = 1
+item_1/disabled = true
 script = ExtResource("10_rod4w")
 
 [node name="Help" type="PopupMenu" parent="MainView/MenuBar"]
@@ -204,16 +215,21 @@ item_2/id = 2
 item_2/separator = true
 item_3/text = "Install Templates..."
 item_3/id = 3
+item_3/disabled = true
 item_4/text = "Install Tutorials..."
 item_4/id = 4
+item_4/disabled = true
 script = ExtResource("11_va2v8")
 
 [node name="FilesConsole" type="VSplitContainer" parent="MainView"]
-layout_mode = 2
+offset_top = 35.0
+offset_right = 1150.0
+offset_bottom = 615.0
 size_flags_vertical = 3
 
 [node name="TabContainer" type="TabContainer" parent="MainView/FilesConsole"]
-layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 284.0
 size_flags_vertical = 3
 tab_alignment = 1
 drag_to_rearrange_enabled = true
@@ -221,34 +237,43 @@ script = ExtResource("13_utfmt")
 
 [node name="ConsoleContainer" type="ScrollContainer" parent="MainView/FilesConsole"]
 custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
+offset_top = 296.0
+offset_right = 1150.0
+offset_bottom = 580.0
 size_flags_vertical = 3
 
 [node name="Console" type="RichTextLabel" parent="MainView/FilesConsole/ConsoleContainer"]
-layout_mode = 2
+offset_right = 1150.0
+offset_bottom = 284.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
 scroll_following = true
 
 [node name="FootBar" type="HSplitContainer" parent="MainView"]
-layout_mode = 2
+offset_top = 619.0
+offset_right = 1150.0
+offset_bottom = 646.0
 split_offset = 300
 script = ExtResource("20_owo0q")
 
 [node name="StatusLabel" type="RichTextLabel" parent="MainView/FootBar"]
-layout_mode = 2
+offset_right = 869.0
+offset_bottom = 27.0
 size_flags_horizontal = 3
 bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
 [node name="ProgressPath" type="HSplitContainer" parent="MainView/FootBar"]
-layout_mode = 2
+offset_left = 881.0
+offset_right = 1150.0
+offset_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="Progress" type="ProgressBar" parent="MainView/FootBar/ProgressPath"]
 custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
+offset_right = 128.0
+offset_bottom = 27.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_styles/fill = SubResource("StyleBoxFlat_wpugc")
@@ -256,11 +281,14 @@ step = 1.0
 rounded = true
 
 [node name="PathContainer" type="ScrollContainer" parent="MainView/FootBar/ProgressPath"]
-layout_mode = 2
+offset_left = 140.0
+offset_right = 269.0
+offset_bottom = 27.0
 size_flags_horizontal = 3
 
 [node name="Path" type="Label" parent="MainView/FootBar/ProgressPath/PathContainer"]
-layout_mode = 2
+offset_right = 129.0
+offset_bottom = 23.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
 script = ExtResource("7_k8qir")
@@ -333,3 +361,4 @@ progress = NodePath("../../MainView/FootBar/ProgressPath/Progress")
 [connection signal="install_templates" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_templates"]
 [connection signal="install_tutorials" from="MainView/MenuBar/Help" to="MainView/MenuBar" method="_on_help_install_tutorials"]
 [connection signal="ToggleBuild" from="Util/BuildMod" to="MainView/MenuBar/Build" method="_on_build_mod_toggle_build"]
+[connection signal="ToggleBuild" from="Util/BuildMod" to="MainView/MenuBar/Database" method="_on_build_mod_toggle_build"]
