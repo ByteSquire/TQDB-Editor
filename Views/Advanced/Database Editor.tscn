@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://blttjixhyslq1"]
+
+[ext_resource type="Script" path="res://Views/Advanced/Scripts/Editor.cs" id="1_20c7d"]
+[ext_resource type="PackedScene" uid="uid://dta8ul6r0kv44" path="res://Table/Scenes/Table.tscn" id="1_skvnh"]
+
+[node name="Database Editor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_20c7d")
+tableNode = NodePath("ScrollContainer/ItemList")
+
+[node name="Table" parent="." instance=ExtResource("1_skvnh")]
+visible = false
+columns = ["File", "Name", "Type", "Class", "Description", "Value"]
+CellHeight = 4
+SeparatorHeight = 30
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ItemList" type="ItemList" parent="ScrollContainer"]
+offset_right = 1152.0
+offset_bottom = 648.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+select_mode = 1
+max_text_lines = 4
+item_count = 6
+max_columns = 6
+fixed_column_width = 80
+item_0/text = "llllllkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"
+item_1/text = "2"
+item_2/text = "3"
+item_3/text = "4"
+item_4/text = "5"
+item_5/text = "6"

@@ -1,0 +1,8 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="TQDB_Editor.App">
+	
+	<Application.Styles>
+		<SimpleTheme Mode="Dark" />
+	</Application.Styles>
+</Application>

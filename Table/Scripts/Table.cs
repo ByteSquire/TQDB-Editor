@@ -46,14 +46,19 @@ namespace TQDBEditor
         private int separatorHeight;
 
         private Godot.Collections.Array<Container> _columns;
+        private Godot.Collections.Array<HSplitContainer> _columnSplitters;
 
         private Control _content;
+
+        private static readonly StringName getTextMethod = "get_text";
+        private static readonly int splitOffset = 10;
 
         // Called when the node enters the scene tree for the first time.
         public override void _Ready()
         {
             _content = GetChild<Control>(0);
             _columns = new();
+            _columnSplitters = new();
 
             GetViewport().GuiFocusChanged += OnGuiFocusChanged;
 
@@ -85,7 +90,11 @@ namespace TQDBEditor
                     node1.AddChild(_column);
                     node1 = _column;
 
-                    _columns.Add(_column.GetChild<Container>(0));
+                    var columnSplit = _column as HSplitContainer;
+                    var columnContent = _column.GetChild<Container>(0);
+                    _columns.Add(columnContent);
+                    _columnSplitters.Add(columnSplit);
+                    columnContent.ChildEnteredTree += (x) => OnItemAdded(columnContent, columnSplit, x);
                 }
                 node.AddChild(new Control());
                 node1.AddChild(new Control());
@@ -99,6 +108,32 @@ namespace TQDBEditor
 
                 _content.CustomMinimumSize = new Vector2i((int)_content.GetMinimumSize().x + 77, 0);
             }
+        }
+
+        private void OnItemAdded(Container column, HSplitContainer splitter, Node element)
+        {
+            if (element is not Control ctrl)
+                return;
+            if (!element.HasMethod(getTextMethod))
+                return;
+
+            var text = element.Call(getTextMethod).AsString();
+            if (string.IsNullOrEmpty(text))
+                return;
+
+            var font = ctrl.HasThemeFont("normal_font") ? ctrl.GetThemeFont("normal_font") : null;
+            font ??= ctrl.HasThemeFont("font") ? ctrl.GetThemeFont("font") : ctrl.GetThemeDefaultFont();
+            var fontSize = ctrl.HasThemeFontSize("font_size") ? ctrl.GetThemeFontSize("font_size") : ctrl.GetThemeDefaultFontSize();
+
+            var textWidth = font.GetStringSize(text, fontSize: fontSize).x;
+            var newOffset = (int)(textWidth + splitOffset /*- column.GetCombinedMinimumSize().x*/);
+            if (newOffset < 0)
+                return;
+
+            var currentOffset = splitter.SplitOffset;
+
+            if (newOffset > currentOffset)
+                splitter.Call("set_synced_offset", newOffset);
         }
 
         private void OnGuiFocusChanged(Control node)

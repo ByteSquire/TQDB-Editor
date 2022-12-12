@@ -14,7 +14,6 @@ script = ExtResource("1_2exor")
 textEdit = NodePath("CheckBox")
 
 [node name="CheckBox" type="LineEdit" parent="."]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

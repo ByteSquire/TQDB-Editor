@@ -41,6 +41,7 @@ size_flags_vertical = 4
 metadata/_edit_use_anchors_ = true
 
 [node name="MainView" type="VBoxContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -49,8 +50,7 @@ grow_vertical = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="MenuBar" type="MenuBar" parent="MainView" node_paths=PackedStringArray("workingDirDialog", "aboutPopup", "createModDialog", "selectNewModDialog", "optionsDialog")]
-offset_right = 1150.0
-offset_bottom = 31.0
+layout_mode = 2
 script = ExtResource("1_hfkuf")
 workingDirDialog = NodePath("../../Popups/SelectWorkingFolder")
 aboutPopup = NodePath("../../Popups/About")
@@ -222,14 +222,11 @@ item_4/disabled = true
 script = ExtResource("11_va2v8")
 
 [node name="FilesConsole" type="VSplitContainer" parent="MainView"]
-offset_top = 35.0
-offset_right = 1150.0
-offset_bottom = 615.0
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="TabContainer" type="TabContainer" parent="MainView/FilesConsole"]
-offset_right = 1150.0
-offset_bottom = 284.0
+layout_mode = 2
 size_flags_vertical = 3
 tab_alignment = 1
 drag_to_rearrange_enabled = true
@@ -237,43 +234,34 @@ script = ExtResource("13_utfmt")
 
 [node name="ConsoleContainer" type="ScrollContainer" parent="MainView/FilesConsole"]
 custom_minimum_size = Vector2(0, 40)
-offset_top = 296.0
-offset_right = 1150.0
-offset_bottom = 580.0
+layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Console" type="RichTextLabel" parent="MainView/FilesConsole/ConsoleContainer"]
-offset_right = 1150.0
-offset_bottom = 284.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 bbcode_enabled = true
 scroll_following = true
 
 [node name="FootBar" type="HSplitContainer" parent="MainView"]
-offset_top = 619.0
-offset_right = 1150.0
-offset_bottom = 646.0
+layout_mode = 2
 split_offset = 300
 script = ExtResource("20_owo0q")
 
 [node name="StatusLabel" type="RichTextLabel" parent="MainView/FootBar"]
-offset_right = 869.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
 [node name="ProgressPath" type="HSplitContainer" parent="MainView/FootBar"]
-offset_left = 881.0
-offset_right = 1150.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Progress" type="ProgressBar" parent="MainView/FootBar/ProgressPath"]
 custom_minimum_size = Vector2(50, 0)
-offset_right = 128.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_styles/fill = SubResource("StyleBoxFlat_wpugc")
@@ -281,14 +269,11 @@ step = 1.0
 rounded = true
 
 [node name="PathContainer" type="ScrollContainer" parent="MainView/FootBar/ProgressPath"]
-offset_left = 140.0
-offset_right = 269.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Path" type="Label" parent="MainView/FootBar/ProgressPath/PathContainer"]
-offset_right = 129.0
-offset_bottom = 23.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 script = ExtResource("7_k8qir")
@@ -309,10 +294,8 @@ visible = false
 
 [node name="Util" type="Node" parent="."]
 
-[node name="BuildMod" type="Node" parent="Util" node_paths=PackedStringArray("statusLabel", "progress")]
+[node name="BuildMod" type="Node" parent="Util"]
 script = ExtResource("28_jkuo5")
-statusLabel = NodePath("../../MainView/FootBar/StatusLabel")
-progress = NodePath("../../MainView/FootBar/ProgressPath/Progress")
 
 [connection signal="BuildClicked" from="MainView/MenuBar" to="Util/BuildMod" method="Build"]
 [connection signal="StopBuildClicked" from="MainView/MenuBar" to="Util/BuildMod" method="CancelBuild"]

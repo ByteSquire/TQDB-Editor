@@ -11,22 +11,18 @@ size_flags_vertical = 8
 split_offset = 300
 
 [node name="StatusLabel" type="RichTextLabel" parent="."]
-offset_right = 870.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
 text = "[color=green]Ready[/color]"
 
 [node name="ProgressPath" type="HSplitContainer" parent="."]
-offset_left = 882.0
-offset_right = 1152.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Progress" type="ProgressBar" parent="ProgressPath"]
 custom_minimum_size = Vector2(50, 0)
-offset_right = 129.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
 theme_override_styles/fill = SubResource("StyleBoxFlat_6f37s")
@@ -34,14 +30,10 @@ step = 1.0
 rounded = true
 
 [node name="PathContainer" type="ScrollContainer" parent="ProgressPath"]
-offset_left = 141.0
-offset_right = 270.0
-offset_bottom = 27.0
+layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Path" type="Label" parent="ProgressPath/PathContainer"]
-offset_right = 634.0
-offset_bottom = 26.0
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 1
-text = "Some/Path/To/Mod/But/it's/very/long/so/it/might/not/fit/see/how/it/handles/that"

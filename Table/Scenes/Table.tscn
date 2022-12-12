@@ -19,14 +19,10 @@ column_button = ExtResource("3_pnhq3")
 column = ExtResource("4_fjvrm")
 
 [node name="Heading-Entries" type="VBoxContainer" parent="."]
-offset_right = 1152.0
-offset_bottom = 648.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Entries" type="PanelContainer" parent="Heading-Entries"]
-offset_right = 1152.0
-offset_bottom = 648.0
+layout_mode = 2
 size_flags_vertical = 3
