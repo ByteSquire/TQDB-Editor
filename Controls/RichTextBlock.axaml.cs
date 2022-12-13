@@ -98,6 +98,11 @@ namespace TQDB_Editor.Controls
             _textChunks.AddRange(parsed);
         }
 
+        public void AppendNewLine()
+        {
+            _textChunks.Add(("&#10;".AsMemory(), null));
+        }
+
         private IReadOnlyList<(ReadOnlySlice<char> slice, TextRunProperties? props)> ParseText(string? text)
         {
             if (text == null)

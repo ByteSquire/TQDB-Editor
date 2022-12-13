@@ -2,6 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:prism="http://prismlibrary.com/"
+		prism:ViewModelLocator.AutoWireViewModel="True"
         xmlns:lControls="clr-namespace:TQDB_Editor.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TQDB_Editor.MainWindow"
@@ -130,9 +132,8 @@
 						<Label Grid.Column="2">Test</Label>
 					</Grid>
 					<GridSplitter Grid.Row="1" Background="Black" ResizeDirection="Rows"/>
-					<ScrollViewer Grid.Row="2">
-						<WrapPanel Orientation="Vertical">
-							<lControls:RichTextBlock TextWrapping="Wrap" UseBBCode="True"/>
+					<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto">
+						<WrapPanel Name="Console" Orientation="Vertical">
 						</WrapPanel>
 					</ScrollViewer>
 				</Grid>
