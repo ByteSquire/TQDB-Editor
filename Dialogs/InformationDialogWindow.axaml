@@ -1,0 +1,31 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="TQDBEditor.Dialogs.InformationDialogWindow"
+        x:Name="InformationDialogWindowWindow"
+        Title="{Binding Title}"
+        UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
+        WindowState="Normal" WindowStartupLocation="CenterOwner"
+        TransparencyLevelHint="AcrylicBlur"
+        Foreground="{DynamicResource DockThemeForegroundBrush}"
+        BorderThickness="1" BorderBrush="{DynamicResource DockThemeBorderLowBrush}"
+        FontFamily="Ubuntu, Segoe UI, SF Pro Display, Noto Sans, Cantarel"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        >
+  <Window.Styles>
+    <Style Selector="Window">
+      <Setter Property="SizeToContent" Value="WidthAndHeight" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel x:Name="ContentDock" Margin="1 1 1 1" LastChildFill="True">
+    <Label VerticalContentAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Top" Content="{Binding Title}" />
+    <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
+      <Button x:Name="OkButton" Click="okBtn_OnClick">Ok</Button>
+    </StackPanel>
+    <ContentControl Content="{Binding #InformationDialogWindowWindow.DialogContent}" />
+  </DockPanel>
+</Window>

@@ -1,0 +1,212 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:prism="http://prismlibrary.com/"
+        prism:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:aControls="clr-namespace:Avalonia.Controls;assembly=Avalonia.Controls"
+        xmlns:lControls="clr-namespace:TQDBEditor.Controls"
+        xmlns:lDataTypes="clr-namespace:TQDBEditor.DataTypes"
+        xmlns:lAttached="clr-namespace:TQDBEditor.AttachedProperties"
+        xmlns:vm="clr-namespace:TQDBEditor.ViewModels"
+        xmlns:constant="clr-namespace:TQDBEditor.Constants"
+        mc:Ignorable="d"
+        d:DesignWidth="800" d:DesignHeight="450"
+        Height="680" Width="1200"
+        x:Class="TQDBEditor.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:Name="MainWindowWindow"
+        x:CompileBindings="True"
+        Icon="/Assets/icon.ico"
+        Title="{Binding Title}"
+        UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
+        WindowState="Normal" WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="AcrylicBlur"
+        Foreground="{DynamicResource DockThemeForegroundBrush}"
+        BorderThickness="1" BorderBrush="{DynamicResource DockThemeBorderLowBrush}"
+        FontFamily="Ubuntu, Segoe UI, SF Pro Display, Noto Sans, Cantarel"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        ExtendClientAreaTitleBarHeightHint="40"
+        >
+
+  <Panel>
+    <!--<ExperimentalAcrylicBorder IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial BackgroundSource="Digger"
+                                     TintColor="{DynamicResource SystemAltHighColor}"
+                                     TintOpacity="1"
+                                     FallbackColor="{DynamicResource AcrylicFallbackColor}"
+                                     MaterialOpacity="0.55" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>-->
+    <Panel Margin="{Binding #MainWindowWindow.OffScreenMargin}">
+      <DockPanel LastChildFill="True">
+        <!--<Grid RowDefinitions="Auto,2,*,2,Auto">-->
+        <ScrollViewer DockPanel.Dock="Top" Name="MenuScroll" Grid.Row="0" MaxWidth="{Binding #MainWindowWindow.ToolbarWidth}" HorizontalAlignment="Left" Height="40" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+          <Menu x:Name="ToolBar">
+            <MenuItem Header="_File">
+              <MenuItem Header="_Set Working Folder..." Command="{Binding SetWorkingFolderCommand}"/>
+              <MenuItem Header="_Rename" IsEnabled="False"/>
+              <Separator/>
+              <MenuItem Header="_Exit" Command="{Binding ExitCommand}"/>
+            </MenuItem>
+            <MenuItem Header="_Edit">
+              <MenuItem Header="_Undo" IsEnabled="False"/>
+              <MenuItem Header="_Redo" IsEnabled="False"/>
+              <MenuItem Header="_Select All" IsEnabled="False"/>
+              <Separator/>
+              <MenuItem Header="_Copy" IsEnabled="False"/>
+              <MenuItem Header="_Paste" IsEnabled="False"/>
+              <MenuItem Header="_Delete" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Mod">
+              <MenuItem Header="_New" Command="{Binding NewModCommand}" />
+              <MenuItem Header="_Delete" IsEnabled="False"/>
+              <Separator/>
+              <MenuItem Header="_Select" Items="{Binding DetectedMods}" Classes="SubItems">
+                <MenuItem.Styles>
+                  <Style Selector="MenuItem.SubItems MenuItem" x:DataType="lDataTypes:ModMenuItem">
+                    <Setter Property="Header" Value="{Binding Name}"/>
+                    <Setter Property="lAttached:AttachedProperties.Command" Value="{Binding Command}"/>
+                    <Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
+                    <Setter Property="Icon">
+                      <Template>
+                        <RadioButton IsChecked="{Binding IsActive}"/>
+                      </Template>
+                    </Setter>
+                  </Style>
+                </MenuItem.Styles>
+              </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Build">
+              <MenuItem Header="_Build"/>
+              <MenuItem Header="_Stop"/>
+              <Separator/>
+              <MenuItem Header="_Verify Build" IsEnabled="False"/>
+              <MenuItem Header="Verify Options" IsEnabled="False">
+                <MenuItem Header="Normal" IsEnabled="False">
+                  <MenuItem.Icon>
+                    <RadioButton BorderThickness="0"
+                          IsHitTestVisible="False"
+                          Command="{Binding ToggleCommand}"
+                          IsChecked="True">
+                    </RadioButton>
+                  </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Detailed" IsEnabled="False">
+                  <MenuItem.Icon>
+                    <RadioButton BorderThickness="0"
+                          IsHitTestVisible="False"
+                          Command="{Binding ToggleCommand}"
+                          IsChecked="False">
+                    </RadioButton>
+                  </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Excessive" IsEnabled="False">
+                  <MenuItem.Icon>
+                    <RadioButton BorderThickness="0"
+                          IsHitTestVisible="False"
+                          Command="{Binding ToggleCommand}"
+                          IsChecked="False">
+                    </RadioButton>
+                  </MenuItem.Icon>
+                </MenuItem>
+              </MenuItem>
+            </MenuItem>
+            <MenuItem Header="_Database">
+              <MenuItem Header="_Import Record..." IsEnabled="False"/>
+              <Separator/>
+              <MenuItem Header="_Check Records" IsEnabled="False"/>
+              <MenuItem Header="_Move Records" IsEnabled="False"/>
+              <MenuItem Header="Db Archive Stats"/>
+              <Separator/>
+              <MenuItem Header="_Stop"/>
+            </MenuItem>
+            <MenuItem Header="_Archive">
+              <MenuItem Header="_Build..." IsEnabled="False"/>
+              <MenuItem Header="_Compact..." IsEnabled="False"/>
+              <Separator/>
+              <MenuItem Header="_Statistics..."/>
+            </MenuItem>
+            <MenuItem Header="_Tools">
+              <MenuItem Header="_Extract game files..." IsEnabled="False"/>
+              <Separator/>
+              <MenuItem Header="_Options..."/>
+            </MenuItem>
+            <MenuItem Header="_View">
+              <MenuItem Header="StatusBar" Command="{Binding ToggleStatusBarCommand}">
+                <MenuItem.Icon>
+                  <CheckBox BorderThickness="0"
+                        IsHitTestVisible="False"
+                        Command="{Binding ToggleCommand}"
+                        IsChecked="{Binding IsStatusBarVisible}">
+                  </CheckBox>
+                </MenuItem.Icon>
+              </MenuItem>
+              <MenuItem Header="Refresh" IsEnabled="False"/>
+            </MenuItem>
+            <MenuItem Header="_Help">
+              <MenuItem Header="_Help..."/>
+              <MenuItem Header="_About TQDB-Editor..."/>
+              <Separator/>
+              <MenuItem Header="_Install Templates" IsEnabled="False"/>
+              <MenuItem Header="_Install Tutorials..." IsEnabled="False"/>
+            </MenuItem>
+          </Menu>
+        </ScrollViewer>
+        <DockPanel DockPanel.Dock="Bottom" IsVisible="{Binding IsStatusBarVisible}">
+          <Separator Height="4" DockPanel.Dock="Top"/>
+          <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="3" />
+              <ColumnDefinition Width="*" MinWidth="153" />
+              <ColumnDefinition Width="3" />
+              <ColumnDefinition Width="Auto" MinWidth="100" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" VerticalAlignment="Center" Content="{Binding ActiveMod.Name}" Margin="0 0 10 0" />
+            <Rectangle Grid.Column="1" Width="3" Fill="{Binding SeparatorBackground}" />
+            <Grid Grid.Column="2">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <Label Grid.Column="0" VerticalContentAlignment="Center" Content="{Binding Status}" Margin="0 0 10 0" />
+              <ProgressBar Grid.Column="1" ShowProgressText="True" MinWidth="40" />
+            </Grid>
+            <GridSplitter Grid.Column="3" ResizeDirection="Columns" Margin="1.5 0 1.5 0"/>
+            <ScrollViewer Grid.Column="4" Name="PathScroll" HorizontalScrollBarVisibility="Visible" Margin="0,0,0,4">
+              <Label>Path that is quite long so I can test scrolling</Label>
+            </ScrollViewer>
+          </Grid>
+        </DockPanel>
+        <DockPanel>
+          <TabControl x:Name="ViewTabs" prism:RegionManager.RegionName="{x:Static constant:RegionNames.ViewsRegion}"/>
+        </DockPanel>
+        <!--</Grid>-->
+      </DockPanel>
+    </Panel>
+  </Panel>
+  <Window.Styles>
+    <Style Selector="#ViewTabs /template/ WrapPanel">
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="#PathScroll /template/ ScrollBar">
+      <Setter Property="MaxHeight" Value="5"/>
+    </Style>
+    <Style Selector="#MenuScroll /template/ ScrollBar">
+      <Setter Property="MaxHeight" Value="5"/>
+    </Style>
+
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Foreground" Value="#F0F0F0"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+
+  </Window.Styles>
+</Window>

@@ -1,9 +1,0 @@
-[gd_resource type="Shortcut" load_steps=2 format=3 uid="uid://c61amnjacu30l"]
-
-[sub_resource type="InputEventKey" id="InputEventKey_dgenn"]
-resource_name = "Ctrl+C"
-ctrl_pressed = true
-keycode = 67
-
-[resource]
-events = [SubResource("InputEventKey_dgenn")]

@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ia="clr-namespace:Avalonia.Markup.XAML.Interactivity"
+             xmlns:dialogs="clr-namespace:TQDBEditor.Dialogs"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Height="300" Width="400"
+             x:CompileBindings="True"
+             x:Class="TQDBEditor.Dialogs.NewModDialog"
+             x:DataType="dialogs:NewModDialogViewModel">
+  <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,3,*">
+    <Label Grid.Column="0" Grid.Row="0" VerticalAlignment="Center" Content="New Mod Name:" />
+    <Separator Grid.ColumnSpan="2" Grid.Row="1" Height="3"/>
+    <Label Grid.Column="0" Grid.Row="2" Content="Existing Mods:" />
+    <TextBox x:Name="Input" Grid.Column="1" Grid.Row="0" Text="{Binding NewModName}" KeyDown="inputTxt_KeyDown" TextChanged="inputTxt_TextChanged" />
+    <ScrollViewer Grid.Column="1" Grid.Row="2">
+      <ListBox Items="{Binding ExistingMods}" SelectionChanged="existingLst_Selected">
+        <ListBox.ItemTemplate>
+          <DataTemplate x:DataType="{x:Type sys:String}">
+            <Label Content="{Binding}" />
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

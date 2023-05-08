@@ -1,9 +1,0 @@
-[gd_scene format=3 uid="uid://c0hiaxfoksa5j"]
-
-[node name="SelectWorkingFolder" type="FileDialog"]
-title = "Open a Directory"
-size = Vector2i(450, 500)
-min_size = Vector2i(70, 200)
-ok_button_text = "Select This Folder"
-file_mode = 2
-access = 2

@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TQDBEditor.ClassicViewModule.ViewModels"
+             xmlns:lControls="clr-namespace:TQDBEditor.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TQDBEditor.ClassicViewModule.Views.ClassicView"
+             x:CompileBindings="True"
+             x:DataType="vm:ClassicViewViewModel">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" MinHeight="100" />
+      <RowDefinition Height="4" />
+      <RowDefinition Height="*" MinHeight="100" />
+    </Grid.RowDefinitions>
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition MinWidth="100" Width="Auto"/>
+        <ColumnDefinition Width="4"/>
+        <ColumnDefinition MinWidth="100" Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <TabControl x:Name="ProjectTabs" Grid.Column="0" TabStripPlacement="Bottom">
+        <TabItem Header="Source">
+          <Label>Noice</Label>
+        </TabItem>
+        <TabItem Header="Assets">
+          <Label>Noice2</Label>
+        </TabItem>
+        <TabItem Header="Database">
+          <Label>Noice3</Label>
+        </TabItem>
+      </TabControl>
+      <GridSplitter Grid.Column="1" ResizeDirection="Columns"/>
+      <Label Grid.Column="2">Test</Label>
+    </Grid>
+    <GridSplitter Grid.Row="1" ResizeDirection="Rows"/>
+    <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto">
+      <WrapPanel Name="Console" Orientation="Vertical">
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block [color=red]ROT[/color] und [/i]kursivd[/i]</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[i]Anfangs kursiv[/i]</lControls:RichTextBlock>
+      </WrapPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

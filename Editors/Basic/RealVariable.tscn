@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://chmqiwc28qvw4"]
-
-[ext_resource type="PackedScene" uid="uid://bc0eok50pcxad" path="res://Editors/Basic/IntVariable.tscn" id="1_uapqi"]
-
-[node name="RealVariable" instance=ExtResource("1_uapqi")]
-isReal = true

@@ -8,13 +8,13 @@ using System.Linq;
 using Avalonia.Styling;
 using Avalonia;
 
-namespace TQDB_Editor.Controls
+namespace TQDBEditor.Controls
 {
     public partial class RichTextBlock : SelectableTextBlock, IStyleable
     {
         Type IStyleable.StyleKey => typeof(SelectableTextBlock);
 
-        private readonly List<(ReadOnlySlice<char> slice, TextRunProperties? props)> _textChunks;
+        private readonly List<(ReadOnlyMemory<char> slice, TextRunProperties? props)> _textChunks;
         private readonly List<CodeTag> _openTags;
 
         public static readonly StyledProperty<bool> UseBBCodeProperty =
@@ -29,15 +29,25 @@ namespace TQDB_Editor.Controls
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
-            if (Text == null)
+            var text = base.GetText();
+            if (text == null)
                 return;
             if (UseBBCode)
             {
-                var parsed = ParseText(Text);
+                var parsed = ParseText(text);
                 _textChunks.AddRange(parsed);
             }
             else
-                _textChunks.Add((Text.AsMemory(), null));
+                _textChunks.Add((text.AsMemory(), null));
+
+            // Dirty fix for italic text clipping
+            if (Padding.Right <= 0)
+                Padding = new Thickness(Padding.Left, Padding.Top, Padding.Right + 5, Padding.Bottom);
+        }
+
+        protected override string? GetText()
+        {
+            return string.Concat(_textChunks.Select(x => new string(x.slice.Span)));
         }
 
         private TextRunProperties DefaultProperties
@@ -103,12 +113,12 @@ namespace TQDB_Editor.Controls
             _textChunks.Add(("&#10;".AsMemory(), null));
         }
 
-        private IReadOnlyList<(ReadOnlySlice<char> slice, TextRunProperties? props)> ParseText(string? text)
+        private IReadOnlyList<(ReadOnlyMemory<char> slice, TextRunProperties? props)> ParseText(string? text)
         {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
 
-            var ret = new List<(ReadOnlySlice<char>, TextRunProperties?)>();
+            var ret = new List<(ReadOnlyMemory<char>, TextRunProperties?)>();
             bool isCode = false;
             var buffer = new List<char>();
             var codeBuffer = new List<char>();
@@ -139,7 +149,7 @@ namespace TQDB_Editor.Controls
                     {
                         isCode = true;
                         if (buffer.Count > 0)
-                            ret.Add((new ReadOnlySlice<char>(buffer.ToArray()), CreateProps()));
+                            ret.Add((new ReadOnlyMemory<char>(buffer.ToArray()), CreateProps()));
                         buffer.Clear();
                         continue;
                     }
@@ -147,9 +157,9 @@ namespace TQDB_Editor.Controls
                 }
             }
             if (buffer.Count > 0)
-                ret.Add((new ReadOnlySlice<char>(buffer.ToArray()), CreateProps()));
+                ret.Add((new ReadOnlyMemory<char>(buffer.ToArray()), CreateProps()));
             if (codeBuffer.Count > 0)
-                ret.Add((new ReadOnlySlice<char>(codeBuffer.ToArray()), CreateProps()));
+                ret.Add((new ReadOnlyMemory<char>(codeBuffer.ToArray()), CreateProps()));
 
             return ret;
         }
@@ -253,10 +263,10 @@ namespace TQDB_Editor.Controls
         {
             private readonly TextRunProperties _defaultProperties;
             private readonly IReadOnlyDictionary<int, int> _sourceIndexToPosMap;
-            private readonly IReadOnlyList<(ReadOnlySlice<char> slice, TextRunProperties? props)> _textChunks;
+            private readonly IReadOnlyList<(ReadOnlyMemory<char> slice, TextRunProperties? props)> _textChunks;
             private readonly int _length;
 
-            public ComplexTextSource(IEnumerable<(ReadOnlySlice<char> slice, TextRunProperties? props)> textChunks, TextRunProperties defaultProps)
+            public ComplexTextSource(IEnumerable<(ReadOnlyMemory<char> slice, TextRunProperties? props)> textChunks, TextRunProperties defaultProps)
             {
                 _defaultProperties = defaultProps;
                 _textChunks = textChunks.ToList();
@@ -264,7 +274,7 @@ namespace TQDB_Editor.Controls
                 _length = _textChunks.Sum(x => x.slice.Length);
             }
 
-            private static IReadOnlyDictionary<int, int> GenerateMap(IReadOnlyList<(ReadOnlySlice<char>, TextRunProperties?)> textChunks)
+            private static IReadOnlyDictionary<int, int> GenerateMap(IReadOnlyList<(ReadOnlyMemory<char>, TextRunProperties?)> textChunks)
             {
                 var ret = new Dictionary<int, int>(textChunks.Count);
                 var pos = 0;
@@ -305,7 +315,7 @@ namespace TQDB_Editor.Controls
 
                 var (runText, runProps) = _textChunks[chunkIndex];
 
-                runText = runText.Skip(startIndex);
+                runText = runText[startIndex..];
 
                 if (runText.IsEmpty)
                 {
