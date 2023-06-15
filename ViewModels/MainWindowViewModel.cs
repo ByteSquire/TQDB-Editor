@@ -132,16 +132,16 @@ namespace TQDBEditor.ViewModels
             {
                 case IClassicDesktopStyleApplicationLifetime desktop:
                     var storageProvider = desktop.MainWindow!.StorageProvider;
-                    var startFolder = await storageProvider.TryGetWellKnownFolder(WellKnownFolder.Documents);
+                    var startFolder = await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
                     if (startFolder != null)
                     {
                         var myGamesPath = Path.Combine(startFolder.Path.LocalPath, "My Games");
-                        var myGames = await storageProvider.TryGetFolderFromPath(myGamesPath);
+                        var myGames = await storageProvider.TryGetFolderFromPathAsync(myGamesPath);
                         if (myGames != null)
                         {
                             startFolder = myGames;
                             var tqPath = Path.Combine(startFolder.Path.LocalPath, "Titan Quest - Immortal Throne");
-                            var tqFolder = await storageProvider.TryGetFolderFromPath(tqPath);
+                            var tqFolder = await storageProvider.TryGetFolderFromPathAsync(tqPath);
                             if (tqFolder != null)
                             {
                                 startFolder = tqFolder;
@@ -149,7 +149,7 @@ namespace TQDBEditor.ViewModels
                             else
                             {
                                 tqPath = Path.Combine(startFolder.Path.LocalPath, "Titan Quest");
-                                tqFolder = await storageProvider.TryGetFolderFromPath(tqPath);
+                                tqFolder = await storageProvider.TryGetFolderFromPathAsync(tqPath);
                                 if (tqFolder != null)
                                     startFolder = tqFolder;
                             }

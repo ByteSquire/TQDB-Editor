@@ -16,7 +16,7 @@
     <Label Grid.Column="0" Grid.Row="2" Content="Existing Mods:" />
     <TextBox x:Name="Input" Grid.Column="1" Grid.Row="0" Text="{Binding NewModName}" KeyDown="inputTxt_KeyDown" TextChanged="inputTxt_TextChanged" />
     <ScrollViewer Grid.Column="1" Grid.Row="2">
-      <ListBox Items="{Binding ExistingMods}" SelectionChanged="existingLst_Selected">
+      <ListBox ItemsSource="{Binding ExistingMods}" SelectionChanged="existingLst_Selected">
         <ListBox.ItemTemplate>
           <DataTemplate x:DataType="{x:Type sys:String}">
             <Label Content="{Binding}" />

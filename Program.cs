@@ -82,9 +82,9 @@ namespace TQDBEditor
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .With(new Win32PlatformOptions { AllowEglInitialization = true })
+                .UseSkia()
                 .LogToTrace(LogEventLevel.Warning, MyLogAreas.AvaloniaLogAreas.Where(x => x != LogArea.Binding).Concat(MyLogAreas.All).ToArray())
                 //.UseManagedSystemDialogs()
-                .UseSkia();
-        //.UseReactiveUI();
+                ;
     }
 }

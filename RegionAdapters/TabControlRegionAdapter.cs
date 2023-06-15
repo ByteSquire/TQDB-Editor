@@ -35,7 +35,7 @@ namespace TQDBEditor.RegionAdapters
                     regionTarget.SelectedIndex = region.Views.IndexOf(region.ActiveViews.FirstOrDefault());
             };
 
-            regionTarget.Items ??= new AvaloniaList<object>();
+            //regionTarget.ItemsSource ??= new AvaloniaList<object>();
 
             region.Views.CollectionChanged +=
                 (sender, e) =>

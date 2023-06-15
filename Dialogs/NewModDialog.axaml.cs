@@ -1,3 +1,4 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -15,9 +16,9 @@ namespace TQDBEditor.Dialogs
             InitializeComponent();
         }
 
-        protected override void OnLoaded()
+        protected override void OnInitialized()
         {
-            base.OnLoaded();
+            base.OnInitialized();
             defaultForeground ??= Input.Foreground;
             Input.Focus();
         }
@@ -25,8 +26,7 @@ namespace TQDBEditor.Dialogs
         private void inputTxt_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && DataContext is NewModDialogViewModel viewModel)
-                if (viewModel.CheckText(Input.Text))
-                    viewModel.OnTextInput(Input.Text);
+                viewModel.OnTextInput(Input.Text);
         }
 
         private void inputTxt_TextChanged(object sender, TextChangedEventArgs e)
@@ -34,7 +34,7 @@ namespace TQDBEditor.Dialogs
             if (DataContext is NewModDialogViewModel viewModel)
             {
                 if (!viewModel.CheckText(Input.Text))
-                    Input.Foreground = new SolidColorBrush(Colors.Red);
+                   Input.Foreground = new SolidColorBrush(Colors.Red);
                 else
                     Input.Foreground = defaultForeground;
             }

@@ -39,7 +39,7 @@ namespace TQDBEditor.Dialogs
                 Submit();
         }
 
-        public bool CanCloseDialog() => true;
+        public bool CanConfirmDialog() => CheckText(NewModName);
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
@@ -48,8 +48,11 @@ namespace TQDBEditor.Dialogs
 
         public void OnTextInput(string? text)
         {
-            if (!string.IsNullOrEmpty(text))
+            if (CheckText(text))
+            {
+                NewModName = text!;
                 Submit();
+            }
         }
 
         public bool CheckText(string? text)

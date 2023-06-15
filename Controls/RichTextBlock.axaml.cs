@@ -5,15 +5,12 @@ using Avalonia.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Avalonia.Styling;
 using Avalonia;
 
 namespace TQDBEditor.Controls
 {
-    public partial class RichTextBlock : SelectableTextBlock, IStyleable
+    public partial class RichTextBlock : SelectableTextBlock
     {
-        Type IStyleable.StyleKey => typeof(SelectableTextBlock);
-
         private readonly List<(ReadOnlyMemory<char> slice, TextRunProperties? props)> _textChunks;
         private readonly List<CodeTag> _openTags;
 
@@ -22,14 +19,14 @@ namespace TQDBEditor.Controls
 
         public bool UseBBCode
         {
-            get { return GetValue(UseBBCodeProperty); }
-            set { SetValue(UseBBCodeProperty, value); }
+            get => GetValue(UseBBCodeProperty);
+            set => SetValue(UseBBCodeProperty, value);
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
-            var text = base.GetText();
+            var text = Text;
             if (text == null)
                 return;
             if (UseBBCode)
@@ -40,14 +37,12 @@ namespace TQDBEditor.Controls
             else
                 _textChunks.Add((text.AsMemory(), null));
 
+            // pretend the Text content is just the text without the BBCode
+            Text = string.Concat(_textChunks.Select(x => new string(x.slice.Span)));
+
             // Dirty fix for italic text clipping
             if (Padding.Right <= 0)
                 Padding = new Thickness(Padding.Left, Padding.Top, Padding.Right + 5, Padding.Bottom);
-        }
-
-        protected override string? GetText()
-        {
-            return string.Concat(_textChunks.Select(x => new string(x.slice.Span)));
         }
 
         private TextRunProperties DefaultProperties
@@ -67,6 +62,7 @@ namespace TQDBEditor.Controls
 
         protected override TextLayout CreateTextLayout(string? text)
         {
+            var original = base.CreateTextLayout(text);
             var paragraphProperties = new GenericTextParagraphProperties(FlowDirection, TextAlignment, true, false,
                 DefaultProperties, TextWrapping, LineHeight, 0, LetterSpacing);
 
@@ -85,10 +81,9 @@ namespace TQDBEditor.Controls
                 textSource,
                 paragraphProperties,
                 TextTrimming,
-                _constraint.Width,
-                _constraint.Height,
-                maxLines: MaxLines,
-                lineHeight: LineHeight);
+                original.MaxWidth,
+                original.MaxHeight,
+                original.MaxLines);
         }
 
         public void AddText(string? text)
@@ -134,7 +129,7 @@ namespace TQDBEditor.Controls
                         {
                             InterpretCodeBuffer(codeBuffer.ToArray());
                         }
-                        catch (BBCException)
+                        catch (BBCodeException)
                         {
                             buffer.AddRange(codeBuffer);
                         }
@@ -182,7 +177,7 @@ namespace TQDBEditor.Controls
                 if (isClosing)
                     openCodes.RemoveAt(exisitingIdx);
                 else
-                    throw new BBCException("Trying to recurse Tags!");
+                    throw new BBCodeException("Trying to recurse Tags!");
             }
             else
                 openCodes.Add(new CodeTag { Tag = code, Value = value });
@@ -253,10 +248,10 @@ namespace TQDBEditor.Controls
             public string? Value { get; set; }
         }
 
-        public class BBCException : Exception
+        public class BBCodeException : Exception
         {
-            public BBCException() : base() { }
-            public BBCException(string msg) : base(msg) { }
+            public BBCodeException() : base() { }
+            public BBCodeException(string msg) : base(msg) { }
         }
 
         private readonly struct ComplexTextSource : ITextSource

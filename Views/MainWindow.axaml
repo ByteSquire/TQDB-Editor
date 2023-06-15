@@ -22,8 +22,7 @@
         UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
         WindowState="Normal" WindowStartupLocation="CenterScreen"
         TransparencyLevelHint="AcrylicBlur"
-        Foreground="{DynamicResource DockThemeForegroundBrush}"
-        BorderThickness="1" BorderBrush="{DynamicResource DockThemeBorderLowBrush}"
+        BorderThickness="1"
         FontFamily="Ubuntu, Segoe UI, SF Pro Display, Noto Sans, Cantarel"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="PreferSystemChrome"
@@ -64,7 +63,7 @@
               <MenuItem Header="_New" Command="{Binding NewModCommand}" />
               <MenuItem Header="_Delete" IsEnabled="False"/>
               <Separator/>
-              <MenuItem Header="_Select" Items="{Binding DetectedMods}" Classes="SubItems">
+              <MenuItem Header="_Select" ItemsSource="{Binding DetectedMods}" Classes="SubItems">
                 <MenuItem.Styles>
                   <Style Selector="MenuItem.SubItems MenuItem" x:DataType="lDataTypes:ModMenuItem">
                     <Setter Property="Header" Value="{Binding Name}"/>
@@ -177,7 +176,7 @@
             </Grid>
             <GridSplitter Grid.Column="3" ResizeDirection="Columns" Margin="1.5 0 1.5 0"/>
             <ScrollViewer Grid.Column="4" Name="PathScroll" HorizontalScrollBarVisibility="Visible" Margin="0,0,0,4">
-              <Label>Path that is quite long so I can test scrolling</Label>
+              <SelectableTextBlock>Path that is quite long so I can test scrolling</SelectableTextBlock>
             </ScrollViewer>
           </Grid>
         </DockPanel>

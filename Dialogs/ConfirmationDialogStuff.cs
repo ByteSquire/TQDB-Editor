@@ -22,6 +22,8 @@ namespace TQDBEditor.Dialogs
 
         void IDialogAware.OnDialogClosed() { }
 
+        bool CanConfirmDialog();
+
         IDialogParameters OnDialogConfirmed(EventArgs e);
 
         IDialogParameters? OnDialogCancelled(EventArgs e);
@@ -45,6 +47,8 @@ namespace TQDBEditor.Dialogs
 
             static void SetResultAndClose(IDialogWindow window, IConfirmationDialogAware aware, EventArgs e, bool cancelled)
             {
+                if (!cancelled && !aware.CanConfirmDialog())
+                    return;
                 window.Result = new DialogResult(cancelled ? ButtonResult.Cancel : ButtonResult.OK, cancelled ? aware.OnDialogCancelled(e) : aware.OnDialogConfirmed(e));
                 window.Close();
             }

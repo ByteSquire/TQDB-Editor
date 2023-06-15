@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <LangVersion>10</LangVersion>
-    <TargetFrameworks>net6.0;net6.0-windows</TargetFrameworks>
+    <TargetFrameworks>net6.0;net6.0-windows;net7.0;net7.0-windows</TargetFrameworks>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Assets/icon.ico</ApplicationIcon>
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
@@ -24,15 +24,16 @@
   </ItemGroup>
   <ItemGroup>
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="$(Configuration) == Debug" Include="Avalonia.Diagnostics" Version="11.0.0-preview5" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="6.0.0" />
-    <PackageReference Include="Prism.DryIoc.Avalonia" Version="8.1.97.4-preview.11.5" />
-    <PackageReference Include="Semi.Avalonia" Version="0.1.0-preview5.2" />
-    <PackageReference Include="XamlNameReferenceGenerator" Version="1.6.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-rc1.1" />
+    <PackageReference Condition="$(Configuration) == Debug" Include="Avalonia.Diagnostics" Version="11.0.0-rc1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-rc1.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="7.0.0" />
+    <PackageReference Include="Prism.DryIoc.Avalonia" Version="8.1.97.11000-rc1.1" />
+    <PackageReference Include="Semi.Avalonia" Version="11.0.0-rc1" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0-windows' Or '$(TargetFramework)' == 'net7.0-windows'">
     <PackageReference Include="WindowsAPICodePackShell" Version="7.0.4-custom" />
   </ItemGroup>
 
