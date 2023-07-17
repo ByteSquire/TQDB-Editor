@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Models\" />
     <AvaloniaResource Include="Assets\**" />
+    <Folder Include="Services\" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.
