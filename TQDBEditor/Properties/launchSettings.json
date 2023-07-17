@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "TQDBEditor": {
+      "commandName": "Project"
+    },
+    "Self Contained": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\green\\Documents\\TTQMods\\TQDBEditor\\bin\\Debug\\net6.0-windows\\publish\\TQDBEditor.exe"
+    }
+  }
+}

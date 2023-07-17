@@ -1,0 +1,113 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:prism="http://prismlibrary.com/"
+        xmlns:lControls="clr-namespace:TQDBEditor.Controls"
+        xmlns:fControls="clr-namespace:TQDBEditor.BasicToolbarModule.Views"
+        xmlns:lDataTypes="clr-namespace:TQDBEditor.DataTypes"
+        xmlns:aProperties="clr-namespace:TQDBEditor.AvaloniaProperties"
+        xmlns:vm="clr-namespace:TQDBEditor.ViewModels"
+        xmlns:vmCore="clr-namespace:TQDBEditor.ViewModels;assembly=TQDBEditor.Core"
+        xmlns:constant="clr-namespace:TQDBEditor.Constants;assembly=TQDBEditor.Core"
+        mc:Ignorable="d"
+        d:DesignWidth="1200" d:DesignHeight="700"
+        Height="680" Width="1200"
+        x:Class="TQDBEditor.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        x:Name="MainWindowWindow"
+        Icon="/Assets/icon.ico"
+        Title="{Binding Title}"
+        UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
+        WindowState="Normal" WindowStartupLocation="CenterScreen"
+        TransparencyLevelHint="AcrylicBlur"
+        BorderThickness="1"
+        FontFamily="Ubuntu, Segoe UI, SF Pro Display, Noto Sans, Cantarel"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="PreferSystemChrome"
+        ExtendClientAreaTitleBarHeightHint="40"
+        >
+
+  <Panel>
+    <Panel Margin="{Binding #MainWindowWindow.OffScreenMargin}">
+      <DockPanel>
+        <Grid RowDefinitions="*,*" DockPanel.Dock="Top">
+          <ScrollViewer Classes="tinyScroll" Name="MenuScroll" Grid.Row="0" MinWidth="100" MaxWidth="{Binding #MainWindowWindow.ToolbarWidth}" HorizontalAlignment="Left" Height="44" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+            <Menu x:Name="ToolBar" prism:RegionManager.RegionName="{x:Static constant:RegionNames.ToolBarRegion}">
+              <MenuItem Header="_View">
+                <MenuItem Header="StatusBar" Command="{Binding ToggleStatusBarCommand}">
+                  <MenuItem.Icon>
+                    <CheckBox BorderThickness="0"
+                          IsHitTestVisible="False"
+                          IsChecked="{Binding IsStatusBarVisible}">
+                    </CheckBox>
+                  </MenuItem.Icon>
+                </MenuItem>
+                <MenuItem Header="Refresh" IsEnabled="False"/>
+              </MenuItem>
+              <MenuItem Header="_Help">
+                <MenuItem Header="_Help..."/>
+                <MenuItem Header="_About TQDB-Editor..."/>
+                <Separator/>
+                <MenuItem Header="_Install Templates" IsEnabled="False"/>
+                <MenuItem Header="_Install Tutorials..." IsEnabled="False"/>
+              </MenuItem>
+            </Menu>
+          </ScrollViewer>
+          <Separator Grid.Row="1" Height="4" DockPanel.Dock="Top"/>
+        </Grid>
+        <DockPanel DockPanel.Dock="Bottom" IsVisible="{Binding IsStatusBarVisible}">
+          <Separator Height="4" DockPanel.Dock="Top"/>
+          <Grid Margin="0,0,0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition MinWidth="200" Width="Auto" />
+              <ColumnDefinition Width="4" />
+              <ColumnDefinition MinWidth="200" Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Classes="tinyScroll" Grid.Column="0" AllowAutoHide="False" HorizontalScrollBarVisibility="Visible">
+              <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal" prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusLeftRegion}">
+                <Label VerticalAlignment="Center" Content="{Binding ActiveMod.Name}" />
+                <Rectangle Fill="Gray" Width="4" />
+                <Label VerticalContentAlignment="Center" Content="{Binding Status}" />
+                <ProgressBar ShowProgressText="True" MinWidth="40" Value="30" />
+              </StackPanel>
+            </ScrollViewer>
+            <GridSplitter Grid.Column="1" Background="Gray"/>
+            <ScrollViewer Classes="tinyScroll" Grid.Column="2" AllowAutoHide="False" HorizontalScrollBarVisibility="Visible">
+              <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusRightRegion}">
+                <SelectableTextBlock>Path that is quite long so I can test scrolling</SelectableTextBlock>
+              </StackPanel>
+            </ScrollViewer>
+          </Grid>
+        </DockPanel>
+        <DockPanel>
+          <TabControl x:Name="ViewTabs" prism:RegionManager.RegionName="{x:Static constant:RegionNames.ViewsRegion}"/>
+        </DockPanel>
+      </DockPanel>
+    </Panel>
+  </Panel>
+  <Window.Styles>
+    <Style Selector="#ViewTabs /template/ WrapPanel">
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="ScrollViewer.tinyScroll /template/ ScrollBar">
+      <Setter Property="MinHeight" Value="2"/>
+      <Setter Property="MaxHeight" Value="10"/>
+    </Style>
+
+    <Style Selector="ScrollViewer[AllowAutoHide=False] /template/ ScrollContentPresenter">
+      <Setter Property="Grid.RowSpan" Value="1"/>
+      <Setter Property="Grid.ColumnSpan" Value="1"/>
+    </Style>
+
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Foreground" Value="#F0F0F0"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+
+  </Window.Styles>
+</Window>

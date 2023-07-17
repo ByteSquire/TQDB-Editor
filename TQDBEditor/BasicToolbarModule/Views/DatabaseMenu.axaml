@@ -1,0 +1,18 @@
+<MenuItem xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TQDBEditor.BasicToolbarModule.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TQDBEditor.BasicToolbarModule.Views.DatabaseMenu"
+             x:DataType="vm:DatabaseMenuViewModel"
+             Header="_Database">
+
+  <MenuItem Header="_Import Record..." IsEnabled="False"/>
+  <Separator/>
+  <MenuItem Header="_Check Records" IsEnabled="False"/>
+  <MenuItem Header="_Move Records" IsEnabled="False"/>
+  <MenuItem Header="Db Archive Stats"/>
+  <Separator/>
+  <MenuItem Header="_Stop"/>
+</MenuItem>

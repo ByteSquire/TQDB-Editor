@@ -1,0 +1,29 @@
+<MenuItem xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TQDBEditor.BasicToolbarModule.ViewModels"
+             xmlns:lDataTypes="clr-namespace:TQDBEditor.DataTypes"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="TQDBEditor.BasicToolbarModule.Views.ModMenu"
+             x:DataType="vm:ModMenuViewModel"
+             Header="_Mod">
+  
+    <MenuItem Header="_New" Command="{Binding NewModCommand}" />
+    <MenuItem Header="_Delete" IsEnabled="False"/>
+    <Separator/>
+    <MenuItem Header="_Select" ItemsSource="{Binding DetectedMods}" Classes="SubItems">
+      <MenuItem.Styles>
+        <Style Selector="MenuItem.SubItems MenuItem" x:DataType="lDataTypes:ModMenuItem">
+          <Setter Property="Header" Value="{Binding Name}"/>
+          <Setter Property="Command" Value="{Binding Command}"/>
+          <Setter Property="CommandParameter" Value="{Binding CommandParameter}"/>
+          <Setter Property="Icon">
+            <Template>
+              <RadioButton IsChecked="{Binding IsActive}"/>
+            </Template>
+          </Setter>
+        </Style>
+      </MenuItem.Styles>
+    </MenuItem>
+</MenuItem>

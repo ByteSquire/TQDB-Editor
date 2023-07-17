@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
+    One for Windows with net7.0-windows TFM, one for MacOS with net7.0-macos and one with net7.0 TFM for Linux.-->
+    <!--<TargetFramework>net7.0</TargetFramework>-->
+    <Nullable>enable</Nullable>
+    <ApplicationIcon>..\TQDBEditor\Assets\icon.ico</ApplicationIcon>
+    <AssemblyVersion>$(EditorVersion)</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TQDBEditor\TQDBEditor.csproj" />
+  </ItemGroup>
+
+  <Target Name="MakeModulesDir" AfterTargets="Build;Publish">
+    <MakeDir Directories="$(OutDir)Modules" />
+  </Target>
+  
+  <UsingTask TaskName="ReplaceFileText" TaskFactory="CodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll">
+    <ParameterGroup>
+      <InputFilename ParameterType="System.String" Required="true" />
+      <OutputFilename ParameterType="System.String" Required="true" />
+      <MatchExpression ParameterType="System.String" Required="true" />
+      <ReplacementText ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Reference Include="System.Core" />
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+            File.WriteAllText(
+                OutputFilename,
+                Regex.Replace(File.ReadAllText(InputFilename), MatchExpression, ReplacementText)
+                );
+          ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="UpdateManifest" BeforeTargets="Build">
+    <Message Importance="high" Text="Generating app.manifest for $(ProjectName)" />
+    <ReplaceFileText InputFilename="..\app.manifest" OutputFilename="app.manifest" MatchExpression="EditorVersion" ReplacementText="$(EditorVersion)" />
+    <ReplaceFileText InputFilename="app.manifest" OutputFilename="app.manifest" MatchExpression="EditorConfig" ReplacementText="$(ProjectName)" />
+  </Target>
+</Project>

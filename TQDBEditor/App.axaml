@@ -1,0 +1,19 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:TQDBEditor"
+             xmlns:s="clr-namespace:System;assembly=mscorlib"
+             RequestedThemeVariant="Default"
+             x:CompileBindings="True"
+             x:Class="TQDBEditor.App"
+             Name="TQDBEditor">
+  <Application.Styles>
+    <!--<StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />-->
+    <FluentTheme DensityStyle="Compact" />
+  </Application.Styles>
+  <Application.Resources>
+    <!-- ... -->
+    <s:Boolean x:Key="True">True</s:Boolean>
+    <s:Boolean x:Key="False">False</s:Boolean>
+  </Application.Resources>
+
+</Application>

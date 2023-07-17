@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQDBEditor", "TQDBEditor.csproj", "{2EBD3A33-B456-450A-9A28-25B27144F0D2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQDBEditor.Windows", "..\TQDBEditor.Windows\TQDBEditor.Windows.csproj", "{F9EB6492-34CE-4C53-9C4F-2E7A947BE72E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TQDBEditor.Desktop", "..\TQDBEditor.Desktop\TQDBEditor.Desktop.csproj", "{074F5A72-1D56-4DDA-9CF6-F20DAFF7E3FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3D4623D5-432B-46EC-919B-B3CD9B6F7D74}"
+	ProjectSection(SolutionItems) = preProject
+		..\app.manifest = ..\app.manifest
+		..\Directory.Build.props = ..\Directory.Build.props
+		..\TQDBEditor.projitems = ..\TQDBEditor.projitems
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TQDBEditor.Core", "..\TQDBEditor.Core\TQDBEditor.Core.csproj", "{B6776868-3B42-4935-99D2-45F2DDA7E455}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2EBD3A33-B456-450A-9A28-25B27144F0D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EBD3A33-B456-450A-9A28-25B27144F0D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EBD3A33-B456-450A-9A28-25B27144F0D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EBD3A33-B456-450A-9A28-25B27144F0D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9EB6492-34CE-4C53-9C4F-2E7A947BE72E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9EB6492-34CE-4C53-9C4F-2E7A947BE72E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9EB6492-34CE-4C53-9C4F-2E7A947BE72E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9EB6492-34CE-4C53-9C4F-2E7A947BE72E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{074F5A72-1D56-4DDA-9CF6-F20DAFF7E3FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{074F5A72-1D56-4DDA-9CF6-F20DAFF7E3FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{074F5A72-1D56-4DDA-9CF6-F20DAFF7E3FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{074F5A72-1D56-4DDA-9CF6-F20DAFF7E3FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6776868-3B42-4935-99D2-45F2DDA7E455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6776868-3B42-4935-99D2-45F2DDA7E455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6776868-3B42-4935-99D2-45F2DDA7E455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6776868-3B42-4935-99D2-45F2DDA7E455}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63A8450B-EFC6-4C83-8EC2-6A84026FB50A}
+	EndGlobalSection
+EndGlobal
