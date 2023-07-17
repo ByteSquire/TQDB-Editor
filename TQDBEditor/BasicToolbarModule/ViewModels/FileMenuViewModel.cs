@@ -24,7 +24,7 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
         private IStorageFolder? _workingDir;
 
         [RelayCommand]
-        private async void SetWorkingFolder()
+        private async Task SetWorkingFolder()
         {
             var storageProvider = _storageProvider;
             if (!storageProvider.CanOpen)
