@@ -1,9 +1,0 @@
-[gd_resource type="Shortcut" load_steps=2 format=3 uid="uid://dlc1ty67vhc60"]
-
-[sub_resource type="InputEventKey" id="InputEventKey_h8w55"]
-resource_name = "Ctrl+Z"
-ctrl_pressed = true
-keycode = 90
-
-[resource]
-events = [SubResource("InputEventKey_h8w55")]
