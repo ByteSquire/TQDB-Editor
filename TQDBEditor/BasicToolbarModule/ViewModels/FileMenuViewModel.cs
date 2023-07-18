@@ -3,25 +3,26 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Prism.Events;
-using Prism.Services.Dialogs;
 using System;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TQDBEditor.Services;
 using TQDBEditor.ViewModels;
 
 namespace TQDBEditor.BasicToolbarModule.ViewModels
 {
     public partial class FileMenuViewModel : ViewModelBase
     {
+        private readonly IConfiguration _config;
         private readonly IStorageProvider _storageProvider;
         private readonly ILogger _logger;
 
         [ObservableProperty]
-        private IStorageFolder? _workingDir;
+        private string? _workingDir;
 
         [RelayCommand]
         private async Task SetWorkingFolder()
@@ -56,7 +57,7 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
                 }
                 var pickedFolder = await storageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions() { AllowMultiple = false, Title = "Select a working directory...", SuggestedStartLocation = startFolder });
                 if (pickedFolder.Any())
-                    WorkingDir = pickedFolder.Single();
+                    WorkingDir = pickedFolder.Single().Path.LocalPath;
             }
         }
 
@@ -73,12 +74,12 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
             }
         }
 
-        private WorkingDirChangedEvent _workingDirChangedEvent;
-        public FileMenuViewModel(ILoggerProvider loggerProvider, IStorageProvider storageProvider, IEventAggregator ea)
+        public FileMenuViewModel(ILoggerProvider loggerProvider, IStorageProvider storageProvider, IConfiguration config)
         {
             _logger = loggerProvider.CreateLogger("File Menu");
             _storageProvider = storageProvider;
-            _workingDirChangedEvent = ea.GetEvent<WorkingDirChangedEvent>();
+            _config = config;
+            _workingDir = config.GetWorkingDir();
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -86,9 +87,7 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
             base.OnPropertyChanged(e);
 
             if (e.PropertyName == nameof(WorkingDir))
-                _workingDirChangedEvent.Publish(WorkingDir);
+                _config.SetWorkingDir(WorkingDir);
         }
     }
-
-    public class WorkingDirChangedEvent : PubSubEvent<IStorageFolder?> { }
 }

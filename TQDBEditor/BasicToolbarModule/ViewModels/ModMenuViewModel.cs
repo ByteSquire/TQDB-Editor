@@ -1,5 +1,4 @@
-﻿using Avalonia.Platform.Storage;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Prism.Services.Dialogs;
 using DynamicData;
@@ -14,7 +13,8 @@ using TQDBEditor.Dialogs.NewMod;
 using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using Prism.Events;
+using TQDBEditor.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace TQDBEditor.BasicToolbarModule.ViewModels
 {
@@ -25,12 +25,13 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(DetectedMods))]
-        private IStorageFolder? _workingDir;
+        private string? _workingDir;
 
+        private readonly IConfiguration _config;
         private readonly IDialogService _dialogService;
         private static bool _shouldActivateNextMod = false;
         private string? _workingModsFolder = null;
-        private string? WorkingModsFolder => _workingModsFolder ?? (WorkingDir is null ? null : (_workingModsFolder = Path.Combine(WorkingDir.Path.LocalPath, "CustomMaps")));
+        private string? WorkingModsFolder => _workingModsFolder ?? (WorkingDir is null ? null : (_workingModsFolder = Path.Combine(WorkingDir, "CustomMaps")));
 
         private ModMenuItem? _activeMod;
         public ModMenuItem? ActiveMod
@@ -71,10 +72,14 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
             ActiveMod = DetectedMods.Single(x => x.Name == modName);
         }
 
-        public ModMenuViewModel(IDialogService dialogService, IEventAggregator ea)
+        public ModMenuViewModel(IDialogService dialogService, IObservableConfiguration config)
         {
             _dialogService = dialogService;
-            ea.GetEvent<WorkingDirChangedEvent>().Subscribe(x => WorkingDir = x);
+            _config = config;
+            WorkingDir = config.GetWorkingDir();
+            if (!string.IsNullOrEmpty(config.GetModDir()))
+                SelectMod(config.GetModDir()!);
+            config.AddWorkingDirChangeListener(x => WorkingDir = x);
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -83,6 +88,8 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
 
             if (e.PropertyName == nameof(WorkingDir))
                 OnWorkingDirChanged();
+            if (e.PropertyName == nameof(ActiveMod))
+                _config.SetModDir(ActiveMod?.Name);
         }
 
         private FileSystemWatcher? watcher;

@@ -443,7 +443,7 @@ namespace TQDBEditor.Services
             var notifyingConfiguration = new NotifyingConfiguration(config);
             _config = notifyingConfiguration;
 
-            containerRegistry.RegisterInstance(notifyingConfiguration);
+            containerRegistry.RegisterInstance<IObservableConfiguration>(notifyingConfiguration);
             containerRegistry.RegisterInstance<IConfiguration>(notifyingConfiguration);
         }
 
@@ -521,12 +521,23 @@ namespace TQDBEditor.Services
         }
     }
 
-    public class NotifyingConfiguration : ConfigurationRoot, IConfiguration
+    public interface IObservableConfiguration : IConfiguration
     {
-        public NotifyingConfiguration(IConfigurationRoot configuration) : base(configuration.Providers.ToList()) { }
-
         public delegate void ConfigurationChangedEventHandler(IConfiguration sender, string key);
         public event ConfigurationChangedEventHandler? ConfigurationChanged;
+
+        public void AddWellKnownChangeHandler(string key, Action<string?> handler);
+    }
+
+    public class NotifyingConfiguration : ConfigurationRoot, IObservableConfiguration
+    {
+        private readonly Dictionary<string, ICollection<Action<string?>>> _wellKnownHandlers;
+        public NotifyingConfiguration(IConfigurationRoot configuration) : base(configuration.Providers.ToList())
+        {
+            _wellKnownHandlers = new();
+        }
+
+        public event IObservableConfiguration.ConfigurationChangedEventHandler? ConfigurationChanged;
 
         public new string? this[string key]
         {
@@ -536,6 +547,9 @@ namespace TQDBEditor.Services
                 if (value != base[key])
                 {
                     base[key] = value;
+                    if (_wellKnownHandlers.TryGetValue(key, out var handlers))
+                        foreach (var handler in handlers)
+                            handler(value);
                     ConfigurationChanged?.Invoke(this, key);
                 }
             }
@@ -545,6 +559,16 @@ namespace TQDBEditor.Services
         {
             get => base[key];
             set => this[key] = value;
+        }
+
+        public void AddWellKnownChangeHandler(string key, Action<string?> handler)
+        {
+            if (!_wellKnownHandlers.TryGetValue(key, out ICollection<Action<string?>>? collection))
+            {
+                collection = new List<Action<string?>>();
+                _wellKnownHandlers.Add(key, collection);
+            }
+            collection.Add(handler);
         }
     }
 
@@ -558,14 +582,18 @@ namespace TQDBEditor.Services
 
         public static string? GetWorkingDir(this IConfiguration configuration) => configuration[WORKING_DIR];
         public static void SetWorkingDir(this IConfiguration configuration, string? workingDir) => configuration[WORKING_DIR] = workingDir;
+        public static void AddWorkingDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(WORKING_DIR, listener);
 
         public static string? GetBuildDir(this IConfiguration configuration) => configuration[BUILD_DIR];
         public static void SetBuildDir(this IConfiguration configuration, string? workingDir) => configuration[BUILD_DIR] = workingDir;
+        public static void AddBuildDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(BUILD_DIR, listener);
 
         public static string? GetToolsDir(this IConfiguration configuration) => configuration[TOOLS_DIR];
         public static void SetToolsDir(this IConfiguration configuration, string? workingDir) => configuration[TOOLS_DIR] = workingDir;
+        public static void AddToolsDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(TOOLS_DIR, listener);
 
         public static string? GetModDir(this IConfiguration configuration) => configuration[MOD_DIR];
         public static void SetModDir(this IConfiguration configuration, string? workingDir) => configuration[MOD_DIR] = workingDir;
+        public static void AddModDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(MOD_DIR, listener);
     }
 }

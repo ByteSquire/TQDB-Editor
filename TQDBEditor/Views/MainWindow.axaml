@@ -62,7 +62,7 @@
             <Grid.ColumnDefinitions>
               <ColumnDefinition MinWidth="200" Width="Auto" />
               <ColumnDefinition Width="4" />
-              <ColumnDefinition MinWidth="200" Width="Auto" />
+              <ColumnDefinition MinWidth="200" Width="*" />
             </Grid.ColumnDefinitions>
             <ScrollViewer Classes="tinyScroll" Grid.Column="0" AllowAutoHide="False" HorizontalScrollBarVisibility="Visible">
               <ItemsControl prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusLeftRegion}">
@@ -71,13 +71,13 @@
                     <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal" />
                   </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-                <Label VerticalAlignment="Center" Content="{Binding ActiveMod.Name}" />
+                <Label VerticalAlignment="Center" Content="{Binding ActiveMod}" />
                 <Rectangle Fill="Gray" Width="4" />
                 <Label VerticalContentAlignment="Center" Content="{Binding Status}" />
                 <ProgressBar ShowProgressText="True" MinWidth="40" Value="30" />
               </ItemsControl>
             </ScrollViewer>
-            <GridSplitter Grid.Column="1" Background="Gray"/>
+            <GridSplitter Grid.Column="1" Background="Gray" />
             <ScrollViewer Classes="tinyScroll" Grid.Column="2" AllowAutoHide="False" HorizontalScrollBarVisibility="Visible">
               <ItemsControl prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusRightRegion}">
                 <ItemsControl.ItemsPanel>

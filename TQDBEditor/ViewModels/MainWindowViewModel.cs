@@ -1,19 +1,7 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
-using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DynamicData;
-using Prism.Services.Dialogs;
-using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reactive.Linq;
-using TQDBEditor.DataTypes;
-using TQDBEditor.Dialogs.NewMod;
+using TQDBEditor.Services;
 
 namespace TQDBEditor.ViewModels
 {
@@ -22,13 +10,15 @@ namespace TQDBEditor.ViewModels
         private readonly string baseTitle = "TQDBEditor";
 
         [ObservableProperty]
-        private ModMenuItem _activeMod = new("Test", true, null);
+        [NotifyPropertyChangedFor(nameof(Title))]
+        private string _activeMod = string.Empty;
+
         public string Title
         {
             get
             {
                 if (ActiveMod != null)
-                    return baseTitle + " - " + ActiveMod.Name;
+                    return baseTitle + " - " + ActiveMod;
                 else
                     return baseTitle;
             }
@@ -51,8 +41,10 @@ namespace TQDBEditor.ViewModels
             IsStatusBarVisible = !IsStatusBarVisible;
         }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IObservableConfiguration config)
         {
+            ActiveMod = config.GetModDir() ?? string.Empty;
+            config.AddModDirChangeListener(x => ActiveMod = x ?? string.Empty);
         }
     }
 }
