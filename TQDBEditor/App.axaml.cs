@@ -106,6 +106,9 @@ namespace TQDBEditor
 
         protected override void ConfigureModuleCatalog(IModuleCatalog moduleCatalog)
         {
+            // Register core modules
+            moduleCatalog.AddModule<Services.Module>();
+
             // Register modules
             moduleCatalog.AddModule<ClassicViewModule.Module>();
             moduleCatalog.AddModule<Dialogs.Module>();
