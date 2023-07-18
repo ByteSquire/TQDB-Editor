@@ -7,7 +7,7 @@ using TQDBEditor.ClassicViewModule.Views;
 
 namespace TQDBEditor.ClassicViewModule
 {
-    [Module(ModuleName = "TQDBEditor.ClassicView")]
+    [Module(ModuleName = nameof(TQDBEditor.ClassicViewModule))]
     public class Module : IModule
     {
         public void OnInitialized(IContainerProvider containerProvider)

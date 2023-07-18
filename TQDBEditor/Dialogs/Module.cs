@@ -4,7 +4,7 @@ using Prism.Services.Dialogs;
 
 namespace TQDBEditor.Dialogs
 {
-    [Module(ModuleName = "TQDBEditor.Dialogs", OnDemand = false)]
+    [Module(ModuleName = nameof(TQDBEditor.Dialogs), OnDemand = false)]
     public class Module : IModule
     {
         public void OnInitialized(IContainerProvider containerProvider)
