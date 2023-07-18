@@ -65,18 +65,28 @@
               <ColumnDefinition MinWidth="200" Width="Auto" />
             </Grid.ColumnDefinitions>
             <ScrollViewer Classes="tinyScroll" Grid.Column="0" AllowAutoHide="False" HorizontalScrollBarVisibility="Visible">
-              <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal" prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusLeftRegion}">
+              <ItemsControl prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusLeftRegion}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel FlowDirection="LeftToRight" Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <Label VerticalAlignment="Center" Content="{Binding ActiveMod.Name}" />
                 <Rectangle Fill="Gray" Width="4" />
                 <Label VerticalContentAlignment="Center" Content="{Binding Status}" />
                 <ProgressBar ShowProgressText="True" MinWidth="40" Value="30" />
-              </StackPanel>
+              </ItemsControl>
             </ScrollViewer>
             <GridSplitter Grid.Column="1" Background="Gray"/>
             <ScrollViewer Classes="tinyScroll" Grid.Column="2" AllowAutoHide="False" HorizontalScrollBarVisibility="Visible">
-              <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusRightRegion}">
+              <ItemsControl prism:RegionManager.RegionName="{x:Static constant:RegionNames.StatusRightRegion}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
                 <SelectableTextBlock>Path that is quite long so I can test scrolling</SelectableTextBlock>
-              </StackPanel>
+              </ItemsControl>
             </ScrollViewer>
           </Grid>
         </DockPanel>
