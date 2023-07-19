@@ -17,12 +17,8 @@ namespace TQDBEditor.Dialogs
 
         public IDialogResult? Result { get; set; }
 
-        object? IDialogWindow.Content { get => dialogContent; set { SetAndRaise(DialogContentProperty, ref dialogContent, value); ClientSize = ContentDock.DesiredSize; } }
+        object? IDialogWindow.Content { get => DialogContent.Content; set => DialogContent.Content = value; }
 
-        private object? dialogContent;
-        public object? DialogContent => dialogContent;
-
-        public static readonly DirectProperty<ConfirmationDialogWindow, object?> DialogContentProperty = AvaloniaProperty.RegisterDirect<ConfirmationDialogWindow, object?>(nameof(DialogContent), x => x.DialogContent);
 
         public event EventHandler? Confirmed;
         public event EventHandler? Cancelled;
