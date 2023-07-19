@@ -34,7 +34,7 @@ namespace TQDBEditor.Dialogs
     {
         public abstract string Title { get; }
 
-        public abstract event Action<IDialogResult> RequestClose;
+        public abstract event Action<IDialogResult>? RequestClose;
 
         public abstract bool CanConfirmDialog();
         public abstract IDialogParameters? OnDialogCancelled(EventArgs e);
@@ -46,24 +46,38 @@ namespace TQDBEditor.Dialogs
     {
         public ConfirmationDialogService(IContainerExtension containerExtension) : base(containerExtension) { }
 
-        protected override void ConfigureDialogWindowProperties(IDialogWindow window, Control dialogContent, IDialogAware viewModel)
+        protected override void ConfigureDialogWindowProperties(IDialogWindow dialogWindow, Control dialogContent, IDialogAware viewModel)
         {
-            base.ConfigureDialogWindowProperties(window, dialogContent, viewModel);
-            if (window is IConfirmationDialogWindow confirmDialogWindow)
+            base.ConfigureDialogWindowProperties(dialogWindow, dialogContent, viewModel);
+            if (dialogWindow is IConfirmationDialogWindow confirmDialogWindow &&
+                viewModel is IConfirmationDialogAware confirmDialogAware)
             {
-                if (viewModel is IConfirmationDialogAware confirmDialogAware)
+                EventHandler? closedHandler = null, cancelledHandler = null, confirmedHandler = null;
+                confirmedHandler = delegate (object? sender, EventArgs e)
                 {
-                    confirmDialogWindow.Cancelled += (s, e) => SetResultAndClose(confirmDialogWindow, confirmDialogAware, e, true);
-                    confirmDialogWindow.Confirmed += (s, e) => SetResultAndClose(confirmDialogWindow, confirmDialogAware, e, false);
-                }
+                    if (!confirmDialogAware.CanConfirmDialog())
+                        return;
+                    CloseDialog(ButtonResult.OK, confirmDialogAware.OnDialogConfirmed(e));
+                };
+                cancelledHandler = delegate (object? sender, EventArgs e)
+                {
+                    CloseDialog(ButtonResult.Cancel, confirmDialogAware.OnDialogCancelled(e));
+                };
+                closedHandler = delegate
+                {
+                    confirmDialogWindow.Confirmed -= confirmedHandler;
+                    confirmDialogWindow.Cancelled -= cancelledHandler;
+                    dialogWindow.Closed -= closedHandler;
+                };
+                confirmDialogWindow.Confirmed += confirmedHandler;
+                confirmDialogWindow.Cancelled += cancelledHandler;
+                dialogWindow.Closed += closedHandler;
             }
 
-            static void SetResultAndClose(IDialogWindow window, IConfirmationDialogAware aware, EventArgs e, bool cancelled)
+            void CloseDialog(ButtonResult buttonResult, IDialogParameters? parameters)
             {
-                if (!cancelled && !aware.CanConfirmDialog())
-                    return;
-                window.Result = new DialogResult(cancelled ? ButtonResult.Cancel : ButtonResult.OK, cancelled ? aware.OnDialogCancelled(e) : aware.OnDialogConfirmed(e));
-                window.Close();
+                dialogWindow.Result = new DialogResult(ButtonResult.Cancel, parameters);
+                dialogWindow.Close();
             }
         }
     }
