@@ -20,21 +20,25 @@
         <ColumnDefinition Width="4"/>
         <ColumnDefinition MinWidth="100" Width="Auto"/>
       </Grid.ColumnDefinitions>
-      <TabControl x:Name="ProjectTabs" Grid.Column="0" TabStripPlacement="Bottom">
-        <TabItem Header="Source">
-          <Label>Noice</Label>
-        </TabItem>
-        <TabItem Header="Assets">
-          <Label>Noice2</Label>
-        </TabItem>
-        <TabItem Header="Database">
-          <Label>Noice3</Label>
-        </TabItem>
-      </TabControl>
-      <GridSplitter Grid.Column="1" ResizeDirection="Columns"/>
-      <Label Grid.Column="2">Test</Label>
+      <DockPanel Grid.Column="0" LastChildFill="True">
+        <TabStrip DockPanel.Dock="Bottom" Margin="5" SelectionChanged="OnTabSelected">
+          <TabItem Header="Sources"/>
+          <TabItem Header="Assets"/>
+          <TabItem Header="Database"/>
+        </TabStrip>
+        <TreeView x:Name="Tree" ItemsSource="{Binding TreeNodes}" SelectionMode="Single" SelectionChanged="OnNodeSelected">
+          <TreeView.ItemTemplate>
+            <TreeDataTemplate ItemsSource="{Binding SubNodes}">
+              <TextBlock Text="{Binding Title}"/>
+            </TreeDataTemplate>
+          </TreeView.ItemTemplate>
+        </TreeView>
+      </DockPanel>
+      <GridSplitter Background="Gray" Grid.Column="1"/>
+      <TreeDataGrid Grid.Column="2" Margin="20" Source="{Binding DataGridSource}">
+      </TreeDataGrid>
     </Grid>
-    <GridSplitter Grid.Row="1" ResizeDirection="Rows"/>
+    <GridSplitter Background="Gray" Grid.Row="1" ResizeDirection="Rows"/>
     <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto">
       <WrapPanel Name="Console" Orientation="Vertical">
         <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
