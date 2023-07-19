@@ -52,7 +52,7 @@ namespace TQDBEditor
                 SourceLevels.Information
 #endif
             };
-            _loggerProvider = new TraceSourceLoggerProvider(sourceSwitch);
+            _loggerProvider = new TraceSourceLoggerProvider(sourceSwitch, Trace.Listeners[1]);
         }
 
         protected override void ConfigureRegionAdapterMappings(RegionAdapterMappings regionAdapterMappings)
