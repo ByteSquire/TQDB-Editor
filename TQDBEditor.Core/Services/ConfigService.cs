@@ -478,6 +478,11 @@ namespace TQDBEditor.Services
                         {DirectoryConfigurationExtensions.BUILD_DIR,  amConfig["Login:builddir"]},
                         {DirectoryConfigurationExtensions.TOOLS_DIR, amConfig["Login:toolsdir"]},
                         {DirectoryConfigurationExtensions.MOD_DIR, amConfig["Login:moddir"]},
+
+                        {DBRViewConfigurationExtensions.NAME_WIDTH, amConfig["Database:nameColumnWidth"]},
+                        {DBRViewConfigurationExtensions.CLASS_WIDTH, amConfig["Database:classColumnWidth"]},
+                        {DBRViewConfigurationExtensions.TYPE_WIDTH, amConfig["Database:typeColumnWidth"]},
+                        {DBRViewConfigurationExtensions.DESC_WIDTH, amConfig["Database:descriptionColumnWidth"]},
                     })
                     .Build();
             }
@@ -572,6 +577,36 @@ namespace TQDBEditor.Services
         }
     }
 
+    public static class DBRViewConfigurationExtensions
+    {
+        public const string SECTION_KEY = "dbr";
+        public const string NAME_WIDTH = "dbr:namewidth";
+        public const string CLASS_WIDTH = "dbr:classwidth";
+        public const string TYPE_WIDTH = "dbr:typewidth";
+        public const string DESC_WIDTH = "dbr:descwidth";
+        public const string VALUE_WIDTH = "dbr:valuewidth";
+
+        public static string? GetNameWidth(this IConfiguration configuration) => configuration[NAME_WIDTH];
+        public static void SetNameWidth(this IConfiguration configuration, string? value) => configuration[NAME_WIDTH] = value;
+        public static void AddNameWidthChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(NAME_WIDTH, listener);
+
+        public static string? GetClassWidth(this IConfiguration configuration) => configuration[CLASS_WIDTH];
+        public static void SetClassWidth(this IConfiguration configuration, string? value) => configuration[CLASS_WIDTH] = value;
+        public static void AddClassWidthChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(CLASS_WIDTH, listener);
+
+        public static string? GetTypeWidth(this IConfiguration configuration) => configuration[TYPE_WIDTH];
+        public static void SetTypeWidth(this IConfiguration configuration, string? value) => configuration[TYPE_WIDTH] = value;
+        public static void AddTypeWidthChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(TYPE_WIDTH, listener);
+
+        public static string? GetDescWidth(this IConfiguration configuration) => configuration[DESC_WIDTH];
+        public static void SetDescWidth(this IConfiguration configuration, string? value) => configuration[DESC_WIDTH] = value;
+        public static void AddDescWidthChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(DESC_WIDTH, listener);
+
+        public static string? GetValueWidth(this IConfiguration configuration) => configuration[VALUE_WIDTH];
+        public static void SetValueWidth(this IConfiguration configuration, string? value) => configuration[VALUE_WIDTH] = value;
+        public static void AddValueWidthChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(VALUE_WIDTH, listener);
+    }
+
     public static class DirectoryConfigurationExtensions
     {
         public const string SECTION_KEY = "directories";
@@ -581,19 +616,19 @@ namespace TQDBEditor.Services
         public const string MOD_DIR = "directories:moddir";
 
         public static string? GetWorkingDir(this IConfiguration configuration) => configuration[WORKING_DIR];
-        public static void SetWorkingDir(this IConfiguration configuration, string? workingDir) => configuration[WORKING_DIR] = workingDir;
+        public static void SetWorkingDir(this IConfiguration configuration, string? value) => configuration[WORKING_DIR] = value;
         public static void AddWorkingDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(WORKING_DIR, listener);
 
         public static string? GetBuildDir(this IConfiguration configuration) => configuration[BUILD_DIR];
-        public static void SetBuildDir(this IConfiguration configuration, string? workingDir) => configuration[BUILD_DIR] = workingDir;
+        public static void SetBuildDir(this IConfiguration configuration, string? value) => configuration[BUILD_DIR] = value;
         public static void AddBuildDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(BUILD_DIR, listener);
 
         public static string? GetToolsDir(this IConfiguration configuration) => configuration[TOOLS_DIR];
-        public static void SetToolsDir(this IConfiguration configuration, string? workingDir) => configuration[TOOLS_DIR] = workingDir;
+        public static void SetToolsDir(this IConfiguration configuration, string? value) => configuration[TOOLS_DIR] = value;
         public static void AddToolsDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(TOOLS_DIR, listener);
 
         public static string? GetModDir(this IConfiguration configuration) => configuration[MOD_DIR];
-        public static void SetModDir(this IConfiguration configuration, string? workingDir) => configuration[MOD_DIR] = workingDir;
+        public static void SetModDir(this IConfiguration configuration, string? value) => configuration[MOD_DIR] = value;
         public static void AddModDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(MOD_DIR, listener);
     }
 }
