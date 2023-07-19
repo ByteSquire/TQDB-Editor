@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using TQDBEditor.DataTypes;
 using TQDBEditor.ViewModels;
-using TQDBEditor.Dialogs.NewMod;
+using TQDBEditor.Dialogs;
 using System.ComponentModel;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;

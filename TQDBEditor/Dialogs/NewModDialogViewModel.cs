@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TQDBEditor.ViewModels;
 using System.IO;
-using TQDBEditor.Dialogs.NewMod;
 
 namespace TQDBEditor.Dialogs
 {

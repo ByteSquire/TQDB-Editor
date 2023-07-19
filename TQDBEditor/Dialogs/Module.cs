@@ -14,10 +14,10 @@ namespace TQDBEditor.Dialogs
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterDialog<NewModDialog, NewModDialogViewModel>(NewMod.IDialogServiceExtensions.newMod);
-            containerRegistry.RegisterDialog<InformationDialog, InformationDialogViewModel>(NewMod.IDialogServiceExtensions.infoDialog);
-            containerRegistry.RegisterDialogWindow<ConfirmationDialogWindow>(NewMod.IDialogServiceExtensions.confirmationDialog);
-            containerRegistry.RegisterDialogWindow<InformationDialogWindow>(NewMod.IDialogServiceExtensions.informationDialog);
+            containerRegistry.RegisterDialog<NewModDialog, NewModDialogViewModel>(IDialogServiceExtensions.newMod);
+            containerRegistry.RegisterDialog<InformationDialog, InformationDialogViewModel>(IDialogServiceExtensions.infoDialog);
+            containerRegistry.RegisterDialogWindow<ConfirmationDialogWindow>(IDialogServiceExtensions.confirmationDialog);
+            containerRegistry.RegisterDialogWindow<InformationDialogWindow>(IDialogServiceExtensions.informationDialog);
             containerRegistry.Register<IDialogService, ConfirmationDialogService>();
         }
     }

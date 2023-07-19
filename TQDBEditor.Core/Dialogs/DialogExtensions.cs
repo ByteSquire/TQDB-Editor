@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TQDBEditor.Dialogs.NewMod
+namespace TQDBEditor.Dialogs
 {
     public static class IDialogParametersExtensions
     {

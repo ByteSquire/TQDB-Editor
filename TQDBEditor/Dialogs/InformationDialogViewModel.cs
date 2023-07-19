@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Prism.Services.Dialogs;
 using System;
-using TQDBEditor.Dialogs.NewMod;
 using TQDBEditor.ViewModels;
 
 namespace TQDBEditor.Dialogs
