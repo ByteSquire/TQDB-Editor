@@ -15,11 +15,11 @@ using System.IO;
 
 namespace TQDBEditor.Dialogs
 {
-    public partial class NewModDialogViewModel : ViewModelBase, IConfirmationDialogAware
+    public partial class NewModDialogViewModel : ConfirmationDialogViewModelBase
     {
-        public string Title => "Create a new Mod";
+        public override string Title => "Create a new Mod";
 
-        public event Action<IDialogResult>? RequestClose;
+        public override event Action<IDialogResult>? RequestClose;
 
         [ObservableProperty]
         private IEnumerable<string>? _existingMods;
@@ -38,9 +38,9 @@ namespace TQDBEditor.Dialogs
                 Submit();
         }
 
-        public bool CanConfirmDialog() => CheckText(NewModName);
+        public override bool CanConfirmDialog() => CheckText(NewModName);
 
-        public void OnDialogOpened(IDialogParameters parameters)
+        public override void OnDialogOpened(IDialogParameters parameters)
         {
             ExistingMods = parameters.GetExistingMods();
         }
@@ -60,14 +60,14 @@ namespace TQDBEditor.Dialogs
             return (!ExistingMods?.Contains(text) ?? true) && !text.Any(x => Path.GetInvalidFileNameChars().Contains(x));
         }
 
-        public IDialogParameters OnDialogConfirmed(EventArgs e)
+        public override IDialogParameters OnDialogConfirmed(EventArgs e)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddModName(NewModName);
             return dialogParams;
         }
 
-        public IDialogParameters? OnDialogCancelled(EventArgs e)
+        public override IDialogParameters? OnDialogCancelled(EventArgs e)
         {
             return null;
         }
