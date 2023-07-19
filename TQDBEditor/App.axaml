@@ -9,6 +9,13 @@
   <Application.Styles>
     <!--<StyleInclude Source="avares://Semi.Avalonia/Themes/Index.axaml" />-->
     <FluentTheme DensityStyle="Compact" />
+
+    <StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml"/>
+
+    <Style Selector="ScrollViewer[AllowAutoHide=False] /template/ ScrollContentPresenter">
+      <Setter Property="Grid.RowSpan" Value="1"/>
+      <Setter Property="Grid.ColumnSpan" Value="1"/>
+    </Style>
   </Application.Styles>
   <Application.Resources>
     <!-- ... -->
