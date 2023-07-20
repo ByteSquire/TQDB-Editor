@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:TQDBEditor.ClassicViewModule.ViewModels"
              xmlns:lControls="clr-namespace:TQDBEditor.Controls"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TQDBEditor.ClassicViewModule.Views.ClassicView"
              x:CompileBindings="True"
@@ -21,10 +22,12 @@
         <ColumnDefinition MinWidth="100" Width="Auto"/>
       </Grid.ColumnDefinitions>
       <DockPanel Grid.Column="0" LastChildFill="True">
-        <TabStrip DockPanel.Dock="Bottom" Margin="5" SelectionChanged="OnTabSelected">
-          <TabItem Header="Sources"/>
-          <TabItem Header="Assets"/>
-          <TabItem Header="Database"/>
+        <TabStrip DockPanel.Dock="Bottom" Margin="5" SelectionChanged="OnTabSelected" ItemsSource="{Binding KnownDirs}">
+          <TabStrip.ItemTemplate>
+            <DataTemplate x:DataType="{x:Type sys:String}">
+              <TabItem Header="{Binding}" />
+            </DataTemplate>
+          </TabStrip.ItemTemplate>
         </TabStrip>
         <TreeView x:Name="Tree" ItemsSource="{Binding TreeNodes}" SelectionMode="Single" SelectionChanged="OnNodeSelected">
           <TreeView.ItemTemplate>

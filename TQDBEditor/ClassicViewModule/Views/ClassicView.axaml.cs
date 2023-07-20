@@ -34,7 +34,7 @@ namespace TQDBEditor.ClassicViewModule.Views
         {
             if (DataContext is ClassicViewViewModel viewModel)
             {
-                viewModel.OnViewSelected((e.AddedItems[0] as TabItem)?.Header?.ToString());
+                viewModel.OnViewSelected(e.AddedItems[0] as string);
             }
         }
     }

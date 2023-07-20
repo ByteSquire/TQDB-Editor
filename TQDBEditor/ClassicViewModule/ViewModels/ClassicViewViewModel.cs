@@ -15,13 +15,17 @@ using TQDBEditor.ViewModels;
 
 using TQDB_Parser.DBRMeta;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace TQDBEditor.ClassicViewModule.ViewModels
 {
     public partial class ClassicViewViewModel : ViewModelBase
     {
+        public static string[] KnownDirs => new string[] { "Source", "Assets", "Database" };
+
         [ObservableProperty]
         private ObservableCollection<Node> _treeNodes = new();
+        private readonly Dictionary<string, Node> _cachedNodes = new();
 
         private readonly ObservableCollection<MyFileInfos> _files = new();
         [ObservableProperty]
@@ -37,8 +41,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             _logger = loggerFactory.CreateLogger(nameof(TQDBEditor.ClassicViewModule));
             _workingDir = configuration.GetWorkingDir();
-            _modDir = configuration.GetModDir();
-            OnViewSelected("Sources");
+            OnModDirChanged(configuration.GetModDir());
             configuration.AddWorkingDirChangeListener(x => _workingDir = x);
             configuration.AddModDirChangeListener(OnModDirChanged);
 
@@ -52,7 +55,6 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                 Columns =
                 {
                     new TextColumn<MyFileInfos, string>("Name", x => Path.GetFileName(x.FullPath)),
-                    //new TemplateColumn<FileInfo>("Test", new FuncDataTemplate<FileInfo>((_,_) => new Button { Content="Hi" })),
                 }
             };
         }
@@ -60,25 +62,28 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private void OnModDirChanged(string? path)
         {
             Reset();
-            if (path != null && WorkingModsFolder != null && _selectedView != null)
+            if (path != null && WorkingModsFolder != null)
             {
                 _modDir = path;
                 var modPath = Path.Combine(WorkingModsFolder, _modDir);
-                TreeNodes = InitDirectory(Path.Combine(modPath, _selectedView.ToLower()));
+                foreach (var known in KnownDirs)
+                {
+                    var rootPath = Path.Combine(modPath, known.ToLower());
+                    Node root = new(rootPath, Path.Combine(_modDir!, known.ToLower()), InitDirectory(rootPath));
+                    _cachedNodes[known] = root;
+                }
+                if (_selectedView != null)
+                    TreeNodes = new() { _cachedNodes[_selectedView] };
             }
         }
 
         private ObservableCollection<Node> InitDirectory(string sourcePath)
         {
             var infos = Directory.CreateDirectory(sourcePath).EnumerateDirectories().ToList();
-            Node root = new(sourcePath, _modDir! + "\\" + _selectedView);
-            var ret = new ObservableCollection<Node>
-            {
-                root
-            };
+            var ret = new ObservableCollection<Node>();
             foreach (var info in infos)
             {
-                root.AddSubNode(new(info.FullName, info.Name, InitDirectory(info.FullName)));
+                ret.Add(new(info.FullName, info.Name, InitDirectory(info.FullName)));
             }
             return ret;
         }
@@ -87,24 +92,30 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             _files.Clear();
             if (selectedNode != null)
-                foreach (var info in Directory.CreateDirectory(selectedNode.Path).EnumerateFileSystemInfos().OfType<FileInfo>())
+                foreach (var info in Directory.CreateDirectory(selectedNode.Path).EnumerateFiles())
                     _files.Add(new(info.FullName, _logger));
         }
 
         public void OnViewSelected(string? view)
         {
             _selectedView = view;
-            OnModDirChanged(_modDir);
             var dataGridSource = CreateBasicDataGridSource();
-            switch (view)
+            if (_selectedView != null)
             {
-                case "Assets":
-                    dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Status", x => string.Empty));
-                    break;
-                case "Database":
-                    dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Description", x => x.Metadata.GetValueOrDefault().FileDescription));
-                    dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Template", x => x.Metadata.GetValueOrDefault().FileDescription));
-                    break;
+                if (KnownDirs.Any(x => x.Equals(_selectedView)))
+                    TreeNodes = new() { _cachedNodes[_selectedView] };
+                else
+                    _logger.LogWarning("Somehow selected a directory \"{dir}\" that is not one of the known ones ({known})", _selectedView, KnownDirs);
+                switch (view)
+                {
+                    case "Assets":
+                        dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Status", x => string.Empty));
+                        break;
+                    case "Database":
+                        dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Description", x => x.Metadata.FileDescription));
+                        dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Template", x => x.Metadata.FileDescription));
+                        break;
+                }
             }
             DataGridSource = dataGridSource;
         }
@@ -124,13 +135,26 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
     public class MyFileInfos
     {
         public string FullPath { get; set; }
+        public string FileExtension { get; }
         private DBRMetadata? _metadata;
         private readonly ILogger? _logger;
-        public DBRMetadata? Metadata => _metadata ??= DBRMetaParser.ParseFile(FullPath, _logger);
+        public DBRMetadata Metadata => _metadata ??= TryGetMetadataOrDefault();
+
+        private DBRMetadata TryGetMetadataOrDefault()
+        {
+            if (FileExtension.Equals(".dbr"))
+                try
+                {
+                    return DBRMetaParser.ParseFile(FullPath, _logger);
+                }
+                catch { }
+            return new();
+        }
 
         public MyFileInfos(string fullPath, ILogger? logger = null)
         {
             FullPath = fullPath;
+            FileExtension = Path.GetExtension(FullPath);
             _logger = logger;
         }
 
