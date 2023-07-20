@@ -48,6 +48,7 @@ namespace TQDBEditor
                             ),
                     };
                     Trace.Listeners.Add(fileListener);
+                    LogFileListener = fileListener;
                     Trace.WriteLine(DateTime.Now, "Startup");
                     AppDomain currentDomain = AppDomain.CurrentDomain;
                     currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyHandler);
@@ -69,6 +70,8 @@ namespace TQDBEditor
                 throw;
             }
         }
+
+        public static TraceListener? LogFileListener { get; private set; }
 
         public static void ConfigureAdditionalModules(IModuleCatalog catalog)
         {
