@@ -1,21 +1,24 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
+
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+
 using Microsoft.Extensions.Configuration;
-using Prism.Ioc;
+using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+
 using TQDBEditor.Controls;
 using TQDBEditor.Services;
 using TQDBEditor.ViewModels;
 
 using TQDB_Parser.DBRMeta;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 
 namespace TQDBEditor.ClassicViewModule.ViewModels
 {
@@ -33,19 +36,120 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
         private string? _workingDir;
         private string? WorkingModsFolder => _workingDir is null ? null : Path.Combine(_workingDir, "CustomMaps");
+        private string? FullModDir => WorkingModsFolder is null || _modDir is null ? null : Path.Combine(WorkingModsFolder, _modDir);
         private string? _selectedView;
         private string? _modDir;
         private readonly ILogger _logger;
+        private readonly FileSystemWatcher _watcher;
 
         public ClassicViewViewModel(IObservableConfiguration configuration, ILoggerProvider loggerFactory)
         {
             _logger = loggerFactory.CreateLogger(nameof(TQDBEditor.ClassicViewModule));
             _workingDir = configuration.GetWorkingDir();
+            _watcher = new()
+            {
+                IncludeSubdirectories = true,
+                NotifyFilter = NotifyFilters.DirectoryName
+            };
+            _watcher.Deleted += DirectoryDeleted;
+            _watcher.Created += DirectoryCreated;
+            _watcher.Renamed += DirectoryRenamed;
+
             OnModDirChanged(configuration.GetModDir());
             configuration.AddWorkingDirChangeListener(x => _workingDir = x);
             configuration.AddModDirChangeListener(OnModDirChanged);
 
             DataGridSource = CreateBasicDataGridSource();
+        }
+
+        private void DirectoryCreated(object sender, FileSystemEventArgs e)
+        {
+            if (!TryGetRelativeToModSplit(e.FullPath, out var pathSegments))
+                return;
+
+            var root = pathSegments[0];
+            if (!KnownDirs.Any(x => x.Equals(root, StringComparison.OrdinalIgnoreCase)))
+                return;
+            var currNode = _cachedNodes[root.ToLower()];
+            for (int i = 1; i < pathSegments.Length; i++)
+            {
+                var currDir = pathSegments[i];
+                var child = currNode.SubNodes?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
+                if (child != null)
+                    currNode = child;
+                else
+                {
+                    var newPath = Path.Combine(pathSegments[..(i + 1)].Prepend(FullModDir!).ToArray());
+                    currNode.AddSubNode(new(newPath, currDir, InitDirectory(newPath)));
+                }
+            }
+        }
+
+        private void DirectoryRenamed(object sender, RenamedEventArgs e)
+        {
+            if (!TryGetRelativeToModSplit(e.OldFullPath, out var pathSegments))
+                return;
+
+            var root = pathSegments[0];
+            if (!KnownDirs.Any(x => x.Equals(root, StringComparison.OrdinalIgnoreCase)))
+                return;
+            var currNode = _cachedNodes[root.ToLower()];
+            for (int i = 1; i < pathSegments.Length; i++)
+            {
+                var currDir = pathSegments[i];
+                var child = currNode.SubNodes?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
+                if (child != null)
+                    currNode = child;
+            }
+            var newDirName = Path.GetFileName(e.Name);
+            if (currNode.Title == pathSegments[^1] && newDirName != null)
+            {
+                var newPath = e.FullPath;
+                currNode.Title = newDirName;
+                currNode.Path = newPath;
+            }
+        }
+
+        private void DirectoryDeleted(object sender, FileSystemEventArgs e)
+        {
+            if (!TryGetRelativeToModSplit(e.FullPath, out var pathSegments))
+                return;
+
+            var root = pathSegments[0];
+            if (!KnownDirs.Any(x => x.Equals(root, StringComparison.OrdinalIgnoreCase)))
+                return;
+            var currNode = _cachedNodes[root.ToLower()];
+            for (int i = 1; i < pathSegments.Length; i++)
+            {
+                var currDir = pathSegments[i];
+                var child = currNode.SubNodes?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
+                if (child != null)
+                {
+                    if (Directory.Exists(child.Path))
+                        currNode = child;
+                    else
+                    {
+                        currNode.SubNodes?.Remove(child);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private bool TryGetRelativeToModSplit(string path, [NotNullWhen(true)] out string[]? relativeSplit)
+        {
+            relativeSplit = null;
+            if (FullModDir == null)
+                return false;
+            var relative = Path.GetRelativePath(FullModDir, path);
+            var root = relative.Split(Path.DirectorySeparatorChar)[0];
+            if (KnownDirs.Any(x => x.Equals(root, StringComparison.OrdinalIgnoreCase)))
+            {
+                relativeSplit = relative.Split(Path.DirectorySeparatorChar);
+                return true;
+            }
+            else
+                return false;
         }
 
         private FlatTreeDataGridSource<MyFileInfos> CreateBasicDataGridSource()
@@ -65,16 +169,23 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             if (path != null && WorkingModsFolder != null)
             {
                 _modDir = path;
-                var modPath = Path.Combine(WorkingModsFolder, _modDir);
+                var modPath = FullModDir!;
+                _watcher.Path = modPath;
+                _watcher.EnableRaisingEvents = true;
                 foreach (var known in KnownDirs)
                 {
                     var rootPath = Path.Combine(modPath, known.ToLower());
                     Node root = new(rootPath, Path.Combine(_modDir!, known.ToLower()), InitDirectory(rootPath));
-                    _cachedNodes[known] = root;
+                    _cachedNodes[known.ToLower()] = root;
                 }
-                if (_selectedView != null)
-                    TreeNodes = new() { _cachedNodes[_selectedView] };
+                UpdateTreeNodes();
             }
+        }
+
+        private void UpdateTreeNodes(string? changedDir = null)
+        {
+            if (_selectedView != null && (changedDir == null || !_selectedView.Equals(changedDir, StringComparison.OrdinalIgnoreCase)))
+                TreeNodes = new() { _cachedNodes[_selectedView.ToLower()] };
         }
 
         private ObservableCollection<Node> InitDirectory(string sourcePath)
@@ -98,12 +209,14 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
         public void OnViewSelected(string? view)
         {
+            if (_selectedView == view)
+                return;
             _selectedView = view;
             var dataGridSource = CreateBasicDataGridSource();
             if (_selectedView != null)
             {
-                if (KnownDirs.Any(x => x.Equals(_selectedView)))
-                    TreeNodes = new() { _cachedNodes[_selectedView] };
+                if (KnownDirs.Any(x => x.Equals(_selectedView, StringComparison.Ordinal)))
+                    UpdateTreeNodes();
                 else
                     _logger.LogWarning("Somehow selected a directory \"{dir}\" that is not one of the known ones ({known})", _selectedView, KnownDirs);
                 switch (view)
@@ -167,7 +280,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         [ObservableProperty]
         private string _title;
 
-        public string Path { get; }
+        public string Path { get; set; }
 
         public Node(string path, string title)
         {
