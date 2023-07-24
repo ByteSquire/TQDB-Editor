@@ -209,8 +209,27 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             {
                 Columns =
                 {
-                    new TextColumn<MyFileInfos, string>("Name", x => Path.GetFileName(x.FullPath)),
-                }
+                    new TextColumn<MyFileInfos, string>("Name", x => Path.GetFileName(x.FullPath), (x, value) =>
+                    {
+                        try
+                        {
+                            var nPath = Path.Combine(Path.GetDirectoryName(x.FullPath)!, value!);
+                            File.Move(x.FullPath, nPath);
+                        }
+                        catch (Exception ex)
+                        {
+                            switch (ex)
+                            {
+                                case ArgumentException ae:
+                                case PathTooLongException pe:
+                                case NotSupportedException se:
+                                    break;
+                                default:
+                                    throw;
+                            };
+                        }
+                    }),
+            }
             };
         }
 
