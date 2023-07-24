@@ -44,29 +44,7 @@
     <GridSplitter Background="Gray" Grid.Row="1" ResizeDirection="Rows"/>
     <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto">
       <WrapPanel Name="Console" Orientation="Vertical">
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block [color=red]ROT[/color] und [/i]kursivd[/i]</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[color=blue]Hi[/color] Netter Block</lControls:RichTextBlock>
-        <lControls:RichTextBlock UseBBCode="True">[i]Anfangs kursiv[/i]</lControls:RichTextBlock>
+        <lControls:RichTextBlock UseBBCode="True">[color=red]Not yet implemented![/color]</lControls:RichTextBlock>
       </WrapPanel>
     </ScrollViewer>
   </Grid>
