@@ -40,20 +40,30 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private string? _selectedView;
         private string? _modDir;
         private readonly ILogger _logger;
-        private readonly FileSystemWatcher _watcher;
+        private readonly FileSystemWatcher _modWatcher;
+        private readonly FileSystemWatcher _dirWatcher;
 
         public ClassicViewViewModel(IObservableConfiguration configuration, ILoggerProvider loggerFactory)
         {
             _logger = loggerFactory.CreateLogger(nameof(TQDBEditor.ClassicViewModule));
             _workingDir = configuration.GetWorkingDir();
-            _watcher = new()
+            _modWatcher = new()
             {
                 IncludeSubdirectories = true,
                 NotifyFilter = NotifyFilters.DirectoryName
             };
-            _watcher.Deleted += DirectoryDeleted;
-            _watcher.Created += DirectoryCreated;
-            _watcher.Renamed += DirectoryRenamed;
+            _modWatcher.Deleted += DirectoryDeleted;
+            _modWatcher.Created += DirectoryCreated;
+            _modWatcher.Renamed += DirectoryRenamed;
+
+            _dirWatcher = new()
+            {
+                NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite
+            };
+            _dirWatcher.Deleted += FileDeleted;
+            _dirWatcher.Created += FileCreated;
+            _dirWatcher.Renamed += FileRenamed;
+            _dirWatcher.Changed += FileChanged;
 
             OnModDirChanged(configuration.GetModDir());
             configuration.AddWorkingDirChangeListener(x => _workingDir = x);
@@ -136,6 +146,47 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             }
         }
 
+        private void FileCreated(object sender, FileSystemEventArgs e)
+        {
+            _files.Add(new(e.FullPath, _logger));
+        }
+
+        private void FileRenamed(object sender, RenamedEventArgs e)
+        {
+            try
+            {
+                App.MainThreadContext?.Post(x => _files.Single(x => x.FullPath == e.OldFullPath).FullPath = e.FullPath, this);
+            }
+            catch
+            {
+                ;
+            }
+        }
+
+        private void FileChanged(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                App.MainThreadContext?.Post(x => _files.Single(x => x.FullPath == e.FullPath).Changed(), this);
+            }
+            catch
+            {
+                ;
+            }
+        }
+
+        private void FileDeleted(object sender, FileSystemEventArgs e)
+        {
+            try
+            {
+                _files.Remove(_files.Single(x => x.FullPath == e.FullPath));
+            }
+            catch
+            {
+                ;
+            }
+        }
+
         private bool TryGetRelativeToModSplit(string path, [NotNullWhen(true)] out string[]? relativeSplit)
         {
             relativeSplit = null;
@@ -170,8 +221,8 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             {
                 _modDir = path;
                 var modPath = FullModDir!;
-                _watcher.Path = modPath;
-                _watcher.EnableRaisingEvents = true;
+                _modWatcher.Path = modPath;
+                _modWatcher.EnableRaisingEvents = true;
                 foreach (var known in KnownDirs)
                 {
                     var rootPath = Path.Combine(modPath, known.ToLower());
@@ -203,14 +254,19 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             _files.Clear();
             if (selectedNode != null)
+            {
+                _dirWatcher.Path = selectedNode.Path;
+                _dirWatcher.EnableRaisingEvents = true;
                 foreach (var info in Directory.CreateDirectory(selectedNode.Path).EnumerateFiles())
                     _files.Add(new(info.FullName, _logger));
+            }
         }
 
         public void OnViewSelected(string? view)
         {
             if (_selectedView == view)
                 return;
+            Reset();
             _selectedView = view;
             var dataGridSource = CreateBasicDataGridSource();
             if (_selectedView != null)
@@ -226,7 +282,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                         break;
                     case "Database":
                         dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Description", x => x.Metadata.FileDescription));
-                        dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Template", x => x.Metadata.FileDescription));
+                        dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Template", x => x.Metadata.TemplateName));
                         break;
                 }
             }
@@ -237,6 +293,8 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             TreeNodes.Clear();
             _files.Clear();
+            _modWatcher.EnableRaisingEvents = false;
+            _dirWatcher.EnableRaisingEvents = false;
         }
 
         public override string ToString()
@@ -245,9 +303,11 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         }
     }
 
-    public class MyFileInfos
+    public partial class MyFileInfos : ObservableObject
     {
-        public string FullPath { get; set; }
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Metadata))]
+        private string _fullPath;
         public string FileExtension { get; }
         private DBRMetadata? _metadata;
         private readonly ILogger? _logger;
@@ -261,7 +321,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                     return DBRMetaParser.ParseFile(FullPath, _logger);
                 }
                 catch { }
-            return new();
+            return new(null, null);
         }
 
         public MyFileInfos(string fullPath, ILogger? logger = null)
@@ -269,8 +329,18 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             FullPath = fullPath;
             FileExtension = Path.GetExtension(FullPath);
             _logger = logger;
+            PropertyChanged += (s, args) => { if (args.PropertyName == nameof(FullPath)) _metadata = TryGetMetadataOrDefault(); };
         }
 
+        public void Changed()
+        {
+            var nMetadata = TryGetMetadataOrDefault();
+            if (!nMetadata.Equals(_metadata))
+            {
+                _metadata = nMetadata;
+                OnPropertyChanged(nameof(Metadata));
+            }
+        }
     }
 
     public partial class Node : ObservableObject
