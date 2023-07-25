@@ -1,8 +1,13 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Templates;
+using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Selection;
+using Avalonia.Data;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+
+using DynamicData;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -10,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
@@ -33,6 +39,8 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private readonly ObservableCollection<MyFileInfos> _files = new();
         [ObservableProperty]
         private FlatTreeDataGridSource<MyFileInfos> _dataGridSource;
+        [ObservableProperty]
+        private bool _allFilesSelected;
 
         private string? _workingDir;
         private string? WorkingModsFolder => _workingDir is null ? null : Path.Combine(_workingDir, "CustomMaps");
@@ -148,7 +156,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
         private void FileCreated(object sender, FileSystemEventArgs e)
         {
-            _files.Add(new(e.FullPath, _logger));
+            _files.Add(CreateNewFileInfo(e.FullPath));
         }
 
         private void FileRenamed(object sender, RenamedEventArgs e)
@@ -179,7 +187,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             try
             {
-                _files.Remove(_files.Single(x => x.FullPath == e.FullPath));
+                RemoveFileInfo(_files.Single(x => x.FullPath == e.FullPath));
             }
             catch
             {
@@ -205,10 +213,14 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
         private FlatTreeDataGridSource<MyFileInfos> CreateBasicDataGridSource()
         {
-            return new FlatTreeDataGridSource<MyFileInfos>(_files)
+            var basicSource = new FlatTreeDataGridSource<MyFileInfos>(_files)
             {
                 Columns =
                 {
+                    new TemplateColumn<MyFileInfos>(
+                        new CheckBox(){ [!CheckBox.IsCheckedProperty] = new Binding(nameof(AllFilesSelected)), },
+                        new FuncDataTemplate<MyFileInfos>(x => true, x => new Border(){ Padding = new(4,2,4,2), Child = new CheckBox(){ [!CheckBox.IsCheckedProperty] = new Binding(nameof(MyFileInfos.IsSelected)) } }),
+                        options: new() { CanUserResizeColumn = false, CanUserSortColumn = false, BeginEditGestures = BeginEditGestures.None }),
                     new TextColumn<MyFileInfos, string>("Name", x => Path.GetFileName(x.FullPath), (x, value) =>
                     {
                         try
@@ -228,9 +240,64 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                                     throw;
                             };
                         }
-                    }),
-            }
+                    }, options: new() { BeginEditGestures = BeginEditGestures.Tap | BeginEditGestures.WhenSelected }),
+                },
             };
+            var selection = basicSource.RowSelection!;
+            selection.SingleSelect = false;
+
+            if (DataGridSource?.RowSelection != null)
+                DataGridSource.RowSelection.SelectionChanged -= Selection_SelectionChanged;
+            selection.SelectionChanged += Selection_SelectionChanged;
+
+            return basicSource;
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.PropertyName == nameof(AllFilesSelected) && DataGridSource?.RowSelection != null)
+                if (AllFilesSelected)
+                    Selection_SelectionChanged(DataGridSource.RowSelection, new(selectedItems: _files));
+                else
+                    Selection_SelectionChanged(DataGridSource.RowSelection, new(deselectedItems: _files));
+        }
+
+        private void Selection_SelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<MyFileInfos> e)
+        {
+            if (sender is ITreeSelectionModel model)
+                AllFilesSelected = model.SelectedItems.OfType<MyFileInfos>().Count() == model.Source!.Cast<MyFileInfos>().Count();
+
+            foreach (var selected in e.SelectedItems.OfType<MyFileInfos>())
+                selected.IsSelected = true;
+            foreach (var deselected in e.DeselectedItems.OfType<MyFileInfos>())
+                deselected.IsSelected = false;
+        }
+
+        public void BeginEditing(TreeDataGrid treeDataGrid)
+        {
+            var selected = DataGridSource.RowSelection?.SelectedIndexes;
+            if (selected != null && selected.Count > 0)
+            {
+                var lastSelected = selected[^1];
+                var cell = treeDataGrid.TryGetCell(0, lastSelected[0]) as TreeDataGridCell;
+                if (cell?.Model is IEditableObject editableCell)
+                {
+                    editableCell.BeginEdit();
+                    //cell.Classes.Add(":editing");
+                    //cell.PseudoClasses.Add(":editing");
+                }
+            }
+        }
+
+        public void BeginOpening(TreeDataGrid treeDataGrid)
+        {
+            var selected = DataGridSource.RowSelection?.SelectedIndexes;
+            if (selected != null && selected.Count > 0)
+            {
+
+            }
         }
 
         private void OnModDirChanged(string? path)
@@ -271,14 +338,48 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
         public void OnNodeSelected(Node? selectedNode)
         {
-            _files.Clear();
+            ClearFiles();
             if (selectedNode != null)
             {
                 _dirWatcher.Path = selectedNode.Path;
                 _dirWatcher.EnableRaisingEvents = true;
                 foreach (var info in Directory.CreateDirectory(selectedNode.Path).EnumerateFiles())
-                    _files.Add(new(info.FullName, _logger));
+                    _files.Add(CreateNewFileInfo(info.FullName));
             }
+        }
+
+        private MyFileInfos CreateNewFileInfo(string fullPath)
+        {
+            var fileInfo = new MyFileInfos(fullPath, _logger);
+            fileInfo.PropertyChanged += FileInfoPropertyChanged;
+            return fileInfo;
+        }
+
+        private void FileInfoPropertyChanged(object? s, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(MyFileInfos.IsSelected) && s is MyFileInfos infos)
+            {
+                var index = DataGridSource.Items.IndexOf(infos);
+                if (infos.IsSelected)
+                    DataGridSource.RowSelection?.Select(index);
+                else
+                    DataGridSource.RowSelection?.Deselect(index);
+            }
+        }
+
+        private void RemoveFileInfo(MyFileInfos info)
+        {
+            info.PropertyChanged -= FileInfoPropertyChanged;
+            _files.Remove(info);
+        }
+
+        private void ClearFiles()
+        {
+            foreach (var file in _files)
+            {
+                file.PropertyChanged -= FileInfoPropertyChanged;
+            }
+            _files.Clear();
         }
 
         public void OnViewSelected(string? view)
@@ -311,7 +412,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private void Reset()
         {
             TreeNodes.Clear();
-            _files.Clear();
+            ClearFiles();
             _modWatcher.EnableRaisingEvents = false;
             _dirWatcher.EnableRaisingEvents = false;
         }
@@ -324,6 +425,9 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
     public partial class MyFileInfos : ObservableObject
     {
+        [ObservableProperty]
+        private bool _isSelected = false;
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Metadata))]
         private string _fullPath;
