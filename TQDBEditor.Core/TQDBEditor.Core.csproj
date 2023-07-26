@@ -17,6 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ByteSquire.tq.TQDB-Parser" Version="1.3.11" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Controls\" />
     <Folder Include="Views\" />
   </ItemGroup>
