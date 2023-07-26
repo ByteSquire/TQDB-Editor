@@ -1,10 +1,5 @@
-﻿using Avalonia.Controls.ApplicationLifetimes;
-using Prism.Events;
-using System;
-using System.Collections.Generic;
+﻿using Prism.Events;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQDBEditor.Events;
 using TQDBEditor.FileViewModule.Views;
 
@@ -19,9 +14,15 @@ namespace TQDBEditor.FileViewModule
 
         private void OnDBRAccess(DBRAccessEventPayload payload)
         {
-            var fileViewWindow = new FileViewWindow();
+            var loads = payload.Accessed.GroupBy(x => x.dbr.TemplateRoot);
+            foreach (var group in loads)
+            {
+                var template = group.Key;
+                var files = group.Select(x => x.dbr);
+                var fileViewWindow = new FileViewWindow(template, files);
 
-            fileViewWindow.Show();
+                fileViewWindow.Show();
+            }
         }
     }
 }

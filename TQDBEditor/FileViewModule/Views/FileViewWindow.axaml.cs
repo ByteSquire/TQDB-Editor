@@ -1,12 +1,48 @@
 using Avalonia.Controls;
+using System;
+using System.Collections.Generic;
+using TQDB_Parser.Blocks;
+using TQDB_Parser.DBR;
+using TQDBEditor.ViewModels;
 
 namespace TQDBEditor.FileViewModule.Views
 {
     public partial class FileViewWindow : Window
     {
+        private readonly GroupBlock _template;
+        private readonly IEnumerable<DBRFile> _files;
+
         public FileViewWindow()
         {
+            // Dummy for design time preview
             InitializeComponent();
+        }
+
+        public FileViewWindow(GroupBlock template, IEnumerable<DBRFile> files) : this()
+        {
+            _template = template;
+            _files = files;
+            Views.SelectionChanged += Views_SelectionChanged;
+        }
+
+        private void Views_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems[0] is TabItem tabItem && tabItem.Content is ContentControl content)
+            {
+                if (content.DataContext is FileViewModelBase viewModel)
+                {
+                    viewModel.InitFiles(_template, _files);
+                }
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            foreach (var file in _files)
+            {
+                file.SaveFile();
+            }
+            base.OnClosed(e);
         }
     }
 }

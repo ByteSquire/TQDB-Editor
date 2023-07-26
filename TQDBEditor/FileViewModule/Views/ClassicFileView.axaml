@@ -2,7 +2,20 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TQDBEditor.FileViewModule.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TQDBEditor.FileViewModule.Views.ClassicFileView">
-  TODO: Tree | View of vars in group
+             x:Class="TQDBEditor.FileViewModule.Views.ClassicFileView"
+             x:DataType="vm:ClassicFileViewViewModel">
+  <Grid ColumnDefinitions="Auto,4,Auto,*">
+    <TreeView Grid.Column="0" x:Name="Tree" ItemsSource="{Binding TreeNodes}" SelectionMode="Single" SelectionChanged="OnNodeSelected">
+      <TreeView.ItemTemplate>
+        <TreeDataTemplate ItemsSource="{Binding SubNodes}">
+          <TextBlock Text="{Binding Title}"/>
+        </TreeDataTemplate>
+      </TreeView.ItemTemplate>
+    </TreeView>
+    <GridSplitter Background="Gray" Grid.Column="1" />
+    <TreeDataGrid Grid.Column="2" Source="{Binding VarSource}" />
+    <TreeDataGrid Grid.Column="3" Source="{Binding ValSource}" />
+  </Grid>
 </UserControl>
