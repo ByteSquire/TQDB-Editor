@@ -277,7 +277,11 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 
             if (e.PropertyName == nameof(WorkingDir))
                 if (WorkingDir != null)
-                    _templateManager = new TemplateManager(WorkingDir, logger: _logger);
+                {
+                    var t = new TemplateManager(WorkingDir, logger: _logger);
+                    t.ResolveAllIncludes();
+                    _templateManager = t;
+                }
         }
 
         private void Selection_SelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<MyFileInfos> e)
