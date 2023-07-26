@@ -40,6 +40,8 @@ namespace TQDBEditor
 
         public static SynchronizationContext? MainThreadContext { get; private set; }
 
+        private bool _areModulesInitialized = false;
+
         private readonly ILoggerProvider _loggerProvider;
         public App() : base()
         {
@@ -98,6 +100,7 @@ namespace TQDBEditor
 
         protected override AvaloniaObject CreateShell()
         {
+            InitializeModules();
             //if (IsSingleViewLifetime)
             //return Container.Resolve<MainControl>(); // For Linux Framebuffer or DRM
             //else
@@ -117,9 +120,16 @@ namespace TQDBEditor
             EditorProgram.ConfigureAdditionalModules(moduleCatalog);
 
             Container.Resolve<IModuleManager>().LoadModuleCompleted += App_LoadModuleCompleted;
+        }
+
+        protected override void InitializeModules()
+        {
+            if (_areModulesInitialized)
+                return;
+            _areModulesInitialized = true;
             try
             {
-                InitializeModules();
+                base.InitializeModules();
             }
             catch (ModularityException ex)
             {
