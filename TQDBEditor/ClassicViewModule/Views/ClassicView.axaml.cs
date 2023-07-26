@@ -8,6 +8,7 @@ using Avalonia.LogicalTree;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using TQDBEditor.ClassicViewModule.ViewModels;
+using TQDBEditor.ViewModels;
 
 namespace TQDBEditor.ClassicViewModule.Views
 {
