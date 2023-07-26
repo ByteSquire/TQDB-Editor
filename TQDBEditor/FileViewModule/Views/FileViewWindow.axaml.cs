@@ -12,7 +12,9 @@ namespace TQDBEditor.FileViewModule.Views
         private readonly GroupBlock _template;
         private readonly IEnumerable<DBRFile> _files;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public FileViewWindow()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             // Dummy for design time preview
             InitializeComponent();
