@@ -38,7 +38,7 @@
         </TreeView>
       </DockPanel>
       <GridSplitter Background="Gray" Grid.Column="1"/>
-      <TreeDataGrid Grid.Column="2" Margin="20" Source="{Binding DataGridSource}">
+      <TreeDataGrid x:Name="FileTable" Grid.Column="2" Margin="20" Source="{Binding DataGridSource}">
       </TreeDataGrid>
     </Grid>
     <GridSplitter Background="Gray" Grid.Row="1" ResizeDirection="Rows"/>
