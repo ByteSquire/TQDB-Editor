@@ -8,7 +8,6 @@ using Avalonia.LogicalTree;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using TQDBEditor.ClassicViewModule.ViewModels;
-using TQDBEditor.ViewModels;
 
 namespace TQDBEditor.ClassicViewModule.Views
 {
@@ -104,7 +103,7 @@ namespace TQDBEditor.ClassicViewModule.Views
         {
             if (DataContext is ClassicViewViewModel viewModel)
             {
-                viewModel.OnNodeSelected(e.AddedItems[0] as Node);
+                viewModel.OnNodeSelected(e.AddedItems[0] as ClassicViewViewModel.Node);
             }
         }
 
