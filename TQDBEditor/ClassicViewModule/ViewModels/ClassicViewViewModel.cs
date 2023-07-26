@@ -25,12 +25,17 @@ using TQDBEditor.Services;
 using TQDBEditor.ViewModels;
 
 using TQDB_Parser.DBRMeta;
+using Prism.Events;
+using TQDBEditor.Events;
+using TQDB_Parser;
 
 namespace TQDBEditor.ClassicViewModule.ViewModels
 {
     public partial class ClassicViewViewModel : ViewModelBase
     {
         public static string[] KnownDirs => new string[] { "Source", "Assets", "Database" };
+
+        public TreeDataGrid? FileTable { get; set; }
 
         [ObservableProperty]
         private ObservableCollection<Node> _treeNodes = new();
@@ -41,9 +46,11 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private FlatTreeDataGridSource<MyFileInfos> _dataGridSource;
         [ObservableProperty]
         private bool _allFilesSelected;
+        private bool _innerSelect = false;
 
+        [ObservableProperty]
         private string? _workingDir;
-        private string? WorkingModsFolder => _workingDir is null ? null : Path.Combine(_workingDir, "CustomMaps");
+        private string? WorkingModsFolder => WorkingDir is null ? null : Path.Combine(WorkingDir, "CustomMaps");
         private string? FullModDir => WorkingModsFolder is null || _modDir is null ? null : Path.Combine(WorkingModsFolder, _modDir);
         private string? _selectedView;
         private string? _modDir;
@@ -51,10 +58,13 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private readonly FileSystemWatcher _modWatcher;
         private readonly FileSystemWatcher _dirWatcher;
 
-        public ClassicViewViewModel(IObservableConfiguration configuration, ILoggerProvider loggerFactory)
+        private TemplateManager? _templateManager;
+        private readonly DBRAccessEvent _accessEvent;
+
+        public ClassicViewViewModel(IObservableConfiguration configuration, IEventAggregator ea, ILoggerProvider loggerFactory)
         {
             _logger = loggerFactory.CreateLogger(nameof(TQDBEditor.ClassicViewModule));
-            _workingDir = configuration.GetWorkingDir();
+            WorkingDir = configuration.GetWorkingDir();
             _modWatcher = new()
             {
                 IncludeSubdirectories = true,
@@ -74,8 +84,10 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             _dirWatcher.Changed += FileChanged;
 
             OnModDirChanged(configuration.GetModDir());
-            configuration.AddWorkingDirChangeListener(x => _workingDir = x);
+            configuration.AddWorkingDirChangeListener(x => WorkingDir = x);
             configuration.AddModDirChangeListener(OnModDirChanged);
+
+            _accessEvent = ea.GetEvent<DBRAccessEvent>();
 
             DataGridSource = CreateBasicDataGridSource();
         }
@@ -240,7 +252,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                                     throw;
                             };
                         }
-                    }, options: new() { BeginEditGestures = BeginEditGestures.Tap | BeginEditGestures.WhenSelected }),
+                    }, options: new() { BeginEditGestures = BeginEditGestures.F2 }),
                 },
             };
             var selection = basicSource.RowSelection!;
@@ -257,46 +269,44 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             base.OnPropertyChanged(e);
 
-            if (e.PropertyName == nameof(AllFilesSelected) && DataGridSource?.RowSelection != null)
+            if (!_innerSelect && e.PropertyName == nameof(AllFilesSelected) && DataGridSource?.RowSelection != null)
                 if (AllFilesSelected)
-                    Selection_SelectionChanged(DataGridSource.RowSelection, new(selectedItems: _files));
+                    Selection_SelectionChanged(DataGridSource.RowSelection, new(selectedIndexes: Enumerable.Range(0, _files.Count).Select(x => new IndexPath(x)).ToList(), selectedItems: _files));
                 else
-                    Selection_SelectionChanged(DataGridSource.RowSelection, new(deselectedItems: _files));
+                    Selection_SelectionChanged(DataGridSource.RowSelection, new(deselectedIndexes: Enumerable.Range(0, _files.Count).Select(x => new IndexPath(x)).ToList(), deselectedItems: _files));
+
+            if (e.PropertyName == nameof(WorkingDir))
+                if (WorkingDir != null)
+                    _templateManager = new TemplateManager(WorkingDir, logger: _logger);
         }
 
         private void Selection_SelectionChanged(object? sender, TreeSelectionModelSelectionChangedEventArgs<MyFileInfos> e)
         {
             if (sender is ITreeSelectionModel model)
+            {
+                _innerSelect = true;
                 AllFilesSelected = model.SelectedItems.OfType<MyFileInfos>().Count() == model.Source!.Cast<MyFileInfos>().Count();
+                _innerSelect = false;
+            }
 
-            foreach (var selected in e.SelectedItems.OfType<MyFileInfos>())
-                selected.IsSelected = true;
+            if (e.SelectedItems.Any())
+            {
+                var rowIndex = DataGridSource.Rows.ModelIndexToRowIndex(e.SelectedIndexes[^1]);
+                FileTable?.TryGetCell(1, rowIndex)?.Focus();
+                foreach (var selected in e.SelectedItems.OfType<MyFileInfos>())
+                    selected.IsSelected = true;
+            }
             foreach (var deselected in e.DeselectedItems.OfType<MyFileInfos>())
                 deselected.IsSelected = false;
         }
 
-        public void BeginEditing(TreeDataGrid treeDataGrid)
+        public void BeginOpening()
         {
-            var selected = DataGridSource.RowSelection?.SelectedIndexes;
-            if (selected != null && selected.Count > 0)
+            var selected = DataGridSource.RowSelection?.SelectedItems;
+            if (selected != null && selected.Count > 0 && WorkingDir != null)
             {
-                var lastSelected = selected[^1];
-                var cell = treeDataGrid.TryGetCell(0, lastSelected[0]) as TreeDataGridCell;
-                if (cell?.Model is IEditableObject editableCell)
-                {
-                    editableCell.BeginEdit();
-                    //cell.Classes.Add(":editing");
-                    //cell.PseudoClasses.Add(":editing");
-                }
-            }
-        }
-
-        public void BeginOpening(TreeDataGrid treeDataGrid)
-        {
-            var selected = DataGridSource.RowSelection?.SelectedIndexes;
-            if (selected != null && selected.Count > 0)
-            {
-
+                var parser = new DBRParser(_templateManager!, _logger);
+                _accessEvent.Publish(new(selected.OfType<MyFileInfos>().Select(x => parser.ParseFile(x.FullPath))));
             }
         }
 
