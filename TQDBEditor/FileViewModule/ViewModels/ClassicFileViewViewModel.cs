@@ -45,7 +45,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
                     new TextColumn<MyVariableRow, string>("Class", x => Enum.GetName(x.VariableBlock.Class)),
                     new TextColumn<MyVariableRow, string>("Type", x => Enum.GetName(x.VariableBlock.Type)),
                     new TextColumn<MyVariableRow, string>("Description", x => x.VariableBlock.Description),
-                    new TextColumn<MyVariableRow, string>("DefaultValue", x => x.VariableBlock.DefaultValue),
+                    new TextColumn<MyVariableRow, string>("DefaultValue", x => x.VariableBlock.DefaultValue, GridLength.Star),
                 },
             };
         }

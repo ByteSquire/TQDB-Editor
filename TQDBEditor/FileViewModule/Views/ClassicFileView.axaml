@@ -15,7 +15,7 @@
       </TreeView.ItemTemplate>
     </TreeView>
     <GridSplitter Background="Gray" Grid.Column="1" />
-    <TreeDataGrid Grid.Column="2" Source="{Binding VarSource}" />
-    <TreeDataGrid Grid.Column="3" Source="{Binding ValSource}" />
+    <TreeDataGrid x:Name="VariableData" Grid.Column="2" Source="{Binding VarSource}" />
+    <TreeDataGrid x:Name="ValueData" Grid.Column="3" Source="{Binding ValSource}" />
   </Grid>
 </UserControl>
