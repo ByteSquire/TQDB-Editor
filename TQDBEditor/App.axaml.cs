@@ -113,6 +113,7 @@ namespace TQDBEditor
             moduleCatalog.AddModule<ClassicViewModule.Module>();
             moduleCatalog.AddModule<Dialogs.Module>();
             moduleCatalog.AddModule<BasicToolbarModule.Module>();
+            moduleCatalog.AddModule<FileViewModule.Module>();
             EditorProgram.ConfigureAdditionalModules(moduleCatalog);
 
             Container.Resolve<IModuleManager>().LoadModuleCompleted += App_LoadModuleCompleted;

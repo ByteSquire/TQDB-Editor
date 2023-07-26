@@ -14,6 +14,7 @@ namespace TQDBEditor.Constants
         public const string ToolBarRegion = "Toolbar";
         public const string StatusLeftRegion = "StatusLeft";
         public const string StatusRightRegion = "StatusRight";
+        public const string FileViewsRegion = "FileViews";
     }
 
     public static class Modules
