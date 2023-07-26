@@ -23,15 +23,8 @@ namespace TQDBEditor.Events
                     description = dbr["FileDescription"].Value;
                 }
                 catch (KeyNotFoundException) { }
-                try
-                {
-                    var metadata = new DBRMetadata(dbr[TQDB_Parser.Constants.TemplateKey].Value, description);
-                    list.Add((metadata, dbr));
-                }
-                catch (KeyNotFoundException)
-                {
-                    Trace.TraceError("DBR {0} does not define a template", dbr.FileName);
-                }
+                var metadata = new DBRMetadata(dbr.TemplateRoot.FileName, description);
+                list.Add((metadata, dbr));
             }
             this.Accessed = list.AsReadOnly();
         }
