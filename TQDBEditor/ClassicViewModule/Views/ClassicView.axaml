@@ -19,7 +19,7 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition MinWidth="100" Width="Auto"/>
         <ColumnDefinition Width="4"/>
-        <ColumnDefinition MinWidth="100" Width="Auto"/>
+        <ColumnDefinition MinWidth="100" Width="*"/>
       </Grid.ColumnDefinitions>
       <DockPanel Grid.Column="0" LastChildFill="True">
         <TabStrip DockPanel.Dock="Bottom" Margin="5" SelectionChanged="OnTabSelected" ItemsSource="{Binding KnownDirs}">

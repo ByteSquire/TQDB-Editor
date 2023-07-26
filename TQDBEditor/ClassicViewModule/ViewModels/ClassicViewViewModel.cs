@@ -394,6 +394,9 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                 file.PropertyChanged -= FileInfoPropertyChanged;
             }
             _files.Clear();
+            _innerSelect = true;
+            AllFilesSelected = false;
+            _innerSelect = false;
         }
 
         public void OnViewSelected(string? view)
