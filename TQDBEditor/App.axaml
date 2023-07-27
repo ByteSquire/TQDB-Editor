@@ -20,6 +20,9 @@
     <Style Selector="TabControl.viewsTab /template/ WrapPanel">
       <Setter Property="HorizontalAlignment" Value="Center"/>
     </Style>
+    <Style Selector="TabControl.viewsTab">
+      <Setter Property="Padding" Value="0"/>
+    </Style>
     <Style Selector="TabItem">
       <Setter Property="FontSize" Value="12"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
