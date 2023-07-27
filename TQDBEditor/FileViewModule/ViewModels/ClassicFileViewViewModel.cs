@@ -56,7 +56,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
             if (node != null && _fList != null)
             {
                 _blocks.Clear();
-                var vars = node.Block.GetVariables(/*node.Title.Equals("All Groups")*/true);
+                var vars = node.Block.GetVariables(true);
                 foreach (var variable in vars)
                 {
                     _blocks.Add(new(variable, _fList));
