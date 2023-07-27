@@ -13,6 +13,12 @@
           <TextBlock Text="{Binding Title}"/>
         </TreeDataTemplate>
       </TreeView.ItemTemplate>
+      <TreeView.Styles>
+        <Style Selector="TreeViewItem" x:DataType="vm:Node">
+          <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+          <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        </Style>
+      </TreeView.Styles>
     </TreeView>
     <GridSplitter Background="Gray" Grid.Column="1" />
     <TreeDataGrid x:Name="VariableData" Grid.Column="2" Source="{Binding VarSource}" />

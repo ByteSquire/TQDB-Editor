@@ -35,11 +35,15 @@
               <TextBlock Text="{Binding Title}"/>
             </TreeDataTemplate>
           </TreeView.ItemTemplate>
+          <TreeView.Styles>
+            <Style Selector="TreeViewItem" x:DataType="vm:Node">
+              <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+            </Style>
+          </TreeView.Styles>
         </TreeView>
       </DockPanel>
       <GridSplitter Background="Gray" Grid.Column="1"/>
-      <TreeDataGrid x:Name="FileTable" Grid.Column="2" Margin="20" Source="{Binding DataGridSource}">
-      </TreeDataGrid>
+      <TreeDataGrid x:Name="FileTable" Grid.Column="2" Source="{Binding DataGridSource}" />
     </Grid>
     <GridSplitter Background="Gray" Grid.Row="1" ResizeDirection="Rows"/>
     <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto">
@@ -48,4 +52,10 @@
       </WrapPanel>
     </ScrollViewer>
   </Grid>
+
+  <UserControl.Styles>
+    <Style Selector="#FileTable /template/ ScrollViewer">
+      <Setter Property="AllowAutoHide" Value="False"/>
+    </Style>
+  </UserControl.Styles>
 </UserControl>

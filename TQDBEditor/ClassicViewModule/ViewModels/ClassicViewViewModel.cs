@@ -104,13 +104,13 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             for (int i = 1; i < pathSegments.Length; i++)
             {
                 var currDir = pathSegments[i];
-                var child = currNode.SubNodes?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
+                var child = currNode.SubNodes?.Cast<Node>()?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
                 if (child != null)
                     currNode = child;
                 else
                 {
                     var newPath = Path.Combine(pathSegments[..(i + 1)].Prepend(FullModDir!).ToArray());
-                    currNode.AddSubNode(new(newPath, currDir, InitDirectory(newPath)));
+                    currNode.AddSubNode(new Node(newPath, currDir, InitDirectory(newPath)));
                 }
             }
         }
@@ -127,7 +127,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             for (int i = 1; i < pathSegments.Length; i++)
             {
                 var currDir = pathSegments[i];
-                var child = currNode.SubNodes?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
+                var child = currNode.SubNodes?.Cast<Node>()?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
                 if (child != null)
                     currNode = child;
             }
@@ -152,7 +152,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             for (int i = 1; i < pathSegments.Length; i++)
             {
                 var currDir = pathSegments[i];
-                var child = currNode.SubNodes?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
+                var child = currNode.SubNodes?.Cast<Node>()?.SingleOrDefault(x => x!.Title.Equals(currDir, StringComparison.OrdinalIgnoreCase), null);
                 if (child != null)
                 {
                     if (Directory.Exists(child.Path))
@@ -326,7 +326,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                 foreach (var known in KnownDirs)
                 {
                     var rootPath = Path.Combine(modPath, known.ToLower());
-                    Node root = new(rootPath, Path.Combine(_modDir!, known.ToLower()), InitDirectory(rootPath));
+                    Node root = new(rootPath, Path.Combine(_modDir!, known.ToLower()), InitDirectory(rootPath)) { IsExpanded = true };
                     _cachedNodes[known.ToLower()] = root;
                 }
                 UpdateTreeNodes();
@@ -438,32 +438,15 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         {
             return "Classic (ArtManager)";
         }
+    }
 
-        public partial class Node : ObservableObject
+    public partial class Node : NodeBase
+    {
+        public string Path { get; set; }
+
+        public Node(string path, string title, ObservableCollection<Node>? subNodes = null) : base(title, subNodes is null ? null : new(subNodes.Cast<NodeBase>()))
         {
-            [ObservableProperty]
-            private ObservableCollection<Node>? _subNodes;
-            [ObservableProperty]
-            private string _title;
-
-            public string Path { get; set; }
-
-            public Node(string path, string title)
-            {
-                Path = path;
-                Title = title;
-            }
-
-            public Node(string path, string title, ObservableCollection<Node> subNodes) : this(path, title)
-            {
-                SubNodes = subNodes;
-            }
-
-            public void AddSubNode(Node node)
-            {
-                SubNodes ??= new();
-                SubNodes.Add(node);
-            }
+            Path = path;
         }
     }
 

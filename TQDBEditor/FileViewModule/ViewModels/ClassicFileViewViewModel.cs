@@ -24,6 +24,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
         private ObservableCollection<Node> _treeNodes = new();
 
         private ObservableCollection<MyVariableRow> _blocks;
+        private IList<DBRFile>? _fList;
 
         public ClassicFileViewViewModel(ILoggerProvider loggerProvider)
         {
@@ -44,7 +45,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
                     new TextColumn<MyVariableRow, string>("Name", x => x.VariableBlock.Name),
                     new TextColumn<MyVariableRow, string>("Class", x => Enum.GetName(x.VariableBlock.Class)),
                     new TextColumn<MyVariableRow, string>("Type", x => Enum.GetName(x.VariableBlock.Type)),
-                    new TextColumn<MyVariableRow, string>("Description", x => x.VariableBlock.Description),
+                    new TextColumn<MyVariableRow, string>("Description", x => x.VariableBlock.Description, GridLength.Star),
                     new TextColumn<MyVariableRow, string>("DefaultValue", x => x.VariableBlock.DefaultValue, GridLength.Star),
                 },
             };
@@ -52,35 +53,31 @@ namespace TQDBEditor.FileViewModule.ViewModels
 
         public void OnNodeSelected(Node? node)
         {
-            if (node != null && _files != null)
+            if (node != null && _fList != null)
             {
                 _blocks.Clear();
-                var fList = _files.ToList();
-                var vars = node.Block.GetVariables(node.Title.Equals("All Groups"));
+                var vars = node.Block.GetVariables(/*node.Title.Equals("All Groups")*/true);
                 foreach (var variable in vars)
                 {
-                    _blocks.Add(new(variable, fList));
-                }
-                for (int i = 0; i < fList.Count; i++)
-                {
-                    var index = i;
-                    ValSource.Columns.Add(new TextColumn<MyVariableRow, string>(fList[i].FileName, x => x.Entries[index], (x, value) => x.Entries[index].Value = value));
+                    _blocks.Add(new(variable, _fList));
                 }
             }
         }
 
-        public override string ToString()
-        {
-            return "Classic (ArtManager)";
-        }
-
-        private IEnumerable<DBRFile>? _files;
         public override void InitFiles(GroupBlock template, IEnumerable<DBRFile> files)
         {
             if (_blocks.Count == 0)
             {
-                _files = files;
-                TreeNodes.Add(NodeFromGroupBlock(template));
+                _fList = files.ToList();
+                for (int i = 0; i < _fList.Count; i++)
+                {
+                    var index = i;
+                    ValSource.Columns.Add(new TextColumn<MyVariableRow, string>(_fList[i].FileName, x => x.Entries[index], (x, value) => x.Entries[index].Value = value));
+                }
+                var root = NodeFromGroupBlock(template);
+                root.IsExpanded = true;
+                TreeNodes.Add(root);
+                root.IsSelected = true;
             }
         }
 
@@ -89,23 +86,20 @@ namespace TQDBEditor.FileViewModule.ViewModels
             return new Node(block, block.Name, new(block.GetGroups().Select(NodeFromGroupBlock)));
         }
 
-        public partial class Node : ObservableObject
+        public override string ToString()
         {
-            [ObservableProperty]
-            private GroupBlock _block;
+            return "Classic (ArtManager)";
+        }
+    }
 
-            [ObservableProperty]
-            private string _title;
+    public partial class Node : NodeBase
+    {
+        [ObservableProperty]
+        private GroupBlock _block;
 
-            [ObservableProperty]
-            private ObservableCollection<Node> _subNodes;
-
-            public Node(GroupBlock block, string title, ObservableCollection<Node> subNodes)
-            {
-                Block = block;
-                Title = title;
-                SubNodes = subNodes;
-            }
+        public Node(GroupBlock block, string title, ObservableCollection<Node> subNodes) : base(title, subNodes is null ? null : new(subNodes.Cast<NodeBase>()))
+        {
+            Block = block;
         }
     }
 

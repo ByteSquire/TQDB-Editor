@@ -11,6 +11,6 @@
     <Menu DockPanel.Dock="Top">
 
     </Menu>
-    <TabControl x:Name="Views" Classes="viewsTab" prism:RegionManager.RegionName="{x:Static constant:RegionNames.FileViewsRegion}"/>
+    <TabControl x:Name="Views" Classes="viewsTab" prism:RegionManager.RegionName="{x:Static constant:RegionNames.FileViewsRegion}" />
   </DockPanel>
 </Window>
