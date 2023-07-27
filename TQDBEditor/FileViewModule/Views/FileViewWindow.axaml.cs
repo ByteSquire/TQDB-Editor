@@ -29,7 +29,7 @@ namespace TQDBEditor.FileViewModule.Views
 
         private void Views_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems[0] is TabItem tabItem && tabItem.Content is ContentControl content)
+            if (e.AddedItems.Count > 0 && e.AddedItems[0] is TabItem tabItem && tabItem.Content is ContentControl content)
             {
                 if (content.DataContext is FileViewModelBase viewModel)
                 {

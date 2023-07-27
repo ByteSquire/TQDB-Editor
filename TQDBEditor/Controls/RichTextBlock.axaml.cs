@@ -163,6 +163,7 @@ namespace TQDBEditor.Controls
 
         private void InterpretCodeBuffer(char[] codeBuffer)
         {
+            if (codeBuffer.Length == 0) return;
             var openCodes = _openTags;
             var isClosing = codeBuffer[0] == '/';
             if (isClosing)

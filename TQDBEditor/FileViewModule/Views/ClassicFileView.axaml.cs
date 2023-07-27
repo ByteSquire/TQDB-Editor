@@ -30,9 +30,9 @@ namespace TQDBEditor.FileViewModule.Views
 
         public void OnNodeSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (DataContext is ClassicFileViewViewModel viewModel)
+            if (DataContext is ClassicFileViewViewModel viewModel && e.AddedItems.Count > 0)
             {
-                viewModel.OnNodeSelected(e.AddedItems[0] as ClassicFileViewViewModel.Node);
+                viewModel.OnNodeSelected(e.AddedItems[0] as Node);
             }
         }
     }

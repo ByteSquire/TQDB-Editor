@@ -18,16 +18,6 @@ namespace TQDBEditor.ClassicViewModule.Views
         public ClassicView()
         {
             InitializeComponent();
-            // Always expand first item in Tree
-            Tree.PropertyChanged += (s, args) =>
-            {
-                if (args.Property == ItemsControl.ItemsSourceProperty)
-                {
-                    var treeViewItem = (TreeViewItem?)Tree.ContainerFromIndex(0);
-                    if (treeViewItem != null)
-                        treeViewItem.IsExpanded = true;
-                }
-            };
         }
 
         protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e)
@@ -101,15 +91,15 @@ namespace TQDBEditor.ClassicViewModule.Views
 
         public void OnNodeSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (DataContext is ClassicViewViewModel viewModel)
+            if (DataContext is ClassicViewViewModel viewModel && e.AddedItems.Count > 0)
             {
-                viewModel.OnNodeSelected(e.AddedItems[0] as ClassicViewViewModel.Node);
+                viewModel.OnNodeSelected(e.AddedItems[0] as Node);
             }
         }
 
         public void OnTabSelected(object sender, SelectionChangedEventArgs e)
         {
-            if (DataContext is ClassicViewViewModel viewModel)
+            if (DataContext is ClassicViewViewModel viewModel && e.AddedItems.Count > 0)
             {
                 viewModel.OnViewSelected(e.AddedItems[0] as string);
             }
