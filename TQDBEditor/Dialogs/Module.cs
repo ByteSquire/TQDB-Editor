@@ -16,8 +16,9 @@ namespace TQDBEditor.Dialogs
         {
             containerRegistry.RegisterDialog<NewModDialog, NewModDialogViewModel>(IDialogServiceExtensions.newMod);
             containerRegistry.RegisterDialog<InformationDialog, InformationDialogViewModel>(IDialogServiceExtensions.infoDialog);
-            containerRegistry.RegisterDialogWindow<ConfirmationDialogWindow>(IDialogServiceExtensions.confirmationDialog);
-            containerRegistry.RegisterDialogWindow<InformationDialogWindow>(IDialogServiceExtensions.informationDialog);
+            containerRegistry.RegisterDialog<DBFilePicker, DBFilePickerViewModel>(IDialogServiceExtensions.databaseFilePicker);
+            containerRegistry.RegisterDialogWindow<ConfirmationDialogWindow>(IDialogServiceExtensions.confirmationDialogWindow);
+            containerRegistry.RegisterDialogWindow<InformationDialogWindow>(IDialogServiceExtensions.informationDialogWindow);
             containerRegistry.Register<IDialogService, ConfirmationDialogService>();
         }
     }

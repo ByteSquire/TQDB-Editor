@@ -42,7 +42,7 @@ namespace TQDBEditor.Dialogs
         public abstract void OnDialogOpened(IDialogParameters parameters);
     }
 
-    public class ConfirmationDialogService : DialogService
+    public class ConfirmationDialogService : MyDialogService
     {
         public ConfirmationDialogService(IContainerExtension containerExtension) : base(containerExtension) { }
 

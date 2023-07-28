@@ -1,6 +1,11 @@
-﻿using Prism.Services.Dialogs;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Chrome;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TQDBEditor.Dialogs
 {
@@ -58,15 +63,16 @@ namespace TQDBEditor.Dialogs
     public static class IDialogServiceExtensions
     {
         public const string newMod = nameof(newMod);
-        public const string confirmationDialog = nameof(confirmationDialog);
+        public const string confirmationDialogWindow = nameof(confirmationDialogWindow);
         public const string infoDialog = nameof(infoDialog);
-        public const string informationDialog = nameof(informationDialog);
+        public const string informationDialogWindow = nameof(informationDialogWindow);
+        public const string databaseFilePicker = nameof(databaseFilePicker);
 
         public static void ShowNewModDialog(this IDialogService dialogService, IEnumerable<string> existingMods, Action<string> callback)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddExistingMods(existingMods);
-            dialogService.ShowDialog(newMod, dialogParams, Callback, confirmationDialog);
+            dialogService.ShowDialog(newMod, dialogParams, Callback, confirmationDialogWindow);
 
             void Callback(IDialogResult dialogResult)
             {
@@ -80,7 +86,19 @@ namespace TQDBEditor.Dialogs
             var dialogParams = new DialogParameters();
             dialogParams.AddInfoTitle(title);
             dialogParams.AddInfoText(info);
-            dialogService.ShowDialog(infoDialog, dialogParams, x => { }, informationDialog);
+            dialogService.ShowDialog(infoDialog, dialogParams, windowName: informationDialogWindow);
+        }
+
+        public static void ShowDBFilePicker(this IDialogService dialogService, Action<string> callback)
+        {
+            var dialogParams = new DialogParameters();
+            dialogService.ShowDialog(databaseFilePicker, dialogParams, Callback);
+
+            void Callback(IDialogResult dialogResult)
+            {
+                if (dialogResult.Result == ButtonResult.OK)
+                    callback(dialogResult.Parameters.GetModName());
+            }
         }
     }
 

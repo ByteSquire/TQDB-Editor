@@ -29,6 +29,7 @@ using Prism.Events;
 using Avalonia.Platform.Storage;
 using Avalonia.Input.Platform;
 using Avalonia.Platform;
+using TQDBEditor.Dialogs;
 
 namespace TQDBEditor
 {
@@ -79,6 +80,7 @@ namespace TQDBEditor
             //containerRegistry.Register<IRestService, RestService>();
             if (_loggerProvider != null)
                 containerRegistry.RegisterInstance(_loggerProvider);
+            containerRegistry.Register<IDialogService, MyDialogService>();
 
             //// Views - Singleton
             var mainWindow = new MainWindow();
