@@ -18,14 +18,14 @@ namespace TQDBEditor.FileViewModule.Views
             if (ValueData.Scroll is ScrollViewer valueScroll && VariableData.Scroll is ScrollViewer variableScroll)
             {
                 variableScroll.VerticalScrollBarVisibility = Avalonia.Controls.Primitives.ScrollBarVisibility.Hidden;
-                valueScroll.PropertyChanged += (s, e) => { if (e.Property == ScrollViewer.OffsetProperty) SyncScroll(valueScroll.Offset, variableScroll); };
-                variableScroll.PropertyChanged += (s, e) => { if (e.Property == ScrollViewer.OffsetProperty) SyncScroll(variableScroll.Offset, valueScroll); };
+                valueScroll.PropertyChanged += (s, e) => { if (e.Property == ScrollViewer.OffsetProperty) SyncScrollY(valueScroll.Offset, variableScroll); };
+                variableScroll.PropertyChanged += (s, e) => { if (e.Property == ScrollViewer.OffsetProperty) SyncScrollY(variableScroll.Offset, valueScroll); };
             }
         }
 
-        static void SyncScroll(Vector offset, ScrollViewer target)
+        static void SyncScrollY(Vector offset, ScrollViewer target)
         {
-            target.Offset = offset;
+            target.Offset = target.Offset.WithY(offset.Y);
         }
 
         public void OnNodeSelected(object sender, SelectionChangedEventArgs e)
