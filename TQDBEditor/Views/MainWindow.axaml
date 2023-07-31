@@ -16,16 +16,9 @@
         x:Class="TQDBEditor.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         x:Name="MainWindowWindow"
-        Icon="/Assets/icon.ico"
         Title="{Binding Title}"
-        UseLayoutRounding="True" RenderOptions.BitmapInterpolationMode="HighQuality"
-        WindowState="Normal" WindowStartupLocation="CenterScreen"
-        TransparencyLevelHint="AcrylicBlur"
-        BorderThickness="1"
-        FontFamily="Ubuntu, Segoe UI, SF Pro Display, Noto Sans, Cantarel"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="PreferSystemChrome"
-        ExtendClientAreaTitleBarHeightHint="40"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Normal"
         >
 
   <Panel>

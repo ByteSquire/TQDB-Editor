@@ -27,6 +27,17 @@
       <Setter Property="FontSize" Value="12"/>
       <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+
+    <Style Selector="Window">
+      <Setter Property="Icon" Value="/Assets/icon.ico"/>
+      <Setter Property="UseLayoutRounding" Value="True"/>
+      <Setter Property="TransparencyLevelHint" Value="AcrylicBlur"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="FontFamily" Value="Ubuntu, Segoe UI, SF Pro Display, Noto Sans, Cantarel"/>
+      <Setter Property="ExtendClientAreaToDecorationsHint" Value="True"/>
+      <Setter Property="ExtendClientAreaChromeHints" Value="PreferSystemChrome"/>
+      <Setter Property="ExtendClientAreaTitleBarHeightHint" Value="40"/>
+    </Style>
   </Application.Styles>
   <Application.Resources>
     <!-- ... -->
