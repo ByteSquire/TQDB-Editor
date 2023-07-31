@@ -6,11 +6,17 @@
         xmlns:constant="clr-namespace:TQDBEditor.Constants;assembly=TQDBEditor.Core"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="TQDBEditor.FileViewModule.Views.FileViewWindow"
-        Title="FileViewWindow">
+        x:Name="Window"
+        WindowState="Normal" WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        >
   <DockPanel LastChildFill="True">
-    <Menu DockPanel.Dock="Top">
+    <Label DockPanel.Dock="Top" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Content="{Binding #Window.Title}" />
+    <DockPanel LastChildFill="True">
+      <Menu DockPanel.Dock="Top">
 
-    </Menu>
-    <TabControl x:Name="Views" Classes="viewsTab" prism:RegionManager.RegionName="{x:Static constant:RegionNames.FileViewsRegion}" />
+      </Menu>
+      <TabControl x:Name="Views" Classes="viewsTab" prism:RegionManager.RegionName="{x:Static constant:RegionNames.FileViewsRegion}" />
+    </DockPanel>
   </DockPanel>
 </Window>

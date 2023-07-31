@@ -24,4 +24,10 @@
     <TreeDataGrid x:Name="VariableData" Grid.Column="2" Source="{Binding VarSource}" />
     <TreeDataGrid x:Name="ValueData" Grid.Column="3" Source="{Binding ValSource}" />
   </Grid>
+
+  <UserControl.Styles>
+    <Style x:SetterTargetType="ScrollViewer" Selector="#VariableData#PART_ScrollViewer">
+      <Setter Property="AllowAutoHide" Value="False" />
+    </Style>
+  </UserControl.Styles>
 </UserControl>

@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
 using TQDBEditor.ViewModels;
@@ -25,6 +26,13 @@ namespace TQDBEditor.FileViewModule.Views
             _template = template;
             _files = files;
             Views.SelectionChanged += Views_SelectionChanged;
+            var fileNames = files.Select(x => x.FileName).ToList();
+            if (fileNames.Count > 5)
+            {
+                fileNames.RemoveRange(5, fileNames.Count - 5);
+                fileNames.Add("...");
+            }
+            Title = string.Join(",", fileNames);
         }
 
         private void Views_SelectionChanged(object? sender, SelectionChangedEventArgs e)

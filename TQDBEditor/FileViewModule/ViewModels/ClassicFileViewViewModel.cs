@@ -33,16 +33,10 @@ namespace TQDBEditor.FileViewModule.ViewModels
         private ObservableCollection<MyVariableRow> _blocks;
         private IList<DBRFile>? _fList;
         private const bool CAN_SORT = false;
-        private readonly string _modDir;
         private readonly IDialogService _dialogService;
 
-        public ClassicFileViewViewModel(ILoggerProvider loggerProvider, IConfiguration config, IDialogService dialogService)
+        public ClassicFileViewViewModel(IDialogService dialogService)
         {
-            var working = config.GetModDir();
-            var mod = config.GetModDir();
-            if (working is null || mod is null)
-                throw new ArgumentNullException(nameof(config), "Working and Mod directories have to be set");
-            _modDir = Path.Combine(working, "CustomMaps", mod);
             _dialogService = dialogService;
             _blocks = new();
             VarSource = CreateBasicDataGridSource();
@@ -63,7 +57,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
                     new TextColumn<MyVariableRow, string>("Class", x => Enum.GetName(x.VariableBlock.Class), options: colOptions),
                     new TextColumn<MyVariableRow, string>("Type", x => x.VariableBlock.Type == TQDB_Parser.VariableType.file ? "file (" + string.Join(',', x.VariableBlock.FileExtensions) + ")" : Enum.GetName(x.VariableBlock.Type), options: colOptions),
                     new TextColumn<MyVariableRow, string>("Description", x => x.VariableBlock.Description, options: colOptions),
-                    new TextColumn<MyVariableRow, string>("DefaultValue", x => x.VariableBlock.DefaultValue, options: colOptions),
+                    new TextColumn<MyVariableRow, string>("DefaultValue", x => x.VariableBlock.DefaultValue, GridLength.Star, options: colOptions),
                 },
             };
         }
@@ -73,7 +67,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
             if (node != null && _fList != null)
             {
                 _blocks.Clear();
-                var vars = node.Block.GetVariables(true);
+                var vars = node.Block.GetVariables(true).Where(x => x.Type != TQDB_Parser.VariableType.eqnVariable);
                 foreach (var variable in vars)
                 {
                     _blocks.Add(new(variable, _fList));
@@ -90,7 +84,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
                 for (int i = 0; i < _fList.Count; i++)
                 {
                     var index = i;
-                    ValSource.Columns.Add(new ValueColumn(_fList[index].FileName, index, _modDir, _dialogService, options: colOptions));
+                    ValSource.Columns.Add(new ValueColumn(_fList[index].FileName, index, _dialogService, options: colOptions));
                 }
                 var root = NodeFromGroupBlock(template);
                 root.IsExpanded = true;
