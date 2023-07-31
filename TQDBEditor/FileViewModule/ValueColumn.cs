@@ -1,33 +1,34 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using Avalonia.Data.Converters;
+using Avalonia.Styling;
 using Prism.Services.Dialogs;
 using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using TQDB_Parser.DBR;
 using TQDB_Parser.Extensions;
 using TQDBEditor.Controls;
-using TQDBEditor.Controls.ViewModels;
+using TQDBEditor.FileViewModule.Controls;
 using TQDBEditor.FileViewModule.ViewModels;
 
-namespace TQDBEditor.ClassicViewModule
+namespace TQDBEditor.FileViewModule
 {
     public class ValueColumn : ColumnBase<MyVariableRow>
     {
         private readonly int _index;
-        private readonly string? _modDir;
         private readonly IDialogService _dialogService;
 
-        public ValueColumn(object? header, int index, string modDir, IDialogService dialogService, GridLength? width = default, ColumnOptions<MyVariableRow>? options = null) : base(header, width, options ?? new())
+        public ValueColumn(object? header, int index, IDialogService dialogService, GridLength? width = default, ColumnOptions<MyVariableRow>? options = null) : base(header, width, options ?? new())
         {
             _index = index;
             _dialogService = dialogService;
-            _modDir = Path.GetFullPath(modDir);
         }
 
         public override ICell CreateCell(IRow<MyVariableRow> row)
@@ -63,7 +64,20 @@ namespace TQDBEditor.ClassicViewModule
                 return null;
             var varTpl = variable.VariableBlock;
             DBREntry varEntry = variable.Entries[valueIndex];
-            if (editing)
+            Control? ret = null;
+            if (!editing)
+            {
+                var binding = new Binding
+                {
+                    Source = varEntry,
+                    Mode = BindingMode.OneWay,
+                    Converter = new BBCodeConverter(),
+                };
+                var richBlock = new RichTextBlock() { UseBBCode = true };
+                richBlock.Bind(TextBlock.TextProperty, binding);
+                ret = richBlock;
+            }
+            else
             {
                 var binding = new Binding
                 {
@@ -78,71 +92,65 @@ namespace TQDBEditor.ClassicViewModule
                         var validValues = varTpl.DefaultValue.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                         var comboBox = new ComboBox() { ItemsSource = validValues };
                         binding.Converter = null;
-                        comboBox.Bind(ComboBox.SelectedItemProperty, binding);
-                        return comboBox;
+                        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, binding);
+                        ret = comboBox;
+                        break;
                     case TQDB_Parser.VariableClass.array:
-                        var arrayText = new TextBox();
-                        arrayText.SetValue(Grid.ColumnProperty, 1);
-                        arrayText.Bind(TextBox.TextProperty, binding);
-                        arrayText.SelectAll();
-                        var arrayButton = new Button() { Content = "..." };
-                        arrayButton.SetValue(Grid.ColumnProperty, 0);
-                        var arrayDisplay = new Grid
+                        var arrayEdit = new AdvancedEdit()
                         {
-                            ColumnDefinitions = { new ColumnDefinition() { Width = GridLength.Auto }, new ColumnDefinition() { Width = GridLength.Star } },
-                            Children = { arrayText, arrayButton },
+                            DataContext = new ArrayEditViewModel(varEntry, _dialogService),
                         };
-                        return arrayDisplay;
-                    case TQDB_Parser.VariableClass.@static:
-                        return null;
+                        ret = arrayEdit;
+                        break;
                 };
-                switch (variable.VariableBlock.Type)
+                if (ret is null)
+                    switch (variable.VariableBlock.Type)
+                    {
+                        case TQDB_Parser.VariableType.@bool:
+                            var checkBox = new CheckBox();
+                            checkBox.Bind(ToggleButton.IsCheckedProperty, binding);
+                            ret = checkBox;
+                            break;
+                        case TQDB_Parser.VariableType.@int:
+                        case TQDB_Parser.VariableType.real:
+                            var numeric = new NumericUpDown() { Increment = variable.VariableBlock.Type == TQDB_Parser.VariableType.real ? 0.1M : 1, ButtonSpinnerLocation = Location.Left };
+                            numeric.Bind(NumericUpDown.ValueProperty, binding);
+                            ret = numeric;
+                            break;
+                        case TQDB_Parser.VariableType.file:
+                            var fileEdit = new AdvancedEdit()
+                            {
+                                DataContext = new FileEditViewModel(varEntry, _dialogService),
+                            };
+                            ret = fileEdit;
+                            break;
+                        case TQDB_Parser.VariableType.equation:
+                            var eqnEdit = new AdvancedEdit()
+                            {
+                                DataContext = new EquationEditViewModel(varEntry, _dialogService),
+                            };
+                            ret = eqnEdit;
+                            break;
+                    }
+                if (ret is null)
                 {
-                    case TQDB_Parser.VariableType.@bool:
-                        var checkBox = new CheckBox();
-                        checkBox.Bind(CheckBox.IsCheckedProperty, binding);
-                        return checkBox;
-                    case TQDB_Parser.VariableType.@int:
-                    case TQDB_Parser.VariableType.real:
-                        var numeric = new NumericUpDown() { Increment = variable.VariableBlock.Type == TQDB_Parser.VariableType.real ? 0.1M : 1, ButtonSpinnerLocation = Location.Left };
-                        numeric.Bind(NumericUpDown.ValueProperty, binding);
-                        return numeric;
-                    case TQDB_Parser.VariableType.file:
-                        var fileEdit = new FileEdit()
-                        {
-                            DataContext = new FileEditViewModel(varEntry, _modDir, _dialogService),
-                        };
-                        return fileEdit;
-                        binding.Converter = null;
-                        var fileText = new TextBox();
-                        fileText.SetValue(Grid.ColumnProperty, 1);
-                        fileText.Bind(TextBox.TextProperty, binding);
-                        var fileButton = new Button() { Content = "..." };
-                        //fileButton.Click += (s, args) => DBRFilePicker().ContinueWith(x => fileText.Text = x.Result);
-                        fileButton.SetValue(Grid.ColumnProperty, 0);
-                        var filePicker = new Grid
-                        {
-                            ColumnDefinitions = { new ColumnDefinition() { Width = GridLength.Auto }, new ColumnDefinition() { Width = GridLength.Star } },
-                            Children = { fileText, fileButton },
-                        };
-                        return filePicker;
+                    var textBox = new TextBox();
+                    textBox.Bind(TextBox.TextProperty, binding);
+                    ret = textBox;
                 }
-                var textBox = new TextBox();
-                textBox.Bind(TextBox.TextProperty, binding);
-                return textBox;
             }
-            else
+            Thickness? padding = null;
+            if ((Application.Current?.Styles.TryGetResource(typeof(TreeDataGridTextCell), Application.Current?.ActualThemeVariant, out var resource) ?? false) && resource is ControlTheme ctrlTheme)
             {
-                var binding = new Binding
-                {
-                    Source = varEntry,
-                    Mode = BindingMode.OneWay,
-                    Converter = new BBCodeConverter(),
-                };
-                var richBlock = new RichTextBlock() { UseBBCode = true };
-                richBlock.Bind(RichTextBlock.TextProperty, binding);
-                return richBlock;
+                padding = ctrlTheme.Setters.OfType<Setter>().SingleOrDefault(x => x.Property == TemplatedControl.PaddingProperty)?.Value as Thickness?;
             }
+            ret.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+            ret = new Border
+            {
+                Child = ret,
+                Padding = padding ?? new(4, 2),
+            };
+            return ret;
         }
 
         class BBCodeConverter : IValueConverter

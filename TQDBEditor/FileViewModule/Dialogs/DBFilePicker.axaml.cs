@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace TQDBEditor.Dialogs
+namespace TQDBEditor.FileViewModule.Dialogs
 {
     public partial class DBFilePicker : UserControl
     {

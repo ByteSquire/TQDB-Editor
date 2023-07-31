@@ -1,14 +1,13 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using TQDB_Parser.DBR;
-using TQDBEditor.Controls.ViewModels;
+using TQDBEditor.FileViewModule.ViewModels;
 
-namespace TQDBEditor.Controls
+namespace TQDBEditor.FileViewModule.Controls
 {
-    public partial class FileEdit : UserControl
+    public partial class AdvancedEdit : UserControl
     {
-        public FileEdit()
+        public AdvancedEdit()
         {
             InitializeComponent();
         }
@@ -32,7 +31,7 @@ namespace TQDBEditor.Controls
 
         public void OnClick(object sender, RoutedEventArgs e)
         {
-            if (DataContext is FileEditViewModel viewModel)
+            if (DataContext is AdvancedEditViewModelBase viewModel)
             {
                 viewModel.OnClick();
             }

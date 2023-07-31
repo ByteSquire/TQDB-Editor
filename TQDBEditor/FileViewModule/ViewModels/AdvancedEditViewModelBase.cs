@@ -1,26 +1,19 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Prism.Services.Dialogs;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TQDB_Parser.DBR;
-using TQDBEditor.Dialogs;
 using TQDBEditor.ViewModels;
 
-namespace TQDBEditor.Controls.ViewModels
+namespace TQDBEditor.FileViewModule.ViewModels
 {
-    public partial class FileEditViewModel : ViewModelBase
+    public abstract partial class AdvancedEditViewModelBase : ViewModelBase
     {
-        private readonly DBREntry _dbrEntry;
-        private readonly string? _modDir;
+        protected readonly DBREntry _dbrEntry;
         private readonly IDialogService _dialogService;
-        public FileEditViewModel(DBREntry dbrEntry, string? modDir, IDialogService dialogService)
+
+        public AdvancedEditViewModelBase(DBREntry dbrEntry, IDialogService dialogService)
         {
             _dbrEntry = dbrEntry;
-            _modDir = modDir;
             _dialogService = dialogService;
             _value = _dbrEntry.Value;
         }
@@ -37,12 +30,11 @@ namespace TQDBEditor.Controls.ViewModels
         [ObservableProperty]
         private string? _value;
 
-        public void OnClick()
+        public virtual void OnClick()
         {
-            if (_modDir == null)
-                return;
-
-            _dialogService.ShowDBFilePicker(x => Value = x);
+            ShowDialog(_dialogService);
         }
+
+        protected abstract void ShowDialog(IDialogService dialogService);
     }
 }

@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:TQDBEditor.Controls.ViewModels"
+             xmlns:vm="clr-namespace:TQDBEditor.FileViewModule.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="40"
-             x:Class="TQDBEditor.Controls.FileEdit"
-             x:DataType="vm:FileEditViewModel">
+             x:Class="TQDBEditor.FileViewModule.Controls.AdvancedEdit"
+             x:DataType="vm:AdvancedEditViewModelBase">
   <Grid ColumnDefinitions="Auto,*">
     <Button Grid.Column="0" Content="..." Click="OnClick" />
-    <TextBox x:Name="TxtBox" Grid.Column="1" Text="{Binding Value}" />
+    <TextBox VerticalAlignment="Center" x:Name="TxtBox" Grid.Column="1" Text="{Binding Value}" />
   </Grid>
 </UserControl>

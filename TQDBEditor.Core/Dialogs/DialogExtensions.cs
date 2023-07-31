@@ -6,6 +6,7 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TQDB_Parser.DBR;
 
 namespace TQDBEditor.Dialogs
 {
@@ -15,6 +16,7 @@ namespace TQDBEditor.Dialogs
         public const string existingMods = nameof(existingMods);
         public const string infoTitle = nameof(infoTitle);
         public const string infoText = nameof(infoText);
+        public const string selectedEntry = nameof(selectedEntry);
 
         public static string GetModName(this IDialogParameters dialogParameters)
         {
@@ -58,15 +60,28 @@ namespace TQDBEditor.Dialogs
         {
             return dialogParameters.GetValue<string>(infoText);
         }
+
+        public static void AddSelectedEntry(this IDialogParameters dialogParameters, DBREntry text)
+        {
+            dialogParameters.Add(selectedEntry, text);
+        }
+
+        public static DBREntry GetSelectedEntry(this IDialogParameters dialogParameters)
+        {
+            return dialogParameters.GetValue<DBREntry>(selectedEntry);
+        }
     }
 
     public static class IDialogServiceExtensions
     {
+        public const string baseDialogWindow = nameof(baseDialogWindow);
         public const string newMod = nameof(newMod);
         public const string confirmationDialogWindow = nameof(confirmationDialogWindow);
         public const string infoDialog = nameof(infoDialog);
         public const string informationDialogWindow = nameof(informationDialogWindow);
         public const string databaseFilePicker = nameof(databaseFilePicker);
+        public const string arrayEdit = nameof(arrayEdit);
+        public const string equationEdit = nameof(equationEdit);
 
         public static void ShowNewModDialog(this IDialogService dialogService, IEnumerable<string> existingMods, Action<string> callback)
         {
@@ -89,16 +104,25 @@ namespace TQDBEditor.Dialogs
             dialogService.ShowDialog(infoDialog, dialogParams, windowName: informationDialogWindow);
         }
 
-        public static void ShowDBFilePicker(this IDialogService dialogService, Action<string> callback)
+        public static void ShowDBFilePicker(this IDialogService dialogService, DBREntry input)
         {
             var dialogParams = new DialogParameters();
-            dialogService.ShowDialog(databaseFilePicker, dialogParams, Callback);
+            dialogParams.AddSelectedEntry(input);
+            dialogService.ShowDialog(databaseFilePicker, dialogParams, windowName: confirmationDialogWindow);
+        }
 
-            void Callback(IDialogResult dialogResult)
-            {
-                if (dialogResult.Result == ButtonResult.OK)
-                    callback(dialogResult.Parameters.GetModName());
-            }
+        public static void ShowArrayEdit(this IDialogService dialogService, DBREntry input)
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.AddSelectedEntry(input);
+            dialogService.ShowDialog(arrayEdit, dialogParams, windowName: confirmationDialogWindow);
+        }
+
+        public static void ShowEquationEdit(this IDialogService dialogService, DBREntry input)
+        {
+            var dialogParams = new DialogParameters();
+            dialogParams.AddSelectedEntry(input);
+            dialogService.ShowDialog(equationEdit, dialogParams, windowName: confirmationDialogWindow);
         }
     }
 
