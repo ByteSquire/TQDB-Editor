@@ -1,0 +1,26 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pDialogs="clr-namespace:Prism.Services.Dialogs;assembly=Prism.Avalonia"
+        x:Class="TQDBEditor.Dialogs.BaseDialogWindow"
+        x:DataType="pDialogs:IDialogAware"
+        Title="{Binding Title}"
+        WindowState="Normal" 
+        WindowStartupLocation="CenterOwner"
+        CanResize="False"
+        >
+  <Window.Styles>
+    <Style Selector="Window">
+      <Setter Property="SizeToContent" Value="WidthAndHeight" />
+    </Style>
+  </Window.Styles>
+  <Border Padding="2 2 2 2">
+    <DockPanel MinWidth="200" x:Name="Dock" LastChildFill="True">
+      <Border DockPanel.Dock="Top" Height="40">
+        <Label Content="{Binding Title}" VerticalAlignment="Center" HorizontalContentAlignment="Left" />
+      </Border>
+      <Border />
+    </DockPanel>
+  </Border>
+</Window>

@@ -25,7 +25,7 @@ namespace TQDBEditor.Dialogs
 
         bool CanConfirmDialog();
 
-        IDialogParameters OnDialogConfirmed(EventArgs e);
+        IDialogParameters? OnDialogConfirmed(EventArgs e);
 
         IDialogParameters? OnDialogCancelled(EventArgs e);
     }
@@ -38,7 +38,7 @@ namespace TQDBEditor.Dialogs
 
         public abstract bool CanConfirmDialog();
         public abstract IDialogParameters? OnDialogCancelled(EventArgs e);
-        public abstract IDialogParameters OnDialogConfirmed(EventArgs e);
+        public abstract IDialogParameters? OnDialogConfirmed(EventArgs e);
         public abstract void OnDialogOpened(IDialogParameters parameters);
     }
 
