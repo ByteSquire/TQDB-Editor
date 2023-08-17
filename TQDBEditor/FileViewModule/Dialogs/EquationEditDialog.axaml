@@ -2,7 +2,23 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TQDBEditor.FileViewModule.Dialogs.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TQDBEditor.FileViewModule.Dialogs.EquationEditDialog">
-  Welcome to Avalonia!
+             x:Class="TQDBEditor.FileViewModule.Dialogs.EquationEditDialog"
+             x:DataType="vm:EquationEditDialogViewModel">
+  <Grid RowDefinitions="*,*">
+    <ItemsControl Grid.Row="0" ItemsSource="{Binding EquationVariables}">
+      <ItemsControl.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Vertical" />
+        </ItemsPanelTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Button Content="{Binding}" Click="VariableSelected" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <TextBox x:Name="EquationText" Grid.Row="1" Text="{Binding Equation}" />
+  </Grid>
 </UserControl>

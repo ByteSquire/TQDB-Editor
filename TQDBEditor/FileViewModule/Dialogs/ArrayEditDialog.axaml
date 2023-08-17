@@ -2,7 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:TQDBEditor.FileViewModule.Dialogs.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="TQDBEditor.FileViewModule.Dialogs.ArrayEditDialog">
-  Welcome to Avalonia!
+             x:Class="TQDBEditor.FileViewModule.Dialogs.ArrayEditDialog"
+             x:DataType="vm:ArrayEditDialogViewModel">
+  <Grid RowDefinitions="Auto,Auto,Auto">
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
+      <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding SetAll}">Set All</Button>
+      <Border Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Child="{Binding SetAllContent}"/>
+      <Button Grid.Row="1" Grid.Column="0" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding IncreaseAll}">Incr. All By</Button>
+      <Border Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" Child="{Binding IncreaseAllContent}"/>
+      <Button Grid.Row="2" Grid.Column="0" IsEnabled="{Binding MultiplyAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding MultiplyAll}">Mult. All By</Button>
+      <Border Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Child="{Binding MultiplyAllContent}"/>
+      <Button Grid.Row="3" Grid.Column="0" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding IncreaseBySeries}">Incr. By Series</Button>
+      <TextBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" Text="{Binding SeriesText}" />
+      <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" IsChecked="{Binding ShouldOverwrite}">Overwrite current values</CheckBox>
+    </Grid>
+  </Grid>
 </UserControl>
