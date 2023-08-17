@@ -32,12 +32,6 @@ namespace TQDBEditor.Dialogs
             RequestClose?.Invoke(new NewModDialogResult(NewModName));
         }
 
-        public void MyKeyDownHandler(object? sender, KeyEventArgs args)
-        {
-            if (args.Key == Key.Enter)
-                Submit();
-        }
-
         public override bool CanConfirmDialog() => CheckText(NewModName);
 
         public override void OnDialogOpened(IDialogParameters parameters)

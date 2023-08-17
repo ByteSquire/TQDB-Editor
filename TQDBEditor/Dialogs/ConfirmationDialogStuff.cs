@@ -76,7 +76,7 @@ namespace TQDBEditor.Dialogs
 
             void CloseDialog(ButtonResult buttonResult, IDialogParameters? parameters)
             {
-                dialogWindow.Result = new DialogResult(ButtonResult.Cancel, parameters);
+                dialogWindow.Result = new DialogResult(buttonResult, parameters);
                 dialogWindow.Close();
             }
         }

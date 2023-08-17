@@ -1,7 +1,6 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Services.Dialogs;
-using TQDBEditor.FileViewModule.Dialogs;
 
 namespace TQDBEditor.Dialogs
 {
@@ -17,7 +16,6 @@ namespace TQDBEditor.Dialogs
         {
             containerRegistry.RegisterDialog<NewModDialog, NewModDialogViewModel>(IDialogServiceExtensions.newMod);
             containerRegistry.RegisterDialog<InformationDialog, InformationDialogViewModel>(IDialogServiceExtensions.infoDialog);
-            containerRegistry.RegisterDialog<DBFilePicker, DBFilePickerViewModel>(IDialogServiceExtensions.databaseFilePicker);
             containerRegistry.RegisterDialogWindow<BaseDialogWindow>();
             containerRegistry.RegisterDialogWindow<ConfirmationDialogWindow>(IDialogServiceExtensions.confirmationDialogWindow);
             containerRegistry.RegisterDialogWindow<InformationDialogWindow>(IDialogServiceExtensions.informationDialogWindow);
