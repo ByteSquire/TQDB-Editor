@@ -30,6 +30,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Input.Platform;
 using Avalonia.Platform;
 using TQDBEditor.Dialogs;
+using System.Globalization;
 
 namespace TQDBEditor
 {
@@ -72,6 +73,15 @@ namespace TQDBEditor
             MainThreadContext = SynchronizationContext.Current;
             AvaloniaXamlLoader.Load(this);
             base.Initialize();              // <-- Required
+        }
+
+        public override void OnFrameworkInitializationCompleted()
+        {
+            // Set default Culture to English
+            CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en");
+            CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en");
+
+            base.OnFrameworkInitializationCompleted();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
