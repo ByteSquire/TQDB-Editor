@@ -30,14 +30,14 @@ namespace TQDBEditor.FileViewModule.ViewModels
         [ObservableProperty]
         private ObservableCollection<Node> _treeNodes = new();
 
-        private ObservableCollection<MyVariableRow> _blocks;
-        private IList<DBRFile>? _fList;
-        private const bool CAN_SORT = false;
-        private readonly IDialogService _dialogService;
+        private readonly ObservableCollection<MyVariableRow> _blocks;
+        private readonly Func<IValueColumnFactory> _valueColumnFactoryFactory;
 
-        public ClassicFileViewViewModel(IDialogService dialogService)
+        private const bool CAN_SORT = false;
+
+        public ClassicFileViewViewModel(Func<IValueColumnFactory> valueColumnFactoryFactory)
         {
-            _dialogService = dialogService;
+            _valueColumnFactoryFactory = valueColumnFactoryFactory;
             _blocks = new();
             VarSource = CreateBasicDataGridSource();
             ValSource = new(_blocks)
@@ -64,13 +64,13 @@ namespace TQDBEditor.FileViewModule.ViewModels
 
         public void OnNodeSelected(Node? node)
         {
-            if (node != null && _fList != null)
+            if (node != null)
             {
                 _blocks.Clear();
                 var vars = node.Block.GetVariables(true).Where(x => x.Type != TQDB_Parser.VariableType.eqnVariable);
                 foreach (var variable in vars)
                 {
-                    _blocks.Add(new(variable, _fList));
+                    _blocks.Add(new(variable));
                 }
             }
         }
@@ -79,13 +79,11 @@ namespace TQDBEditor.FileViewModule.ViewModels
         {
             if (_blocks.Count == 0)
             {
-                _fList = files.ToList();
+                var factory = _valueColumnFactoryFactory.Invoke();
                 var colOptions = new ColumnOptions<MyVariableRow>() { CanUserSortColumn = CAN_SORT };
-                for (int i = 0; i < _fList.Count; i++)
-                {
-                    var index = i;
-                    ValSource.Columns.Add(new ValueColumn(_fList[index].FileName, index, _dialogService, options: colOptions));
-                }
+                foreach (var file in files)
+                    ValSource.Columns.Add(factory.CreateValueColumn(file, options: colOptions));
+
                 var root = NodeFromGroupBlock(template);
                 root.IsExpanded = true;
                 TreeNodes.Add(root);
@@ -119,12 +117,9 @@ namespace TQDBEditor.FileViewModule.ViewModels
     {
         public VariableBlock VariableBlock { get; }
 
-        public IList<DBREntry> Entries { get; }
-
-        public MyVariableRow(VariableBlock variableBlock, IEnumerable<DBRFile> files)
+        public MyVariableRow(VariableBlock variableBlock)
         {
             VariableBlock = variableBlock;
-            Entries = files.Select(x => x[VariableBlock.Name]).ToList();
         }
     }
 }

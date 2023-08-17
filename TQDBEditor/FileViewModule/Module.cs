@@ -7,6 +7,7 @@ using TQDBEditor.FileViewModule.Views;
 using TQDBEditor.FileViewModule.ViewModels;
 using TQDBEditor.FileViewModule.Dialogs;
 using TQDBEditor.Dialogs;
+using TQDBEditor.FileViewModule.Dialogs.ViewModels;
 
 namespace TQDBEditor.FileViewModule
 {
@@ -24,6 +25,9 @@ namespace TQDBEditor.FileViewModule
         {
             containerRegistry.RegisterSingleton<DBRAccessHandler>();
             containerRegistry.RegisterForNavigation<ClassicFileView, ClassicFileViewViewModel>();
+
+            containerRegistry.RegisterSingleton<IValueColumnFactory, ValueColumnFactory>();
+            containerRegistry.RegisterSingleton<ICreateControlForVariable, VariableControlProvider>();
 
             containerRegistry.RegisterDialog<ArrayEditDialog, ArrayEditDialogViewModel>(IDialogServiceExtensions.arrayEdit);
             containerRegistry.RegisterDialog<EquationEditDialog, EquationEditDialogViewModel>(IDialogServiceExtensions.equationEdit);
