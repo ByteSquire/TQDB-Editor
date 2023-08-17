@@ -6,6 +6,7 @@ using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
 
 namespace TQDBEditor.Dialogs
@@ -17,6 +18,8 @@ namespace TQDBEditor.Dialogs
         public const string infoTitle = nameof(infoTitle);
         public const string infoText = nameof(infoText);
         public const string selectedEntry = nameof(selectedEntry);
+        public const string changedValue = nameof(changedValue);
+        public const string templateGroup = nameof(templateGroup);
 
         public static string GetModName(this IDialogParameters dialogParameters)
         {
@@ -61,14 +64,34 @@ namespace TQDBEditor.Dialogs
             return dialogParameters.GetValue<string>(infoText);
         }
 
-        public static void AddSelectedEntry(this IDialogParameters dialogParameters, DBREntry text)
+        public static void AddSelectedEntry(this IDialogParameters dialogParameters, ObservableEntry entry)
         {
-            dialogParameters.Add(selectedEntry, text);
+            dialogParameters.Add(selectedEntry, entry);
         }
 
-        public static DBREntry GetSelectedEntry(this IDialogParameters dialogParameters)
+        public static ObservableEntry GetSelectedEntry(this IDialogParameters dialogParameters)
         {
-            return dialogParameters.GetValue<DBREntry>(selectedEntry);
+            return dialogParameters.GetValue<ObservableEntry>(selectedEntry);
+        }
+
+        public static void AddTemplateGroup(this IDialogParameters dialogParameters, GroupBlock template)
+        {
+            dialogParameters.Add(templateGroup, template);
+        }
+
+        public static GroupBlock GetTemplateGroup(this IDialogParameters dialogParameters)
+        {
+            return dialogParameters.GetValue<GroupBlock>(templateGroup);
+        }
+
+        public static void AddChangedValue(this IDialogParameters dialogParameters, string value)
+        {
+            dialogParameters.Add(changedValue, value);
+        }
+
+        public static string GetChangedValue(this IDialogParameters dialogParameters)
+        {
+            return dialogParameters.GetValue<string>(changedValue);
         }
     }
 
@@ -104,25 +127,44 @@ namespace TQDBEditor.Dialogs
             dialogService.ShowDialog(infoDialog, dialogParams, windowName: informationDialogWindow);
         }
 
-        public static void ShowDBFilePicker(this IDialogService dialogService, DBREntry input)
+        public static void ShowDBFilePicker(this IDialogService dialogService, Action<string> callback, ObservableEntry input)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddSelectedEntry(input);
-            dialogService.ShowDialog(databaseFilePicker, dialogParams, windowName: confirmationDialogWindow);
+            dialogService.Show(databaseFilePicker, dialogParams, Callback, windowName: confirmationDialogWindow);
+
+            void Callback(IDialogResult result)
+            {
+                if (result.Result == ButtonResult.OK)
+                    callback(result.Parameters.GetChangedValue());
+            }
         }
 
-        public static void ShowArrayEdit(this IDialogService dialogService, DBREntry input)
+        public static void ShowArrayEdit(this IDialogService dialogService, Action<string> callback, ObservableEntry input)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddSelectedEntry(input);
-            dialogService.ShowDialog(arrayEdit, dialogParams, windowName: confirmationDialogWindow);
+            dialogService.Show(arrayEdit, dialogParams, Callback, windowName: confirmationDialogWindow);
+
+            void Callback(IDialogResult result)
+            {
+                if (result.Result == ButtonResult.OK)
+                    callback(result.Parameters.GetChangedValue());
+            }
         }
 
-        public static void ShowEquationEdit(this IDialogService dialogService, DBREntry input)
+        public static void ShowEquationEdit(this IDialogService dialogService, Action<string> callback, ObservableEntry input, GroupBlock template)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddSelectedEntry(input);
-            dialogService.ShowDialog(equationEdit, dialogParams, windowName: confirmationDialogWindow);
+            dialogParams.AddTemplateGroup(template);
+            dialogService.Show(equationEdit, dialogParams, Callback, windowName: confirmationDialogWindow);
+
+            void Callback(IDialogResult result)
+            {
+                if (result.Result == ButtonResult.OK)
+                    callback(result.Parameters.GetChangedValue());
+            }
         }
     }
 
