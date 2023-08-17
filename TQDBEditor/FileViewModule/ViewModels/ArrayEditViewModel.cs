@@ -7,12 +7,12 @@ namespace TQDBEditor.FileViewModule.ViewModels
 {
     public partial class ArrayEditViewModel : AdvancedEditViewModelBase
     {
-        public ArrayEditViewModel(DBREntry dbrEntry, IDialogService dialogService) : base(dbrEntry, dialogService)
+        public ArrayEditViewModel(ObservableEntry dbrEntry, IDialogService dialogService) : base(dbrEntry, dialogService)
         { }
 
-        protected override void ShowDialog(IDialogService dialogService)
+        protected override void ShowDialog(IDialogService dialogService, Action<string> callback)
         {
-            dialogService.ShowArrayEdit(_dbrEntry);
+            dialogService.ShowArrayEdit(callback, _dbrEntry);
         }
     }
 }
