@@ -1,12 +1,10 @@
 ﻿using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
-using System;
 using TQDBEditor.Constants;
 using TQDBEditor.FileViewModule.Views;
 using TQDBEditor.FileViewModule.ViewModels;
 using TQDBEditor.FileViewModule.Dialogs;
-using TQDBEditor.Dialogs;
 using TQDBEditor.FileViewModule.Dialogs.ViewModels;
 
 namespace TQDBEditor.FileViewModule
