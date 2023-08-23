@@ -6,7 +6,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="TQDBEditor.FileViewModule.Dialogs.ArrayEditDialog"
              x:DataType="vm:ArrayEditDialogViewModel">
-  <Grid RowDefinitions="Auto,Auto,Auto">
+  <Grid RowDefinitions="Auto,Auto,*">
     <Grid Grid.Row="0" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
       <Button Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding SetAll}">Set All</Button>
       <Border Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch" Child="{Binding SetAllContent}"/>
@@ -15,8 +15,18 @@
       <Button Grid.Row="2" Grid.Column="0" IsEnabled="{Binding MultiplyAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding MultiplyAll}">Mult. All By</Button>
       <Border Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Child="{Binding MultiplyAllContent}"/>
       <Button Grid.Row="3" Grid.Column="0" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding IncreaseBySeries}">Incr. By Series</Button>
-      <TextBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" Text="{Binding SeriesText}" />
+      <TextBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" Foreground="{Binding SeriesForeground}" Text="{Binding SeriesText}" />
       <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" IsChecked="{Binding ShouldOverwrite}">Overwrite current values</CheckBox>
     </Grid>
+    <StackPanel Grid.Row="1">
+      <TextBlock HorizontalAlignment="Center" Text="Array editing tools"/>
+      <WrapPanel HorizontalAlignment="Center">
+        <Button Command="{Binding AddElement}">Add Value</Button>
+        <Button Command="{Binding RemoveElements}">Remove Value</Button>
+        <Button Command="{Binding MoveElementsUp}">Move Up</Button>
+        <Button Command="{Binding MoveElementsDown}">Move Down</Button>
+      </WrapPanel>
+    </StackPanel>
+    <TreeDataGrid Grid.Row="2" Source="{Binding TreeSource}" />
   </Grid>
 </UserControl>
