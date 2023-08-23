@@ -24,7 +24,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
         public override void OnDialogOpened(IDialogParameters parameters)
         {
             base.OnDialogOpened(parameters);
-            Equation = LocalEntry?.Value;
+            Equation = LocalVariable?.Value;
             EquationVariables = parameters.GetTemplateGroup().GetVariables().Where(x => x.Type == TQDB_Parser.VariableType.eqnVariable).Select(x => x.DefaultValue).ToList();
         }
 
@@ -32,9 +32,9 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
         {
             base.OnPropertyChanged(e);
             if (e.PropertyName == nameof(Equation) &&
-                LocalEntry != null && Equation != null && Equation != LocalEntry.Value)
+                LocalVariable != null && Equation != null && Equation != LocalVariable.Value)
             {
-                LocalEntry.UpdateValue(Equation);
+                LocalVariable.Value = Equation;
             }
         }
 

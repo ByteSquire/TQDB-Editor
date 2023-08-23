@@ -9,7 +9,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
     public abstract class EditDialogViewModelBase : ConfirmationDialogViewModelBase
     {
         public override event Action<IDialogResult>? RequestClose;
-        protected DBREntry? LocalEntry { get; private set; }
+        protected IVariableProvider? LocalVariable { get; private set; }
 
         public override IDialogParameters? OnDialogCancelled(EventArgs e)
         {
@@ -18,10 +18,10 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 
         public override IDialogParameters? OnDialogConfirmed(EventArgs e)
         {
-            if (LocalEntry != null)
+            if (LocalVariable?.Value != null)
             {
                 var dParams = new DialogParameters();
-                dParams.AddChangedValue(LocalEntry.Value);
+                dParams.AddChangedValue(LocalVariable.Value);
                 return dParams;
             }
             return null;
@@ -29,8 +29,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 
         public override void OnDialogOpened(IDialogParameters parameters)
         {
-            var entry = parameters.GetSelectedEntry();
-            LocalEntry = new DBREntry(((DBREntry)entry).Template, entry.Value);
+            LocalVariable = parameters.GetVariable();
         }
     }
 }

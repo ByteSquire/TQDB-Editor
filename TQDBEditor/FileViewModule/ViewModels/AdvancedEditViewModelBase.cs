@@ -10,14 +10,14 @@ namespace TQDBEditor.FileViewModule.ViewModels
 {
     public abstract partial class AdvancedEditViewModelBase : ViewModelBase
     {
-        protected readonly ObservableEntry _dbrEntry;
+        protected readonly IVariableProvider _variableProvider;
         private readonly IDialogService _dialogService;
 
-        public AdvancedEditViewModelBase(ObservableEntry dbrEntry, IDialogService dialogService)
+        public AdvancedEditViewModelBase(IVariableProvider variableProvider, IDialogService dialogService)
         {
-            _dbrEntry = dbrEntry;
+            _variableProvider = variableProvider;
             _dialogService = dialogService;
-            _value = _dbrEntry.Value;
+            _value = _variableProvider.Value;
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -25,7 +25,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
             base.OnPropertyChanged(e);
             if (e.PropertyName == nameof(Value))
             {
-                _dbrEntry.UpdateValue(Value ?? string.Empty);
+                _variableProvider.Value = Value;
             }
         }
 
@@ -40,7 +40,6 @@ namespace TQDBEditor.FileViewModule.ViewModels
         protected virtual void UpdateValue(string? value)
         {
             Value = value;
-            //_dbrEntry.UpdateValue(value);
         }
 
         protected abstract void ShowDialog(IDialogService dialogService, Action<string> callback);

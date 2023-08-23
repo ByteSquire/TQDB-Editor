@@ -9,9 +9,12 @@ using Avalonia.Styling;
 using Prism.Services.Dialogs;
 using ReactiveUI;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Linq;
+using TQDB_Parser;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
 using TQDB_Parser.Extensions;
@@ -23,7 +26,7 @@ namespace TQDBEditor.FileViewModule
 {
     public interface IValueColumnFactory
     {
-        ValueColumn CreateValueColumn(DBRFile file, GridLength? width = default, ColumnOptions<MyVariableRow>? options = null);
+        ValueColumn<T> CreateValueColumn<T>(DBRFile file, GridLength? width = default, ColumnOptions<T>? options = null) where T : IVariableRow;
     }
 
     internal class ValueColumnFactory : IValueColumnFactory
@@ -35,7 +38,7 @@ namespace TQDBEditor.FileViewModule
             _controlProvider = controlProvider;
         }
 
-        public ValueColumn CreateValueColumn(DBRFile file, GridLength? width = null, ColumnOptions<MyVariableRow>? options = null)
+        public ValueColumn<T> CreateValueColumn<T>(DBRFile file, GridLength? width = null, ColumnOptions<T>? options = null) where T : IVariableRow
         {
             return new(_controlProvider, file, width, options);
         }
@@ -43,7 +46,58 @@ namespace TQDBEditor.FileViewModule
 
     public interface ICreateControlForVariable
     {
-        Control? CreateControl(DBRFile file, VariableBlock varTpl, ObservableEntry varEntry, bool editing);
+        Control? CreateControl(GroupBlock fileTpl, IVariableProvider varProvider, bool editing);
+    }
+
+    public interface IVariableProvider : INotifyPropertyChanged
+    {
+        VariableClass Class { get; }
+
+        VariableType Type { get; }
+
+        string DefaultValue { get; }
+
+        bool IsValid { get; }
+
+        IReadOnlyList<int> InvalidIndices { get; }
+
+        string? Value { get; set; }
+    }
+
+    public class DBREntryVariableProvider : IVariableProvider
+    {
+        public VariableClass Class => _entry.Template.Class;
+
+        public VariableType Type => _entry.Template.Type;
+
+        public string DefaultValue => _entry.Template.GetDefaultValue();
+
+        public bool IsValid => _entry.IsValid();
+
+        public IReadOnlyList<int> InvalidIndices => _entry.InvalidIndices;
+
+        public string? Value
+        {
+            get => _entry.Value;
+            set
+            {
+                value ??= string.Empty;
+                if (value != Value)
+                {
+                    _entry.UpdateValue(value);
+                    PropertyChanged?.Invoke(this, new(nameof(Value)));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        private readonly DBREntry _entry;
+
+        public DBREntryVariableProvider(DBREntry entry)
+        {
+            _entry = entry;
+        }
     }
 
     public class VariableControlProvider : ICreateControlForVariable
@@ -55,67 +109,70 @@ namespace TQDBEditor.FileViewModule
             _dialogService = dialogService;
         }
 
-        public Control? CreateControl(DBRFile file, VariableBlock varTpl, ObservableEntry varEntry, bool editing)
+        public Control? CreateControl(GroupBlock fileTpl, IVariableProvider varProvider, bool editing)
         {
+            if (varProvider is null)
+                return null;
             Control? ret = null;
             var binding = new Binding
             {
-                Source = varEntry,
-                Path = nameof(ObservableEntry.Value),
-                ConverterParameter = varEntry,
+                Source = varProvider,
+                Path = nameof(varProvider.Value),
+                ConverterParameter = varProvider,
             };
             if (!editing)
             {
                 binding.Converter = new BBCodeConverter();
-                var richBlock = new RichTextBlock() { UseBBCode = true };
-                richBlock.Bind(TextBlock.TextProperty, binding);
+                var richBlock = new RichTextBlock() { UseBBCode = true, [!TextBlock.TextProperty] = binding };
                 ret = richBlock;
             }
             else
             {
                 binding.Converter = new TQStringConverter();
-                switch (varTpl.Class)
+                switch (varProvider.Class)
                 {
-                    case TQDB_Parser.VariableClass.picklist:
-                        var validValues = varTpl.DefaultValue.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-                        var comboBox = new ComboBox() { ItemsSource = validValues };
+                    case VariableClass.picklist:
+                        var validValues = varProvider.DefaultValue.Split(';', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
                         binding.Converter = null;
-                        comboBox.Bind(SelectingItemsControl.SelectedItemProperty, binding);
+                        var comboBox = new ComboBox() { ItemsSource = validValues, [!SelectingItemsControl.SelectedItemProperty] = binding };
                         ret = comboBox;
                         break;
-                    case TQDB_Parser.VariableClass.array:
+                    case VariableClass.array:
                         var arrayEdit = new AdvancedEdit()
                         {
-                            DataContext = new ArrayEditViewModel(varEntry, _dialogService),
+                            DataContext = new ArrayEditViewModel(fileTpl, varProvider, _dialogService),
                         };
                         ret = arrayEdit;
                         break;
                 };
                 if (ret is null)
-                    switch (varTpl.Type)
+                    switch (varProvider.Type)
                     {
-                        case TQDB_Parser.VariableType.@bool:
-                            var checkBox = new CheckBox();
-                            checkBox.Bind(ToggleButton.IsCheckedProperty, binding);
+                        case VariableType.@bool:
+                            var checkBox = new CheckBox() { [!ToggleButton.IsCheckedProperty] = binding };
                             ret = checkBox;
                             break;
-                        case TQDB_Parser.VariableType.@int:
-                        case TQDB_Parser.VariableType.real:
-                            var numeric = new NumericUpDown() { Increment = varTpl.Type == TQDB_Parser.VariableType.real ? 0.1M : 1, ButtonSpinnerLocation = Location.Left };
-                            numeric.Bind(NumericUpDown.ValueProperty, binding);
+                        case VariableType.@int:
+                        case VariableType.real:
+                            var numeric = new NumericUpDown()
+                            {
+                                Increment = varProvider.Type == VariableType.real ? 0.1M : 1,
+                                ButtonSpinnerLocation = Location.Left,
+                                [!NumericUpDown.ValueProperty] = binding,
+                            };
                             ret = numeric;
                             break;
-                        case TQDB_Parser.VariableType.file:
+                        case VariableType.file:
                             var fileEdit = new AdvancedEdit()
                             {
-                                DataContext = new FileEditViewModel(varEntry, _dialogService),
+                                DataContext = new FileEditViewModel(varProvider, _dialogService),
                             };
                             ret = fileEdit;
                             break;
-                        case TQDB_Parser.VariableType.equation:
+                        case VariableType.equation:
                             var eqnEdit = new AdvancedEdit()
                             {
-                                DataContext = new EquationEditViewModel(file.TemplateRoot, varEntry, _dialogService),
+                                DataContext = new EquationEditViewModel(fileTpl, varProvider, _dialogService),
                             };
                             ret = eqnEdit;
                             break;
@@ -145,17 +202,15 @@ namespace TQDBEditor.FileViewModule
         {
             public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
             {
-                if (value is string sValue && parameter is ObservableEntry entry)
+                if (value is string sValue && parameter is IVariableProvider variable)
                 {
-                    var varEntry = (DBREntry)entry;
                     var varValueBBC = sValue;
-                    if (!varEntry.IsValid())
+                    if (!variable.IsValid)
                     {
                         var valSplit = varValueBBC.Split(';');
                         if (valSplit.Length > 1)
                         {
-                            var invalidIndices = varEntry.InvalidIndices;
-                            foreach (var index in invalidIndices)
+                            foreach (var index in variable.InvalidIndices)
                                 valSplit[index] = "[color=red]" + valSplit[index] + "[/color]";
                             varValueBBC = string.Join(';', valSplit);
                         }
@@ -191,7 +246,7 @@ namespace TQDBEditor.FileViewModule
 
             public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
             {
-                if (targetType == typeof(string) && parameter is ObservableEntry entry)
+                if (targetType == typeof(string) && parameter is IVariableProvider variable)
                 {
                     string? ret = null;
                     switch (value)
@@ -208,15 +263,14 @@ namespace TQDBEditor.FileViewModule
                         case decimal d:
                             var fd = (float)d;
                             var id = (int)d;
-                            ret = ((DBREntry)entry).Template.Type == TQDB_Parser.VariableType.real ? fd.ToTQString() : id.ToTQString();
+                            ret = variable.Type == VariableType.real ? fd.ToTQString() : id.ToTQString();
                             break;
                         case string s:
                             ret = s;
                             break;
                     }
-                    //if (ret != null)
-                    entry.UpdateValue(ret ?? string.Empty);
-                    return ret;
+                    if (ret != null)
+                        return ret;
                 }
 
                 return new BindingNotification(null, BindingErrorType.DataValidationError);
@@ -224,33 +278,38 @@ namespace TQDBEditor.FileViewModule
         }
     }
 
-    public class ValueColumn : ColumnBase<MyVariableRow>
+    public interface IVariableRow
+    {
+        public VariableBlock VariableBlock { get; }
+    }
+
+    public class ValueColumn<T> : ColumnBase<T> where T : IVariableRow
     {
         private readonly DBRFile _file;
         private readonly ICreateControlForVariable _controlProvider;
 
-        public ValueColumn(ICreateControlForVariable controlProvider, DBRFile file, GridLength? width = default, ColumnOptions<MyVariableRow>? options = null) : base(file.FileName, width, options ?? new())
+        public ValueColumn(ICreateControlForVariable controlProvider, DBRFile file, GridLength? width = default, ColumnOptions<T>? options = null) : base(file.FileName, width, options ?? new())
         {
             _file = file;
             _controlProvider = controlProvider;
         }
 
-        public override ICell CreateCell(IRow<MyVariableRow> row)
+        public override ICell CreateCell(IRow<T> row)
         {
             var model = row.Model;
-            if (model.VariableBlock.Class == TQDB_Parser.VariableClass.@static)
+            if (model.VariableBlock.Class == VariableClass.@static)
                 return new TemplateCell(model, x => CreateCellDataTemplate(), null, null);
             return new TemplateCell(model, x => CreateCellDataTemplate(), x => CreateCellDataTemplate(true), null);
         }
 
-        public override Comparison<MyVariableRow?>? GetComparison(ListSortDirection direction)
+        public override Comparison<T?>? GetComparison(ListSortDirection direction)
         {
             if (!(Options.CanUserSortColumn ?? true))
                 return null;
             return (a, b) => CompareVariableRows(a, b) * (direction == ListSortDirection.Descending ? -1 : 1);
         }
 
-        private int CompareVariableRows(MyVariableRow? a, MyVariableRow? b)
+        private int CompareVariableRows(T? a, T? b)
         {
             if (ReferenceEquals(a, b)) return 0;
             if (a == null) return -1;
@@ -260,7 +319,7 @@ namespace TQDBEditor.FileViewModule
 
         private IDataTemplate CreateCellDataTemplate(bool editing = false)
         {
-            var ret = new FuncDataTemplate<MyVariableRow>((x, _) => _controlProvider.CreateControl(_file, x.VariableBlock, new(_file[x.VariableBlock.Name]), editing), true);
+            var ret = new FuncDataTemplate<IVariableRow>((x, _) => _controlProvider.CreateControl(_file.TemplateRoot, new DBREntryVariableProvider(_file[x.VariableBlock.Name]), editing), true);
             return ret;
         }
     }

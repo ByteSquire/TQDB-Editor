@@ -82,7 +82,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
                 var factory = _valueColumnFactoryFactory.Invoke();
                 var colOptions = new ColumnOptions<MyVariableRow>() { CanUserSortColumn = CAN_SORT };
                 foreach (var file in files)
-                    ValSource.Columns.Add(factory.CreateValueColumn(file, options: colOptions));
+                    ValSource.Columns.Add(factory.CreateValueColumn<MyVariableRow>(file, options: colOptions));
 
                 var root = NodeFromGroupBlock(template);
                 root.IsExpanded = true;
@@ -113,7 +113,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
         }
     }
 
-    public class MyVariableRow
+    public class MyVariableRow : IVariableRow
     {
         public VariableBlock VariableBlock { get; }
 
