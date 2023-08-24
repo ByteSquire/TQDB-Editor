@@ -207,12 +207,46 @@ namespace TQDBEditor.FileViewModule
                     var varValueBBC = sValue;
                     if (!variable.IsValid)
                     {
-                        var valSplit = varValueBBC.Split(';');
-                        if (valSplit.Length > 1)
+                        if (variable.Class == VariableClass.array)
                         {
+                            var valSplit = varValueBBC.Split(';');
                             foreach (var index in variable.InvalidIndices)
                                 valSplit[index] = "[color=red]" + valSplit[index] + "[/color]";
                             varValueBBC = string.Join(';', valSplit);
+                        }
+                        else if (variable.Type == VariableType.equation)
+                        {
+                            var valSplit = varValueBBC.Select(x => x.ToString()).ToList();
+                            bool isRed = false;
+                            int offset = 0;
+                            for (int i = 0; i < variable.InvalidIndices.Count - 1; i++)
+                            {
+                                var index = variable.InvalidIndices[i] + offset;
+                                var nIndex = variable.InvalidIndices[i + 1] + offset;
+                                if (nIndex == index + 1)
+                                {
+                                    if (!isRed)
+                                    {
+                                        valSplit.Insert(index, "[color=red]");
+                                        offset++;
+                                        isRed = true;
+                                    }
+                                    continue;
+                                }
+                                if (isRed)
+                                {
+                                    valSplit.Insert(index + 1, "[/color]");
+                                    offset++;
+                                    isRed = false;
+                                }
+                                else
+                                    valSplit[index] = "[color=red]" + valSplit[index] + "[/color]";
+                            }
+                            if (variable.InvalidIndices.Count == 1)
+                                valSplit[variable.InvalidIndices[^1]] = "[color=red]" + valSplit[variable.InvalidIndices[^1]] + "[/color]";
+                            if (isRed)
+                                valSplit.Insert(variable.InvalidIndices[^1] + offset + 1, "[/color]");
+                            varValueBBC = string.Concat(valSplit);
                         }
                         else
                             varValueBBC = "[color=red]" + varValueBBC + "[/color]";
