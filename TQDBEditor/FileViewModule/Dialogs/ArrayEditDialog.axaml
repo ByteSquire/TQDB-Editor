@@ -16,7 +16,7 @@
       <Border Grid.Row="2" Grid.Column="1" HorizontalAlignment="Stretch" Child="{Binding MultiplyAllContent}"/>
       <Button Grid.Row="3" Grid.Column="0" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Command="{Binding IncreaseBySeries}">Incr. By Series</Button>
       <TextBox Grid.Row="3" Grid.Column="1" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" HorizontalAlignment="Stretch" Foreground="{Binding SeriesForeground}" Text="{Binding SeriesText}" />
-      <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" IsChecked="{Binding ShouldOverwrite}">Overwrite current values</CheckBox>
+      <CheckBox Grid.Row="4" Grid.Column="0" IsEnabled="{Binding IncreaseAllContent, Converter={x:Static ObjectConverters.IsNotNull}}" Grid.ColumnSpan="2" IsChecked="{Binding ShouldOverwrite}">Overwrite current values</CheckBox>
     </Grid>
     <StackPanel Grid.Row="1">
       <TextBlock HorizontalAlignment="Center" Text="Array editing tools"/>

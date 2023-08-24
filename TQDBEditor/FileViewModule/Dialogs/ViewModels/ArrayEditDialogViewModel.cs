@@ -55,7 +55,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
         private Control? _multiplyAllContent;
 
         [ObservableProperty]
-        private bool _shouldOverwrite = false;
+        private bool _shouldOverwrite = true;
 
         private readonly ICreateControlForVariable _variableControlProvider;
         private VariableBlock? _tmpTpl;
@@ -213,16 +213,17 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 }
             }
 
-            if (error)
-            {
-                SeriesForeground = new SolidColorBrush(Colors.Red);
-                _seriesValid = false;
-            }
-            else
-            {
-                SeriesForeground = _defaultSeriesForeground;
-                _seriesValid = true;
-            }
+            if (_defaultSeriesForeground != null)
+                if (error)
+                {
+                    SeriesForeground = new SolidColorBrush(Colors.Red);
+                    _seriesValid = false;
+                }
+                else
+                {
+                    SeriesForeground = _defaultSeriesForeground;
+                    _seriesValid = true;
+                }
         }
 
         public void IncreaseBySeries(object? _)
