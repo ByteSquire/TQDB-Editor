@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TQDBEditor.ViewModels
 {
-    public partial class NodeBase : ObservableObject
+    public abstract partial class NodeBase : ObservableObject
     {
         [ObservableProperty]
         private ObservableCollection<NodeBase>? _subNodes;
@@ -21,12 +21,15 @@ namespace TQDBEditor.ViewModels
         [ObservableProperty]
         private bool _isSelected = false;
 
-        public NodeBase(string title, ObservableCollection<NodeBase>? subNodes = null)
+        public NodeBase(string title, IEnumerable<NodeBase>? subNodes = null)
         {
             Title = title;
-            SubNodes = subNodes;
-            if (SubNodes?.Count == 1)
-                SubNodes[0].IsExpanded = true;
+            if (subNodes != null)
+            {
+                SubNodes = new(subNodes);
+                if (SubNodes.Count == 1)
+                    SubNodes[0].IsExpanded = true;
+            }
         }
 
         public void AddSubNode(NodeBase node)
