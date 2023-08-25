@@ -93,7 +93,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 return;
             var fileTpl = parameters.GetTemplateGroup();
 
-            _tmpTpl = new(string.Empty, string.Empty, new Dictionary<string, string> { { "name", "tmp" }, { "class", VariableClass.variable.ToString() }, { "type", LocalVariable.Type.ToString() }, { "defaultValue", LocalVariable.DefaultValue } }, Array.Empty<Block>());
+            _tmpTpl = new(string.Empty, string.Empty, new Dictionary<string, string> { { "name", "tmp" }, { "class", VariableClass.variable.ToString() }, { "type", LocalVariable.Type.ToString() + '_' + string.Join(',', LocalVariable.FileExtensions.Select(x => x[1..])) }, { "defaultValue", LocalVariable.DefaultValue } }, Array.Empty<Block>());
 
             var values = LocalVariable.Value!.Split(';');
             foreach (var item in values)
@@ -354,6 +354,8 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             public VariableClass Class => VariableBlock.Class;
 
             public VariableType Type => VariableBlock.Type;
+
+            public IReadOnlyCollection<string> FileExtensions => VariableBlock.FileExtensions;
 
             public string DefaultValue => VariableBlock.DefaultValue;
 
