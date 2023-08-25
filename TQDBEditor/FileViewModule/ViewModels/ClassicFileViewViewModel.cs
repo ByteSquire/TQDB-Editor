@@ -93,7 +93,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
 
         private Node NodeFromGroupBlock(GroupBlock block)
         {
-            return new Node(block, block.Name, new(block.GetGroups().Select(NodeFromGroupBlock)));
+            return new Node(block, block.Name, block.GetGroups().Select(NodeFromGroupBlock));
         }
 
         public override string ToString()
@@ -107,7 +107,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
         [ObservableProperty]
         private GroupBlock _block;
 
-        public Node(GroupBlock block, string title, ObservableCollection<Node> subNodes) : base(title, subNodes is null ? null : new(subNodes.Cast<NodeBase>()))
+        public Node(GroupBlock block, string title, IEnumerable<Node> subNodes) : base(title, subNodes)
         {
             Block = block;
         }
