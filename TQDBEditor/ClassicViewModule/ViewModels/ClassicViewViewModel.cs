@@ -339,10 +339,10 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                 TreeNodes = new() { _cachedNodes[_selectedView.ToLower()] };
         }
 
-        private ObservableCollection<Node> InitDirectory(string sourcePath)
+        private IEnumerable<Node> InitDirectory(string sourcePath)
         {
             var infos = Directory.CreateDirectory(sourcePath).EnumerateDirectories().ToList();
-            var ret = new ObservableCollection<Node>();
+            var ret = new List<Node>();
             foreach (var info in infos)
             {
                 ret.Add(new(info.FullName, info.Name, InitDirectory(info.FullName)));
@@ -444,7 +444,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
     {
         public string Path { get; set; }
 
-        public Node(string path, string title, ObservableCollection<Node>? subNodes = null) : base(title, subNodes is null ? null : new(subNodes.Cast<NodeBase>()))
+        public Node(string path, string title, IEnumerable<Node>? subNodes = null) : base(title, subNodes)
         {
             Path = path;
         }
