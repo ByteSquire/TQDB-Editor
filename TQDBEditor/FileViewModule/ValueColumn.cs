@@ -55,6 +55,8 @@ namespace TQDBEditor.FileViewModule
 
         VariableType Type { get; }
 
+        public IReadOnlyCollection<string> FileExtensions { get; }
+
         string DefaultValue { get; }
 
         bool IsValid { get; }
@@ -69,6 +71,8 @@ namespace TQDBEditor.FileViewModule
         public VariableClass Class => _entry.Template.Class;
 
         public VariableType Type => _entry.Template.Type;
+
+        public IReadOnlyCollection<string> FileExtensions => _entry.Template.FileExtensions;
 
         public string DefaultValue => _entry.Template.GetDefaultValue();
 
