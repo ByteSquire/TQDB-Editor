@@ -9,13 +9,8 @@
         x:Name="ConfirmationDialogWindowWindow"
         Title="{Binding Title}"
         WindowState="Normal" WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
         >
-  <Window.Styles>
-    <Style Selector="Window">
-      <Setter Property="SizeToContent" Value="WidthAndHeight" />
-    </Style>
-  </Window.Styles>
-
   <DockPanel x:Name="ContentDock" Margin="1 1 1 1" LastChildFill="True">
     <Label VerticalContentAlignment="Center" HorizontalAlignment="Center" DockPanel.Dock="Top" Content="{Binding Title}" />
     <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Horizontal">
