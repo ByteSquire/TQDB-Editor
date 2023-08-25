@@ -15,7 +15,7 @@ namespace TQDBEditor.Services
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            containerRegistry.RegisterInstance(new ConfigService(containerRegistry));
+            ConfigService.RegisterConfigService(containerRegistry);
         }
     }
 }
