@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 using TQDBEditor.Controls;
@@ -33,7 +34,11 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
 {
     public partial class ClassicViewViewModel : ViewModelBase
     {
-        public static string[] KnownDirs => new string[] { "Source", "Assets", "Database" };
+        const string SourceDir = "Source";
+        const string AssetsDir = "Assets";
+        const string DatabaseDir = "Database";
+
+        public static string[] KnownDirs => new string[] { SourceDir, AssetsDir, DatabaseDir };
 
         public TreeDataGrid? FileTable { get; set; }
 
@@ -307,10 +312,29 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         public void BeginOpening()
         {
             var selected = DataGridSource.RowSelection?.SelectedItems;
-            if (selected != null && selected.Count > 0 && WorkingDir != null)
+            if (selected != null && selected.Count > 0)
             {
-                var parser = new DBRParser(_templateManager!, _logger);
-                _accessEvent.Publish(new(selected.OfType<MyFileInfos>().Select(x => parser.ParseFile(x.FullPath))));
+                switch (_selectedView)
+                {
+                    case SourceDir:
+                        // TODO: use known file extensions like msh and so on to start the right tool
+                        foreach (var filePath in selected.OfType<MyFileInfos>().Select(x => x.FullPath))
+                            new Process
+                            {
+                                StartInfo = new ProcessStartInfo(filePath)
+                                {
+                                    UseShellExecute = true
+                                }
+                            }.Start();
+                        break;
+                    case DatabaseDir:
+                        if (_templateManager != null)
+                        {
+                            var parser = new DBRParser(_templateManager, _logger);
+                            _accessEvent.Publish(new(selected.OfType<MyFileInfos>().Select(x => parser.ParseFile(x.FullPath))));
+                        }
+                        break;
+                }
             }
         }
 
@@ -414,10 +438,10 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                     _logger.LogWarning("Somehow selected a directory \"{dir}\" that is not one of the known ones ({known})", _selectedView, KnownDirs);
                 switch (view)
                 {
-                    case "Assets":
+                    case AssetsDir:
                         dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Status", x => string.Empty));
                         break;
-                    case "Database":
+                    case DatabaseDir:
                         dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Description", x => x.Metadata.FileDescription));
                         dataGridSource.Columns.Add(new TextColumn<MyFileInfos, string>("Template", x => x.Metadata.TemplateName));
                         break;
