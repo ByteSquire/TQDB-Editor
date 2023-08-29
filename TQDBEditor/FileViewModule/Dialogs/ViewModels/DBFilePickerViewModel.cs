@@ -25,11 +25,12 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
         private HierarchicalTreeDataGridSource<DBNode> _treeSource;
         private readonly ObservableCollection<DBNode> _nodes;
 
-        private readonly string? _toolsDir;
-        private readonly string? _modDir;
+        private string? _toolsDir;
+        private string? _databaseDir;
+        private string? _modName;
         private readonly ILogger _logger;
 
-        public DBFilePickerViewModel(IConfiguration configuration, ILoggerProvider loggerProvider)
+        public DBFilePickerViewModel(IObservableConfiguration configuration, ILoggerProvider loggerProvider)
         {
             _nodes = new();
             TreeSource = new(_nodes)
@@ -41,13 +42,17 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                         x => new ObservableCollection<DBNode>(x.SubNodes!.Cast<DBNode>().OrderBy(x => x.Title)),
                         x => x.SubNodes != null, x => x.IsExpanded
                         ),
-                    new TextColumn<DBNode, string>("Source", x => x.SubNodes == null ? x.Source : null),
+                    new TextColumn<DBNode, string>("Source", x => x.SubNodes == null ? x.Source : null, width: GridLength.Auto),
                 }
             };
             if (TreeSource.RowSelection != null)
                 TreeSource.RowSelection.SingleSelect = true;
+            _modName = configuration.GetModName();
+            configuration.AddModNameChangeListener(x => _modName = x);
             _toolsDir = configuration.GetToolsDir();
-            _modDir = configuration.GetModDir();
+            configuration.AddToolsDirChangeListener(x => _toolsDir = x);
+            _databaseDir = configuration.GetModDir() is null ? null : Path.Combine(configuration.GetModDir()!, "database");
+            configuration.AddModDirChangeListener(x => _databaseDir = x is null ? null : Path.Combine(x, "database"));
             _logger = loggerProvider.CreateLogger("DBFilePicker");
         }
 
@@ -60,6 +65,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             var fExtensions = LocalVariable.FileExtensions;
             if (!fExtensions.Any())
                 return;
+            var tmpList = new List<DBNode>();
             if (fExtensions.ToArray()[0] == ".dbr")
             {
                 if (_toolsDir == null)
@@ -67,11 +73,31 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 var reader = new ArzReader(Path.Combine(_toolsDir, "database", "database.arz"), _logger);
                 var stringArr = reader.GetStringList().ToArray();
                 var fileNames = reader.GetDBRFileInfos().Select(x => stringArr[x.NameID]).ToList();
-                var tmpList = new List<DBNode>();
                 foreach (var file in fileNames)
                     AddTreeNode(file, "vanilla database", tmpList);
-                _nodes.AddRange(tmpList);
+
+                if (_modName != null)
+                {
+                    var docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    var outputDir = Path.Combine(docs, "My Games", "Titan Quest - Immortal Throne", "CustomMaps", _modName);
+                    var outputArchivePath = Path.Combine(outputDir, "database", _modName + ".arz");
+                    if (File.Exists(outputArchivePath))
+                    {
+                        var outReader = new ArzReader(Path.Combine(outputArchivePath), _logger);
+                        var outStringArr = outReader.GetStringList().ToArray();
+                        var outFileNames = outReader.GetDBRFileInfos().Select(x => outStringArr[x.NameID]).ToList();
+                        foreach (var file in outFileNames)
+                            AddTreeNode(file, "mod database", tmpList, true);
+                    }
+                }
             }
+            if (_databaseDir != null)
+                foreach (var file in fExtensions.SelectMany(x => Directory.EnumerateFiles(_databaseDir, '*' + x, SearchOption.AllDirectories)))
+                {
+                    AddTreeNode(Path.GetRelativePath(_databaseDir, file), "mod file system", tmpList);
+                }
+
+            _nodes.AddRange(tmpList);
         }
 
         public override IDialogParameters? OnDialogConfirmed(EventArgs e)
@@ -82,7 +108,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             return base.OnDialogConfirmed(e);
         }
 
-        private void AddTreeNode(string path, string source, IList<DBNode> list)
+        private void AddTreeNode(string path, string source, IList<DBNode> list, bool overwrite = false)
         {
             var pathSegments = path.Split('\\');
             var root = list.FirstOrDefault(x => x.Title == pathSegments[0]);
@@ -108,6 +134,10 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 AddChildren(nNode, source, pathSegments[(i + 1)..]);
                 (node.SubNodes ??= new ObservableCollection<NodeBase>()).Add(nNode);
                 break;
+            }
+            if (node != null)
+            {
+                node.Source = !overwrite ? node.Source + " - " + source : source;
             }
         }
 
