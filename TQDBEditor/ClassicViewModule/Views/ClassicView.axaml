@@ -22,14 +22,14 @@
         <ColumnDefinition MinWidth="100" Width="*"/>
       </Grid.ColumnDefinitions>
       <DockPanel Grid.Column="0" LastChildFill="True">
-        <TabStrip DockPanel.Dock="Bottom" Margin="5" SelectionChanged="OnTabSelected" ItemsSource="{Binding KnownDirs}">
+        <TabStrip DockPanel.Dock="Bottom" Margin="5" SelectedItem="{Binding SelectedView}" ItemsSource="{Binding KnownDirs}">
           <TabStrip.ItemTemplate>
             <DataTemplate x:DataType="{x:Type sys:String}">
               <TabItem Header="{Binding}" />
             </DataTemplate>
           </TabStrip.ItemTemplate>
         </TabStrip>
-        <TreeView x:Name="Tree" ItemsSource="{Binding TreeNodes}" SelectionMode="Single" SelectionChanged="OnNodeSelected">
+        <TreeView x:Name="Tree" ItemsSource="{Binding TreeNodes}" SelectionMode="Single" SelectedItem="{Binding SelectedNode}">
           <TreeView.ItemTemplate>
             <TreeDataTemplate ItemsSource="{Binding SubNodes}">
               <TextBlock Text="{Binding Title}"/>

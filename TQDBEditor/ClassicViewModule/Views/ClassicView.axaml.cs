@@ -88,21 +88,5 @@ namespace TQDBEditor.ClassicViewModule.Views
                 }
             }
         }
-
-        public void OnNodeSelected(object sender, SelectionChangedEventArgs e)
-        {
-            if (DataContext is ClassicViewViewModel viewModel && e.AddedItems.Count > 0)
-            {
-                viewModel.OnNodeSelected(e.AddedItems[0] as Node);
-            }
-        }
-
-        public void OnTabSelected(object sender, SelectionChangedEventArgs e)
-        {
-            if (DataContext is ClassicViewViewModel viewModel && e.AddedItems.Count > 0)
-            {
-                viewModel.OnViewSelected(e.AddedItems[0] as string);
-            }
-        }
     }
 }
