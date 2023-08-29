@@ -51,6 +51,8 @@ namespace TQDBEditor.FileViewModule
 
     public interface IVariableProvider : INotifyPropertyChanged
     {
+        string Name { get; }
+
         VariableClass Class { get; }
 
         VariableType Type { get; }
@@ -68,6 +70,8 @@ namespace TQDBEditor.FileViewModule
 
     public class DBREntryVariableProvider : IVariableProvider
     {
+        public string Name => _entry.Template.Name;
+
         public VariableClass Class => _entry.Template.Class;
 
         public VariableType Type => _entry.Template.Type;
