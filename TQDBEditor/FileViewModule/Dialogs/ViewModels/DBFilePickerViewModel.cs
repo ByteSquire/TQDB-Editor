@@ -17,7 +17,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 {
     public partial class DBFilePickerViewModel : EditDialogViewModelBase
     {
-        public override string Title => "Pick a file";
+        protected override string SubTitle => "Pick a file";
 
         public override bool CanConfirmDialog() => TreeSource.RowSelection?.SelectedItem != null;
 
@@ -38,11 +38,11 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 Columns =
                 {
                     new HierarchicalExpanderColumn<DBNode>(
-                        new TextColumn<DBNode, string>("File", x => x.Title, width: GridLength.Star),
+                        new TextColumn<DBNode, string>("File", x => x.Title, width: GridLength.Auto),
                         x => new ObservableCollection<DBNode>(x.SubNodes!.Cast<DBNode>().OrderBy(x => x.Title)),
                         x => x.SubNodes != null, x => x.IsExpanded
                         ),
-                    new TextColumn<DBNode, string>("Source", x => x.SubNodes == null ? x.Source : null, width: GridLength.Auto),
+                    new TextColumn<DBNode, string>("Source", x => x.SubNodes == null ? x.Source : null),
                 }
             };
             if (TreeSource.RowSelection != null)

@@ -8,6 +8,9 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 {
     public abstract class EditDialogViewModelBase : ConfirmationDialogViewModelBase
     {
+        public override string Title => (LocalVariable is null ? string.Empty : LocalVariable.Name + " : ") + SubTitle;
+        protected abstract string SubTitle { get; }
+
         public override event Action<IDialogResult>? RequestClose;
         protected IVariableProvider? LocalVariable { get; private set; }
 
@@ -30,6 +33,8 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
         public override void OnDialogOpened(IDialogParameters parameters)
         {
             LocalVariable = parameters.GetVariable();
+            OnPropertyChanged(nameof(LocalVariable));
+            OnPropertyChanged(nameof(Title));
         }
     }
 }

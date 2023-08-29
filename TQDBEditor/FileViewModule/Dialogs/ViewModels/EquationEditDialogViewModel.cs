@@ -13,7 +13,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 {
     public partial class EquationEditDialogViewModel : EditDialogViewModelBase
     {
-        public override string Title => "Edit the Equation";
+        protected override string SubTitle => "Edit the Equation";
 
         [ObservableProperty]
         private string? _equation;
