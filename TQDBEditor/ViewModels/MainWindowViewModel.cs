@@ -43,8 +43,8 @@ namespace TQDBEditor.ViewModels
 
         public MainWindowViewModel(IObservableConfiguration config)
         {
-            ActiveMod = config.GetModDir() ?? string.Empty;
-            config.AddModDirChangeListener(x => ActiveMod = x ?? string.Empty);
+            ActiveMod = config.GetModName() ?? string.Empty;
+            config.AddModNameChangeListener(x => ActiveMod = x ?? string.Empty);
         }
     }
 }

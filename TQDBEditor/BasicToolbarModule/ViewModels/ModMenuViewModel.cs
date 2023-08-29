@@ -77,8 +77,8 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
             _dialogService = dialogService;
             _config = config;
             WorkingDir = config.GetWorkingDir();
-            if (!string.IsNullOrEmpty(config.GetModDir()))
-                SelectMod(config.GetModDir()!);
+            if (!string.IsNullOrEmpty(config.GetModName()))
+                SelectMod(config.GetModName()!);
             config.AddWorkingDirChangeListener(x => WorkingDir = x);
         }
 
@@ -89,7 +89,7 @@ namespace TQDBEditor.BasicToolbarModule.ViewModels
             if (e.PropertyName == nameof(WorkingDir))
                 OnWorkingDirChanged();
             if (e.PropertyName == nameof(ActiveMod))
-                _config.SetModDir(ActiveMod?.Name);
+                _config.SetModName(ActiveMod?.Name);
         }
 
         private FileSystemWatcher? watcher;
