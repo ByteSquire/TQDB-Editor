@@ -41,6 +41,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         public static string[] KnownDirs => new string[] { SourceDir, AssetsDir, DatabaseDir };
 
         public TreeDataGrid? FileTable { get; set; }
+        public Control? Control { get; set; }
 
         [ObservableProperty]
         private ObservableCollection<Node> _treeNodes = new();
@@ -58,10 +59,11 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private bool _allFilesSelected;
         private bool _innerSelect = false;
 
-        [ObservableProperty]
-        private string? _workingDir;
-        private string? WorkingModsFolder => WorkingDir is null ? null : Path.Combine(WorkingDir, "CustomMaps");
-        private string? FullModDir => WorkingModsFolder is null || _modDir is null ? null : Path.Combine(WorkingModsFolder, _modDir);
+        //[ObservableProperty]
+        //private string? _workingDir;
+        //private string? WorkingModsFolder => WorkingDir is null ? null : Path.Combine(WorkingDir, "CustomMaps");
+        //private string? FullModDir => WorkingModsFolder is null || _modDir is null ? null : Path.Combine(WorkingModsFolder, _modDir);
+        private string? _modName;
         private string? _modDir;
         private readonly ILogger _logger;
         private readonly FileSystemWatcher _modWatcher;
@@ -73,7 +75,8 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         public ClassicViewViewModel(IObservableConfiguration configuration, IEventAggregator ea, ILoggerProvider loggerFactory)
         {
             _logger = loggerFactory.CreateLogger(nameof(TQDBEditor.ClassicViewModule));
-            WorkingDir = configuration.GetWorkingDir();
+            _modDir = configuration.GetModDir();
+            configuration.AddModDirChangeListener(x => _modDir = x);
             _modWatcher = new()
             {
                 IncludeSubdirectories = true,
@@ -92,13 +95,24 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             _dirWatcher.Renamed += FileRenamed;
             _dirWatcher.Changed += FileChanged;
 
-            OnModDirChanged(configuration.GetModDir());
-            configuration.AddWorkingDirChangeListener(x => WorkingDir = x);
-            configuration.AddModDirChangeListener(OnModDirChanged);
+            InitTemplateManger(configuration.GetWorkingDir());
+            OnModNameChanged(configuration.GetModName());
+            configuration.AddWorkingDirChangeListener(InitTemplateManger);
+            configuration.AddModNameChangeListener(OnModNameChanged);
 
             _accessEvent = ea.GetEvent<DBRAccessEvent>();
 
             DataGridSource = CreateBasicDataGridSource();
+        }
+
+        private void InitTemplateManger(string? workingDir)
+        {
+            if (workingDir != null)
+            {
+                var t = new TemplateManager(workingDir, logger: _logger);
+                t.ResolveAllIncludes();
+                _templateManager = t;
+            }
         }
 
         private void DirectoryCreated(object sender, FileSystemEventArgs e)
@@ -118,7 +132,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                     currNode = child;
                 else
                 {
-                    var newPath = Path.Combine(pathSegments[..(i + 1)].Prepend(FullModDir!).ToArray());
+                    var newPath = Path.Combine(pathSegments[..(i + 1)].Prepend(_modDir!).ToArray());
                     currNode.AddSubNode(new Node(newPath, currDir, InitDirectory(newPath)));
                 }
             }
@@ -216,9 +230,9 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
         private bool TryGetRelativeToModSplit(string path, [NotNullWhen(true)] out string[]? relativeSplit)
         {
             relativeSplit = null;
-            if (FullModDir == null)
+            if (_modDir == null)
                 return false;
-            var relative = Path.GetRelativePath(FullModDir, path);
+            var relative = Path.GetRelativePath(_modDir, path);
             var root = relative.Split(Path.DirectorySeparatorChar)[0];
             if (KnownDirs.Any(x => x.Equals(root, StringComparison.OrdinalIgnoreCase)))
             {
@@ -236,7 +250,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                 Columns =
                 {
                     new TemplateColumn<MyFileInfos>(
-                        new CheckBox(){ [!CheckBox.IsCheckedProperty] = new Binding(nameof(AllFilesSelected)), },
+                        new CheckBox(){ [!CheckBox.IsCheckedProperty] = new Binding(nameof(AllFilesSelected)), Focusable = false },
                         new FuncDataTemplate<MyFileInfos>(x => true, x => new Border(){ Padding = new(4,2,4,2), Child = new CheckBox(){ [!CheckBox.IsCheckedProperty] = new Binding(nameof(MyFileInfos.IsSelected)) } }),
                         options: new() { CanUserResizeColumn = false, CanUserSortColumn = false, BeginEditGestures = BeginEditGestures.None }),
                     new TextColumn<MyFileInfos, string>("Name", x => Path.GetFileName(x.FullPath), (x, value) =>
@@ -278,6 +292,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             if (!_innerSelect && e.PropertyName == nameof(AllFilesSelected) && DataGridSource?.RowSelection != null)
                 if (AllFilesSelected)
                 {
+                    Control?.Focus();
                     DataGridSource.RowSelection.BeginBatchUpdate();
                     for (int i = 0; i < _filePaths.Count; i++)
                     {
@@ -290,13 +305,13 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                     DataGridSource.RowSelection.Clear();
                 }
 
-            if (e.PropertyName == nameof(WorkingDir))
-                if (WorkingDir != null)
-                {
-                    var t = new TemplateManager(WorkingDir, logger: _logger);
-                    t.ResolveAllIncludes();
-                    _templateManager = t;
-                }
+            //if (e.PropertyName == nameof(WorkingDir))
+            //    if (WorkingDir != null)
+            //    {
+            //        var t = new TemplateManager(WorkingDir, logger: _logger);
+            //        t.ResolveAllIncludes();
+            //        _templateManager = t;
+            //    }
 
             if (e.PropertyName == nameof(SelectedNode))
                 OnNodeSelected();
@@ -354,20 +369,19 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
             }
         }
 
-        private void OnModDirChanged(string? path)
+        private void OnModNameChanged(string? path)
         {
             Reset();
             _modWatcher.EnableRaisingEvents = false;
-            if (path != null && WorkingModsFolder != null)
+            if (path != null && _modDir != null)
             {
-                _modDir = path;
-                var modPath = FullModDir!;
-                _modWatcher.Path = modPath;
+                _modName = path;
+                _modWatcher.Path = _modDir;
                 _modWatcher.EnableRaisingEvents = true;
                 foreach (var known in KnownDirs)
                 {
-                    var rootPath = Path.Combine(modPath, known.ToLower());
-                    Node root = new(rootPath, Path.Combine(_modDir!, known.ToLower()), InitDirectory(rootPath)) { IsExpanded = true };
+                    var rootPath = Path.Combine(_modDir, known.ToLower());
+                    Node root = new(rootPath, Path.Combine(_modName!, known.ToLower()), InitDirectory(rootPath)) { IsExpanded = true };
                     _cachedNodes[known.ToLower()] = root;
                 }
                 UpdateTreeNodes();

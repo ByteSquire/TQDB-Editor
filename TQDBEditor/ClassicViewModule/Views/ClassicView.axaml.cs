@@ -30,9 +30,11 @@ namespace TQDBEditor.ClassicViewModule.Views
         protected override void OnLoaded(RoutedEventArgs e)
         {
             base.OnLoaded(e);
+            Focusable = true;
             if (DataContext is ClassicViewViewModel viewModel)
             {
                 viewModel.FileTable = FileTable;
+                viewModel.Control = this;
             }
         }
 
