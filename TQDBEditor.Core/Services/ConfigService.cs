@@ -215,8 +215,15 @@ namespace TQDBEditor.Services
         public static void SetToolsDir(this IConfiguration configuration, string? value) => configuration[TOOLS_DIR] = value;
         public static void AddToolsDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(TOOLS_DIR, listener);
 
-        public static string? GetModDir(this IConfiguration configuration) => configuration[MOD_DIR];
-        public static void SetModDir(this IConfiguration configuration, string? value) => configuration[MOD_DIR] = value;
-        public static void AddModDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(MOD_DIR, listener);
+        public static string? GetModName(this IConfiguration configuration) => configuration[MOD_DIR];
+        public static void SetModName(this IConfiguration configuration, string? value) => configuration[MOD_DIR] = value;
+        public static void AddModNameChangeListener(this IObservableConfiguration configuration, Action<string?> listener) => configuration.AddWellKnownChangeHandler(MOD_DIR, listener);
+
+        public static string? GetModDir(this IConfiguration configuration) => (configuration[WORKING_DIR] == null || configuration[MOD_DIR] == null) ? null : Path.Combine(configuration[WORKING_DIR]!, "CustomMaps", configuration[MOD_DIR]!);
+        public static void AddModDirChangeListener(this IObservableConfiguration configuration, Action<string?> listener)
+        {
+            configuration.AddModNameChangeListener(x => listener(GetModDir(configuration)));
+            configuration.AddWorkingDirChangeListener(x => listener(GetModDir(configuration)));
+        }
     }
 }
