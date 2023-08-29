@@ -89,16 +89,16 @@ namespace TQDBEditor
         }
     }
 
-    public abstract class ObservableCollectionWithMapping<T, U> : ObservableCollection<T> where U : notnull
+    public abstract class ObservableCollectionWithMapping<FromType, ToType> : ObservableCollection<ToType> where FromType : notnull where ToType : notnull
     {
-        protected readonly Dictionary<U, int> indexMap = new();
+        protected readonly Dictionary<FromType, int> indexMap = new();
 
-        protected void AddPreserveNotify(IEnumerable<U> input)
+        protected void AddPreserveNotify(IEnumerable<FromType> input)
         {
             this.AddPreserveNotifyMapping(input, Mapping);
         }
 
-        protected T Mapping(U input)
+        protected ToType Mapping(FromType input)
         {
             if (indexMap.TryGetValue(input, out int index))
                 return this[index];
@@ -106,16 +106,16 @@ namespace TQDBEditor
                 return Map(input);
         }
 
-        protected abstract T Map(U input);
-        protected abstract U MapBack(T input);
+        protected abstract ToType Map(FromType input);
+        protected abstract FromType MapBack(ToType input);
 
-        protected override void SetItem(int index, T item)
+        protected override void SetItem(int index, ToType item)
         {
             base.SetItem(index, item);
             indexMap[MapBack(item)] = index;
         }
 
-        protected override void InsertItem(int index, T item)
+        protected override void InsertItem(int index, ToType item)
         {
             base.InsertItem(index, item);
             indexMap[MapBack(item)] = index;
