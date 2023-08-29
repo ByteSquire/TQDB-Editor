@@ -2,14 +2,11 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Selection;
 using Avalonia.Controls.Templates;
-using Avalonia.Data;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ImTools;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -17,18 +14,16 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using TQDB_Parser;
 using TQDB_Parser.Blocks;
 using TQDB_Parser.DBR;
 using TQDB_Parser.Extensions;
-using static ImTools.ImMap;
 
 namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 {
     public partial class ArrayEditDialogViewModel : EditDialogViewModelBase
     {
-        public override string Title => "Edit the Array";
+        protected override string SubTitle => "Edit the Array";
 
         public override bool CanConfirmDialog() => true;
 
@@ -58,7 +53,6 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
         private bool _shouldOverwrite = true;
 
         private readonly ICreateControlForVariable _variableControlProvider;
-        private VariableBlock? _tmpTpl;
         private DBREntry? _setAllEntry;
         private DBREntry? _increaseAllEntry;
         private DBREntry? _multiplyAllEntry;
@@ -93,8 +87,6 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 return;
             var fileTpl = parameters.GetTemplateGroup();
 
-            _tmpTpl = new(string.Empty, string.Empty, new Dictionary<string, string> { { "name", "tmp" }, { "class", VariableClass.variable.ToString() }, { "type", LocalVariable.Type.ToString() + '_' + string.Join(',', LocalVariable.FileExtensions.Select(x => x[1..])) }, { "defaultValue", LocalVariable.DefaultValue } }, Array.Empty<Block>());
-
             var values = LocalVariable.Value!.Split(';');
             foreach (var item in values)
             {
@@ -105,16 +97,36 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 new FuncDataTemplate<TreeRow>((x, _) => _variableControlProvider.CreateControl(fileTpl, x, true)), width: GridLength.Star)
             );
 
-            _setAllEntry = new(_tmpTpl);
-            _increaseAllEntry = new(_tmpTpl);
-            _multiplyAllEntry = new(_tmpTpl);
+            _setAllEntry = new(CreateTemplate("Set All")!);
+            _increaseAllEntry = new(CreateTemplate("Increase All")!);
+            _multiplyAllEntry = new(CreateTemplate("Multiply All")!);
 
             SetAllContent = _variableControlProvider.CreateControl(fileTpl, new DBREntryVariableProvider(_setAllEntry), true);
-            if (_tmpTpl.Type == VariableType.real || _tmpTpl.Type == VariableType.@int)
+            if (LocalVariable.Type == VariableType.real || LocalVariable.Type == VariableType.@int)
             {
                 IncreaseAllContent = _variableControlProvider.CreateControl(fileTpl, new DBREntryVariableProvider(_increaseAllEntry), true);
                 MultiplyAllContent = _variableControlProvider.CreateControl(fileTpl, new DBREntryVariableProvider(_multiplyAllEntry), true);
             }
+        }
+
+        private VariableBlock? CreateTemplate(string name)
+        {
+            if (LocalVariable == null)
+                return null;
+            var keyValuePairs = new Dictionary<string, string> {
+                { "name", name },
+                { "class", VariableClass.variable.ToString() },
+                { "type", LocalVariable.Type.ToString() + '_' + string.Join(',', LocalVariable.FileExtensions.Select(x => x[1..])) },
+                { "defaultValue", LocalVariable.DefaultValue }
+            };
+            return new(string.Empty, string.Empty, keyValuePairs, Array.Empty<Block>());
+        }
+
+        private VariableBlock? CreateTemplate(int index)
+        {
+            if (LocalVariable == null)
+                return null;
+            return CreateTemplate(LocalVariable.Name + '[' + index.ToString() + ']');
         }
 
         public override IDialogParameters? OnDialogConfirmed(EventArgs e)
@@ -126,9 +138,10 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 
         private int? AddTreeElement(int? index = null, string? value = null)
         {
-            if (_tmpTpl == null) return null;
             index ??= _treeRows.Count;
-            _treeRows.Insert(index.Value, new(_treeRows, _tmpTpl) { Value = value ?? _tmpTpl.GetDefaultValue() });
+            var tmpTpl = CreateTemplate(index.Value);
+            if (tmpTpl == null) return null;
+            _treeRows.Insert(index.Value, new(_treeRows, tmpTpl) { Value = value ?? tmpTpl.GetDefaultValue() });
             return index;
         }
 
@@ -193,12 +206,12 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 
         private void OnIncrSeriesChanged()
         {
-            if (_tmpTpl == null) return;
+            if (LocalVariable == null) return;
             var error = false;
             var split = GetIncrSeriesElements();
             foreach (var s in split)
             {
-                if (_tmpTpl.Type == VariableType.real)
+                if (LocalVariable.Type == VariableType.real)
                 {
                     if (!TQNumberString.TryParseTQString(s, out float _))
                     {
@@ -228,7 +241,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 
         public void IncreaseBySeries(object? _)
         {
-            if (SeriesText == null || _tmpTpl == null || !_seriesValid) return;
+            if (SeriesText == null || LocalVariable == null || !_seriesValid) return;
 
             var split = GetIncrSeriesElements();
             var series = new List<float>();
@@ -254,14 +267,14 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                     if (shouldOverwrite)
                     {
                         if (!TQNumberString.TryParseTQString(lastValue.Value, out float fVal)) continue;
-                        row.Value = (fVal + series[seriesIndex]).ToTQString(_tmpTpl.Type == VariableType.@int);
+                        row.Value = (fVal + series[seriesIndex]).ToTQString(LocalVariable.Type == VariableType.@int);
                         lastValue = row;
                     }
                     else
                     {
                         lastValue = row;
                         if (!TQNumberString.TryParseTQString(lastValue.Value, out float fVal)) continue;
-                        row.Value = (fVal + series[seriesIndex]).ToTQString(_tmpTpl.Type == VariableType.@int);
+                        row.Value = (fVal + series[seriesIndex]).ToTQString(LocalVariable.Type == VariableType.@int);
                     }
 
                     if (++seriesIndex >= series.Count)
@@ -350,6 +363,8 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             public int Index => _rows.IndexOf(this);
 
             public VariableBlock VariableBlock { get; }
+
+            public string Name => VariableBlock.Name;
 
             public VariableClass Class => VariableBlock.Class;
 
