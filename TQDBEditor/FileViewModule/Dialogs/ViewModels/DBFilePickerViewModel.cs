@@ -19,18 +19,21 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
     {
         protected override string SubTitle => "Pick a file";
 
-        public override bool CanConfirmDialog() => TreeSource.RowSelection?.SelectedItem != null;
+        public override bool CanConfirmDialog() => TreeSource.RowSelection?.SelectedItem != null && TreeSource.RowSelection.SelectedItem.SubNodes == null;
 
         [ObservableProperty]
         private HierarchicalTreeDataGridSource<DBNode> _treeSource;
         private readonly ObservableCollection<DBNode> _nodes;
 
-        private string? _toolsDir;
-        private string? _databaseDir;
-        private string? _modName;
+        private readonly string? _toolsDir;
+        private readonly string? _databaseDir;
+        private readonly string? _modName;
+        private readonly string? _modArzPath;
         private readonly ILogger _logger;
+        private static readonly Dictionary<string, IList<string>> _archiveFilesMap = new();
+        private static readonly Dictionary<string, FileSystemWatcher> _archiveFileWatcher = new();
 
-        public DBFilePickerViewModel(IObservableConfiguration configuration, ILoggerProvider loggerProvider)
+        public DBFilePickerViewModel(IConfiguration configuration, ILoggerProvider loggerProvider)
         {
             _nodes = new();
             TreeSource = new(_nodes)
@@ -48,11 +51,14 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             if (TreeSource.RowSelection != null)
                 TreeSource.RowSelection.SingleSelect = true;
             _modName = configuration.GetModName();
-            configuration.AddModNameChangeListener(x => _modName = x);
             _toolsDir = configuration.GetToolsDir();
-            configuration.AddToolsDirChangeListener(x => _toolsDir = x);
             _databaseDir = configuration.GetModDir() is null ? null : Path.Combine(configuration.GetModDir()!, "database");
-            configuration.AddModDirChangeListener(x => _databaseDir = x is null ? null : Path.Combine(x, "database"));
+            if (_modName != null)
+            {
+                var docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                var outputDir = Path.Combine(docs, "My Games", "Titan Quest - Immortal Throne", "CustomMaps", _modName);
+                _modArzPath = Path.Combine(outputDir, "database", _modName + ".arz");
+            }
             _logger = loggerProvider.CreateLogger("DBFilePicker");
         }
 
@@ -68,28 +74,11 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             var tmpList = new List<DBNode>();
             if (fExtensions.ToArray()[0] == ".dbr")
             {
-                if (_toolsDir == null)
-                    return;
-                var reader = new ArzReader(Path.Combine(_toolsDir, "database", "database.arz"), _logger);
-                var stringArr = reader.GetStringList().ToArray();
-                var fileNames = reader.GetDBRFileInfos().Select(x => stringArr[x.NameID]).ToList();
-                foreach (var file in fileNames)
-                    AddTreeNode(file, "vanilla database", tmpList);
+                if (_toolsDir != null)
+                    AddNodesFromArchive(Path.Combine(_toolsDir, "database", "database.arz"), "vanilla database", tmpList);
 
-                if (_modName != null)
-                {
-                    var docs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    var outputDir = Path.Combine(docs, "My Games", "Titan Quest - Immortal Throne", "CustomMaps", _modName);
-                    var outputArchivePath = Path.Combine(outputDir, "database", _modName + ".arz");
-                    if (File.Exists(outputArchivePath))
-                    {
-                        var outReader = new ArzReader(Path.Combine(outputArchivePath), _logger);
-                        var outStringArr = outReader.GetStringList().ToArray();
-                        var outFileNames = outReader.GetDBRFileInfos().Select(x => outStringArr[x.NameID]).ToList();
-                        foreach (var file in outFileNames)
-                            AddTreeNode(file, "mod database", tmpList, true);
-                    }
-                }
+                if (_modArzPath != null)
+                    AddNodesFromArchive(_modArzPath, "mod database", tmpList);
             }
             if (_databaseDir != null)
                 foreach (var file in fExtensions.SelectMany(x => Directory.EnumerateFiles(_databaseDir, '*' + x, SearchOption.AllDirectories)))
@@ -98,6 +87,48 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
                 }
 
             _nodes.AddRange(tmpList);
+        }
+
+        private void AddNodesFromArchive(string archivePath, string source, IList<DBNode> existingNodes)
+        {
+            foreach (var file in GetFilesFromArchive(archivePath))
+                AddTreeNode(file, source, existingNodes, true);
+        }
+
+        private IList<string> GetFilesFromArchive(string archivePath)
+        {
+            if (_archiveFilesMap.TryGetValue(archivePath, out var files))
+                return files;
+
+            if (!File.Exists(archivePath))
+                return Array.Empty<string>();
+
+            var arzReader = new ArzReader(archivePath, _logger);
+            var arzStringArr = arzReader.GetStringList().ToArray();
+            var arzFileNames = arzReader.GetDBRFileInfos().Select(x => arzStringArr[x.NameID]).ToList();
+            AddArchiveToMap(archivePath, arzFileNames);
+
+            return arzFileNames;
+        }
+
+        private static void AddArchiveToMap(string archivePath, IList<string> arzFileNames)
+        {
+            _archiveFilesMap[archivePath] = arzFileNames;
+            var fsWatcher = new FileSystemWatcher(Path.GetDirectoryName(archivePath)!, Path.GetFileName(archivePath))
+            {
+                EnableRaisingEvents = true,
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
+            };
+            _archiveFileWatcher[archivePath] = fsWatcher;
+            fsWatcher.Changed += (_, _) => RemoveFromMap();
+            fsWatcher.Deleted += (_, _) => RemoveFromMap();
+            fsWatcher.Renamed += (_, _) => RemoveFromMap();
+
+            void RemoveFromMap()
+            {
+                _archiveFilesMap.Remove(archivePath);
+                _archiveFileWatcher.Remove(archivePath);
+            }
         }
 
         public override IDialogParameters? OnDialogConfirmed(EventArgs e)
