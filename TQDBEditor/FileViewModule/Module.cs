@@ -24,7 +24,7 @@ namespace TQDBEditor.FileViewModule
             containerRegistry.RegisterSingleton<DBRAccessHandler>();
             containerRegistry.RegisterForNavigation<ClassicFileView, ClassicFileViewViewModel>();
 
-            containerRegistry.RegisterSingleton<IValueColumnFactory, ValueColumnFactory>();
+            //containerRegistry.RegisterSingleton<IValueColumnFactory, ValueColumnFactory>();
             containerRegistry.RegisterSingleton<ICreateControlForVariable, VariableControlProvider>();
 
             containerRegistry.RegisterDialog<ArrayEditDialog, ArrayEditDialogViewModel>(IDialogServiceExtensions.arrayEdit);

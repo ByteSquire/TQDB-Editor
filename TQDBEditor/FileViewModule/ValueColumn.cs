@@ -24,29 +24,29 @@ using TQDBEditor.FileViewModule.ViewModels;
 
 namespace TQDBEditor.FileViewModule
 {
-    public interface IValueColumnFactory
-    {
-        ValueColumn<T> CreateValueColumn<T>(DBRFile file, GridLength? width = default, ColumnOptions<T>? options = null) where T : IVariableRow;
-    }
+    //public interface IValueColumnFactory
+    //{
+    //    ValueColumn<T> CreateValueColumn<T>(DBRFile file, GridLength? width = default, ColumnOptions<T>? options = null) where T : IVariableRow;
+    //}
 
-    internal class ValueColumnFactory : IValueColumnFactory
-    {
-        private readonly ICreateControlForVariable _controlProvider;
+    //internal class ValueColumnFactory : IValueColumnFactory
+    //{
+    //    private readonly ICreateControlForVariable _controlProvider;
 
-        public ValueColumnFactory(ICreateControlForVariable controlProvider)
-        {
-            _controlProvider = controlProvider;
-        }
+    //    public ValueColumnFactory(ICreateControlForVariable controlProvider)
+    //    {
+    //        _controlProvider = controlProvider;
+    //    }
 
-        public ValueColumn<T> CreateValueColumn<T>(DBRFile file, GridLength? width = null, ColumnOptions<T>? options = null) where T : IVariableRow
-        {
-            return new(_controlProvider, file, width, options);
-        }
-    }
+    //    public ValueColumn<T> CreateValueColumn<T>(DBRFile file, GridLength? width = null, ColumnOptions<T>? options = null) where T : IVariableRow
+    //    {
+    //        return new(_controlProvider, file, width, options);
+    //    }
+    //}
 
     public interface ICreateControlForVariable
     {
-        Control? CreateControl(GroupBlock fileTpl, IVariableProvider varProvider, bool editing);
+        Control? CreateControl(GroupBlock fileTpl, IVariableProvider? varProvider, bool editing);
     }
 
     public interface IVariableProvider : INotifyPropertyChanged
@@ -117,7 +117,7 @@ namespace TQDBEditor.FileViewModule
             _dialogService = dialogService;
         }
 
-        public Control? CreateControl(GroupBlock fileTpl, IVariableProvider varProvider, bool editing)
+        public Control? CreateControl(GroupBlock fileTpl, IVariableProvider? varProvider, bool editing)
         {
             if (varProvider is null)
                 return null;
@@ -125,13 +125,13 @@ namespace TQDBEditor.FileViewModule
             var binding = new Binding
             {
                 Source = varProvider,
-                Path = nameof(varProvider.Value),
+                Path = nameof(IVariableProvider.Value),
                 ConverterParameter = varProvider,
             };
             if (!editing)
             {
                 binding.Converter = new BBCodeConverter();
-                var richBlock = new RichTextBlock() { UseBBCode = true, [!TextBlock.TextProperty] = binding };
+                var richBlock = new RichTextBlock() { [!RichTextBlock.BBCodeProperty] = binding };
                 ret = richBlock;
             }
             else
@@ -320,49 +320,85 @@ namespace TQDBEditor.FileViewModule
         }
     }
 
-    public interface IVariableRow
-    {
-        public VariableBlock VariableBlock { get; }
-    }
+    //public interface IVariableRow
+    //{
+    //    public VariableBlock VariableBlock { get; }
+    //    public IDictionary<string, IVariableProvider> VariableValues { get; }
+    //}
 
-    public class ValueColumn<T> : ColumnBase<T> where T : IVariableRow
-    {
-        private readonly DBRFile _file;
-        private readonly ICreateControlForVariable _controlProvider;
+    //public class ValueColumn<T> : ColumnBase<T> where T : IVariableRow
+    //{
+    //    private readonly DBRFile _file;
+    //    private readonly ICreateControlForVariable _controlProvider;
+    //    private readonly Dictionary<string, IVariableProvider> _cachedVarProviders;
 
-        public ValueColumn(ICreateControlForVariable controlProvider, DBRFile file, GridLength? width = default, ColumnOptions<T>? options = null) : base(file.FileName, width, options ?? new())
-        {
-            _file = file;
-            _controlProvider = controlProvider;
-        }
+    //    public ValueColumn(ICreateControlForVariable controlProvider, DBRFile file, GridLength? width = default, ColumnOptions<T>? options = null) : base(file.FileName, width, options ?? new())
+    //    {
+    //        _file = file;
+    //        _controlProvider = controlProvider;
+    //        _cachedVarProviders = new();
+    //    }
 
-        public override ICell CreateCell(IRow<T> row)
-        {
-            var model = row.Model;
-            if (model.VariableBlock.Class == VariableClass.@static)
-                return new TemplateCell(model, x => CreateCellDataTemplate(), null, null);
-            return new TemplateCell(model, x => CreateCellDataTemplate(), x => CreateCellDataTemplate(true), null);
-        }
+    //    public override ICell CreateCell(IRow<T> row)
+    //    {
+    //        var model = row.Model;
+    //        if (model.VariableBlock.Class == VariableClass.@static)
+    //            //    return new TemplateCell(model, x => CreateCellDataTemplate(), null, null);
+    //            //return new TemplateCell(model, x => CreateCellDataTemplate(), x => CreateCellDataTemplate(true), null);        
+    //            return new MyCell(model.VariableValues[_file.FileName]);
+    //        return new MyCell(model.VariableValues[_file.FileName]);
+    //    }
 
-        public override Comparison<T?>? GetComparison(ListSortDirection direction)
-        {
-            if (!(Options.CanUserSortColumn ?? true))
-                return null;
-            return (a, b) => CompareVariableRows(a, b) * (direction == ListSortDirection.Descending ? -1 : 1);
-        }
+    //    public override Comparison<T?>? GetComparison(ListSortDirection direction)
+    //    {
+    //        if (!(Options.CanUserSortColumn ?? true))
+    //            return null;
+    //        return (a, b) => CompareVariableRows(a, b) * (direction == ListSortDirection.Descending ? -1 : 1);
+    //    }
 
-        private int CompareVariableRows(T? a, T? b)
-        {
-            if (ReferenceEquals(a, b)) return 0;
-            if (a == null) return -1;
-            if (b == null) return 1;
-            return string.Compare(_file[a.VariableBlock.Name].Value, _file[b.VariableBlock.Name].Value);
-        }
+    //    private int CompareVariableRows(T? a, T? b)
+    //    {
+    //        if (ReferenceEquals(a, b)) return 0;
+    //        if (a == null) return -1;
+    //        if (b == null) return 1;
+    //        return string.Compare(_file[a.VariableBlock.Name].Value, _file[b.VariableBlock.Name].Value);
+    //    }
 
-        private IDataTemplate CreateCellDataTemplate(bool editing = false)
-        {
-            var ret = new FuncDataTemplate<IVariableRow>((x, _) => _controlProvider.CreateControl(_file.TemplateRoot, new DBREntryVariableProvider(_file[x.VariableBlock.Name]), editing), true);
-            return ret;
-        }
-    }
+    //    private IDataTemplate CreateCellDataTemplate(bool editing = false)
+    //    {
+    //        var ret = new FuncDataTemplate<IVariableRow>((x, _) => CreateControl(x, editing), true);
+    //        return ret;
+    //    }
+
+    //    private Control? CreateControl(IVariableRow? row, bool editing)
+    //    {
+    //        if (row == null) return null;
+    //        var varKey = row.VariableBlock.Name;
+    //        //if (!_cachedVarProviders.TryGetValue(varKey, out var provider))
+    //        //{
+    //        //    provider = new DBREntryVariableProvider(_file[varKey]);
+    //        //    _cachedVarProviders.Add(varKey, provider);
+    //        //}
+    //        return _controlProvider.CreateControl(_file.TemplateRoot, row.VariableValues[varKey], editing);
+    //    }
+    //}
+
+    //partial class MyCell : ObservableObject, ICell
+    //{
+    //    public bool CanEdit => true;
+
+    //    public BeginEditGestures EditGestures => BeginEditGestures.DoubleTap;
+
+    //    [ObservableProperty]
+    //    private object? _value;
+
+    //    object? ICell.Value => Value;
+
+    //    public MyCell(IVariableProvider variableProvider)
+    //    {
+    //        Value = variableProvider.Value;
+
+    //        variableProvider.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(IVariableProvider.Value)) Value = variableProvider.Value; };
+    //    }
+    //}
 }
