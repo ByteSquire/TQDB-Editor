@@ -48,7 +48,7 @@
     <GridSplitter Background="Gray" Grid.Row="1" ResizeDirection="Rows"/>
     <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto">
       <WrapPanel Name="Console" Orientation="Vertical">
-        <lControls:RichTextBlock UseBBCode="True">[color=red]Not yet implemented![/color]</lControls:RichTextBlock>
+        <lControls:RichTextBlock BBCode="[color=red]Not yet implemented![/color]" />
       </WrapPanel>
     </ScrollViewer>
   </Grid>

@@ -16,35 +16,45 @@ namespace TQDBEditor.Controls
         private readonly List<(ReadOnlyMemory<char> slice, TextRunProperties? props)> _textChunks;
         private readonly List<CodeTag> _openTags;
 
-        public static readonly StyledProperty<bool> UseBBCodeProperty =
-            AvaloniaProperty.Register<RichTextBlock, bool>(nameof(UseBBCode));
+        public static readonly StyledProperty<string?> BBCodeProperty =
+            AvaloniaProperty.Register<RichTextBlock, string?>(nameof(BBCode));
 
-        public bool UseBBCode
+        public string? BBCode
         {
-            get => GetValue(UseBBCodeProperty);
-            set => SetValue(UseBBCodeProperty, value);
+            get => GetValue(BBCodeProperty);
+            set => SetValue(BBCodeProperty, value);
         }
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
-            var text = Text;
-            if (text == null)
-                return;
-            if (UseBBCode)
-            {
-                var parsed = ParseText(text);
-                _textChunks.AddRange(parsed);
-            }
-            else
-                _textChunks.Add((text.AsMemory(), null));
-
-            // pretend the Text content is just the text without the BBCode
-            Text = string.Concat(_textChunks.Select(x => new string(x.slice.Span)));
+            ParseText();
 
             // Dirty fix for italic text clipping
             if (Padding.Right <= 0)
                 Padding = new Thickness(Padding.Left, Padding.Top, Padding.Right + 5, Padding.Bottom);
+        }
+
+        private void ParseText()
+        {
+            var text = BBCode;
+            _textChunks.Clear();
+            if (text == null)
+                return;
+            var parsed = ParseText(text);
+            _textChunks.AddRange(parsed);
+
+            // pretend the Text content is just the text without the BBCode
+            Text = string.Concat(_textChunks.Select(x => new string(x.slice.Span)));
+        }
+
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        {
+            base.OnPropertyChanged(change);
+            if (change.Property == BBCodeProperty)
+            {
+                ParseText();
+            }
         }
 
         private TextRunProperties DefaultProperties
