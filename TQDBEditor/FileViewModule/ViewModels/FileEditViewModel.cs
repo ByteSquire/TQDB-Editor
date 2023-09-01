@@ -9,9 +9,9 @@ namespace TQDBEditor.FileViewModule.ViewModels
         public FileEditViewModel(IVariableProvider dbrEntry, IDialogService dialogService) : base(dbrEntry, dialogService)
         { }
 
-        protected override void ShowDialog(IDialogService dialogService, Action<string> callback)
+        protected override void ShowDialog(IDialogService dialogService)
         {
-            dialogService.ShowDBFilePicker(callback, _variableProvider);
+            dialogService.ShowDBFilePicker(_variableProvider);
         }
     }
 }

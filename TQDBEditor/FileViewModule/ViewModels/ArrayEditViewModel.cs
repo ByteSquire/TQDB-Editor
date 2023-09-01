@@ -14,9 +14,9 @@ namespace TQDBEditor.FileViewModule.ViewModels
             _fileTpl = fileTpl;
         }
 
-        protected override void ShowDialog(IDialogService dialogService, Action<string> callback)
+        protected override void ShowDialog(IDialogService dialogService)
         {
-            dialogService.ShowArrayEdit(callback, _variableProvider, _fileTpl);
+            dialogService.ShowArrayEdit(_variableProvider, _fileTpl);
         }
     }
 }

@@ -30,15 +30,15 @@ namespace TQDBEditor.FileViewModule.Dialogs
             return dialogParameters.GetValue<GroupBlock>(templateGroup);
         }
 
-        public static void AddChangedValue(this IDialogParameters dialogParameters, string value)
-        {
-            dialogParameters.Add(changedValue, value);
-        }
+        //public static void AddChangedValue(this IDialogParameters dialogParameters, string value)
+        //{
+        //    dialogParameters.Add(changedValue, value);
+        //}
 
-        public static string GetChangedValue(this IDialogParameters dialogParameters)
-        {
-            return dialogParameters.GetValue<string>(changedValue);
-        }
+        //public static string GetChangedValue(this IDialogParameters dialogParameters)
+        //{
+        //    return dialogParameters.GetValue<string>(changedValue);
+        //}
     }
 
     public static class IDialogServiceExtensions
@@ -47,45 +47,27 @@ namespace TQDBEditor.FileViewModule.Dialogs
         public const string arrayEdit = nameof(arrayEdit);
         public const string equationEdit = nameof(equationEdit);
 
-        public static void ShowDBFilePicker(this IDialogService dialogService, Action<string> callback, IVariableProvider input)
+        public static void ShowDBFilePicker(this IDialogService dialogService, IVariableProvider input)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddVariable(input);
-            dialogService.Show(databaseFilePicker, dialogParams, Callback, windowName: TQDBEditor.Dialogs.IDialogServiceExtensions.confirmationDialogWindow);
-
-            void Callback(IDialogResult result)
-            {
-                if (result.Result == ButtonResult.OK)
-                    callback(result.Parameters.GetChangedValue());
-            }
+            dialogService.Show(databaseFilePicker, dialogParams, windowName: TQDBEditor.Dialogs.IDialogServiceExtensions.confirmationDialogWindow);
         }
 
-        public static void ShowArrayEdit(this IDialogService dialogService, Action<string> callback, IVariableProvider input, GroupBlock template)
+        public static void ShowArrayEdit(this IDialogService dialogService, IVariableProvider input, GroupBlock template)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddVariable(input);
             dialogParams.AddTemplateGroup(template);
-            dialogService.Show(arrayEdit, dialogParams, Callback, windowName: TQDBEditor.Dialogs.IDialogServiceExtensions.confirmationDialogWindow);
-
-            void Callback(IDialogResult result)
-            {
-                if (result.Result == ButtonResult.OK)
-                    callback(result.Parameters.GetChangedValue());
-            }
+            dialogService.Show(arrayEdit, dialogParams, windowName: TQDBEditor.Dialogs.IDialogServiceExtensions.confirmationDialogWindow);
         }
 
-        public static void ShowEquationEdit(this IDialogService dialogService, Action<string> callback, IVariableProvider input, GroupBlock template)
+        public static void ShowEquationEdit(this IDialogService dialogService, IVariableProvider input, GroupBlock template)
         {
             var dialogParams = new DialogParameters();
             dialogParams.AddVariable(input);
             dialogParams.AddTemplateGroup(template);
-            dialogService.Show(equationEdit, dialogParams, Callback, windowName: TQDBEditor.Dialogs.IDialogServiceExtensions.confirmationDialogWindow);
-
-            void Callback(IDialogResult result)
-            {
-                if (result.Result == ButtonResult.OK)
-                    callback(result.Parameters.GetChangedValue());
-            }
+            dialogService.Show(equationEdit, dialogParams, windowName: TQDBEditor.Dialogs.IDialogServiceExtensions.confirmationDialogWindow);
         }
     }
 }

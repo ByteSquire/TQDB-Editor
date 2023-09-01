@@ -13,9 +13,9 @@ namespace TQDBEditor.FileViewModule.ViewModels
             _template = template;
         }
 
-        protected override void ShowDialog(IDialogService dialogService, Action<string> callback)
+        protected override void ShowDialog(IDialogService dialogService)
         {
-            dialogService.ShowEquationEdit(callback, _variableProvider, _template);
+            dialogService.ShowEquationEdit(_variableProvider, _template);
         }
     }
 }

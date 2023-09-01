@@ -17,31 +17,20 @@ namespace TQDBEditor.FileViewModule.ViewModels
         {
             _variableProvider = variableProvider;
             _dialogService = dialogService;
-            _value = _variableProvider.Value;
-        }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            if (e.PropertyName == nameof(Value))
+            _variableProvider.PropertyChanged += (_, e) =>
             {
-                _variableProvider.Value = Value;
-            }
+                if (e.PropertyName == nameof(IVariableProvider.Value))
+                    OnPropertyChanged(nameof(Value));
+            };
         }
 
-        [ObservableProperty]
-        private string? _value;
+        public string? Value { get => _variableProvider.Value; set => _variableProvider.Value = value; }
 
         public virtual void OnClick()
         {
-            ShowDialog(_dialogService, UpdateValue);
+            ShowDialog(_dialogService);
         }
 
-        protected virtual void UpdateValue(string? value)
-        {
-            Value = value;
-        }
-
-        protected abstract void ShowDialog(IDialogService dialogService, Action<string> callback);
+        protected abstract void ShowDialog(IDialogService dialogService);
     }
 }
