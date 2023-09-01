@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Controls.Templates;
 using Avalonia.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DynamicData;
@@ -31,14 +32,16 @@ namespace TQDBEditor.FileViewModule.ViewModels
         private ObservableCollection<Node> _treeNodes = new();
 
         private readonly ObservableCollection<MyVariableRow> _blocks;
-        private readonly Func<IValueColumnFactory> _valueColumnFactoryFactory;
+        private IReadOnlyList<DBRFile> _files;
+        private readonly ICreateControlForVariable _createControlForVariable;
 
         private const bool CAN_SORT = false;
 
-        public ClassicFileViewViewModel(Func<IValueColumnFactory> valueColumnFactoryFactory)
+        public ClassicFileViewViewModel(ICreateControlForVariable controlFactory)
         {
-            _valueColumnFactoryFactory = valueColumnFactoryFactory;
+            _createControlForVariable = controlFactory;
             _blocks = new();
+            _files = Array.Empty<DBRFile>();
             VarSource = CreateBasicDataGridSource();
             ValSource = new(_blocks)
             {
@@ -70,7 +73,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
                 var vars = node.Block.GetVariables(true).Where(x => x.Type != TQDB_Parser.VariableType.eqnVariable);
                 foreach (var variable in vars)
                 {
-                    _blocks.Add(new(variable));
+                    _blocks.Add(new(variable, _files.ToDictionary(x => x.FileName, x => new DBREntryVariableProvider(x[variable.Name]) as IVariableProvider)));
                 }
             }
         }
@@ -79,10 +82,15 @@ namespace TQDBEditor.FileViewModule.ViewModels
         {
             if (_blocks.Count == 0)
             {
-                var factory = _valueColumnFactoryFactory.Invoke();
-                var colOptions = new ColumnOptions<MyVariableRow>() { CanUserSortColumn = CAN_SORT };
-                foreach (var file in files)
-                    ValSource.Columns.Add(factory.CreateValueColumn<MyVariableRow>(file, options: colOptions));
+                _files = files.ToList();
+                var colOptions = new TemplateColumnOptions<MyVariableRow>() { CanUserSortColumn = CAN_SORT };
+                foreach (var file in _files)
+                {
+                    ValSource.Columns.Add(new TemplateColumn<MyVariableRow>(file.FileName,
+                        new FuncDataTemplate<MyVariableRow>((x, _) => _createControlForVariable.CreateControl(file.TemplateRoot, x?.VariableValues[file.FileName], false)),
+                        new FuncDataTemplate<MyVariableRow>((x, _) => _createControlForVariable.CreateControl(file.TemplateRoot, x?.VariableValues[file.FileName], true)),
+                        options: colOptions));
+                }
 
                 var root = NodeFromGroupBlock(template);
                 root.IsExpanded = true;
@@ -113,13 +121,16 @@ namespace TQDBEditor.FileViewModule.ViewModels
         }
     }
 
-    public class MyVariableRow : IVariableRow
+    public class MyVariableRow
     {
-        public VariableBlock VariableBlock { get; }
+        public VariableBlock VariableBlock { get; private set; }
 
-        public MyVariableRow(VariableBlock variableBlock)
+        public IDictionary<string, IVariableProvider> VariableValues { get; }
+
+        public MyVariableRow(VariableBlock variableBlock, IDictionary<string, IVariableProvider> variableValues)
         {
             VariableBlock = variableBlock;
+            VariableValues = variableValues;
         }
     }
 }

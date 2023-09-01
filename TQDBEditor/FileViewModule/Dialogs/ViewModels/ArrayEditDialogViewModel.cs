@@ -94,7 +94,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             }
             TreeSource.Columns.Add(new TemplateColumn<TreeRow>(
                 "value",
-                new FuncDataTemplate<TreeRow>((x, _) => _variableControlProvider.CreateControl(fileTpl, x, true)), width: GridLength.Star)
+                new FuncDataTemplate<TreeRow>((x, _) => _variableControlProvider.CreateControl(fileTpl, x, true)), width: GridLength.Star, options: new() { CanUserSortColumn = false })
             );
 
             _setAllEntry = new(CreateTemplate("Set All")!);
@@ -357,7 +357,7 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
             }
         }
 
-        public class TreeRow : IVariableRow, IVariableProvider
+        public class TreeRow : IVariableProvider
         {
             private readonly IList<TreeRow> _rows;
             public int Index => _rows.IndexOf(this);
