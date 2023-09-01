@@ -21,12 +21,6 @@ namespace TQDBEditor.FileViewModule.Dialogs.ViewModels
 
         public override IDialogParameters? OnDialogConfirmed(EventArgs e)
         {
-            if (LocalVariable?.Value != null)
-            {
-                var dParams = new DialogParameters();
-                dParams.AddChangedValue(LocalVariable.Value);
-                return dParams;
-            }
             return null;
         }
 
