@@ -272,7 +272,7 @@ namespace TQDBEditor.ClassicViewModule.ViewModels
                                     throw;
                             };
                         }
-                    }, options: new() { BeginEditGestures = BeginEditGestures.F2 }),
+                    }, options: new() { BeginEditGestures = BeginEditGestures.F2, IsTextSearchEnabled = true }),
                 },
             };
             var selection = basicSource.RowSelection!;

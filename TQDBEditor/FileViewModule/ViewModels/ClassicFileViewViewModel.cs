@@ -56,7 +56,7 @@ namespace TQDBEditor.FileViewModule.ViewModels
             {
                 Columns =
                 {
-                    new TextColumn<MyVariableRow, string>("Name", x => x.VariableBlock.Name, options: colOptions),
+                    new TextColumn<MyVariableRow, string>("Name", x => x.VariableBlock.Name, options: new(){ CanUserSortColumn = CAN_SORT, IsTextSearchEnabled = true }),
                     new TextColumn<MyVariableRow, string>("Class", x => Enum.GetName(x.VariableBlock.Class), options: colOptions),
                     new TextColumn<MyVariableRow, string>("Type", x => x.VariableBlock.Type == TQDB_Parser.VariableType.file ? "file (" + string.Join(',', x.VariableBlock.FileExtensions) + ")" : Enum.GetName(x.VariableBlock.Type), options: colOptions),
                     new TextColumn<MyVariableRow, string>("Description", x => x.VariableBlock.Description, options: colOptions),
