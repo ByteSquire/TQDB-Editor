@@ -1,3 +1,5 @@
+# Put on hold indefinietely, I will consider making a fork for TQ2 if there is a similar approach to modding
+
 # TQDB-Editor
 A general purpose Editor for the Titan Quest Database, fully customizable!
 
